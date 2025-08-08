@@ -156,51 +156,77 @@ public class DataSeeder : IDataSeeder
             }
         }
 
-        // Seed additional development projects
-        var developmentProjects = new[]
+        // Check if we already have enough projects for testing
+        var existingProjectCount = await _context.Projects.CountAsync(cancellationToken);
+        if (existingProjectCount >= 50)
         {
-            new Project
-            {
-                Name = "Mobile App Development",
-                Description = "Native mobile application for iOS and Android platforms",
-                Status = ProjectStatus.InProgress,
-                Budget = 120000m,
-                ClientName = "Tech Startup Inc",
-                Priority = 1,
-                StartDate = DateTime.UtcNow.AddDays(-60),
-                EndDate = DateTime.UtcNow.AddDays(90),
-                Tags = "mobile,ios,android,development",
-                OwnerId = SeedDataConstants.ManagerUserId
-            },
-            new Project
-            {
-                Name = "API Modernization",
-                Description = "Modernize legacy API infrastructure with microservices architecture",
-                Status = ProjectStatus.Planning,
-                Budget = 200000m,
-                ClientName = "Enterprise Client",
-                Priority = 2,
-                StartDate = DateTime.UtcNow.AddDays(30),
-                EndDate = DateTime.UtcNow.AddDays(210),
-                Tags = "api,microservices,modernization",
-                OwnerId = SeedDataConstants.ManagerUserId
-            }
-        };
-
-        foreach (var project in developmentProjects)
+            _logger.LogInformation("Sufficient projects already exist ({Count}), skipping project seeding", existingProjectCount);
+        }
+        else
         {
-            var existing = await _context.Projects
-                .FirstOrDefaultAsync(p => p.Name == project.Name, cancellationToken);
+            _logger.LogInformation("Seeding development projects for pagination testing");
             
-            if (existing == null)
+            // Seed additional development projects - enough for pagination testing
+            var projectStatuses = new[] { ProjectStatus.Planning, ProjectStatus.InProgress, ProjectStatus.OnHold, ProjectStatus.Completed, ProjectStatus.Cancelled };
+            var clients = new[] { "Tech Startup Inc", "Enterprise Corp", "Global Solutions", "Innovation Labs", "Digital Agency", "Software House", "Cloud Systems", "Data Analytics Co" };
+            var tags = new[] { "web", "mobile", "api", "cloud", "database", "ai", "ml", "security", "infrastructure", "analytics" };
+            
+            var developmentProjects = new List<Project>();
+            
+            // Create 50+ projects for pagination testing
+            for (int i = 1; i <= 55; i++)
             {
-                _context.Projects.Add(project);
-                _logger.LogDebug("Added development project: {ProjectName}", project.Name);
+                var status = projectStatuses[i % projectStatuses.Length];
+                var startOffset = -90 + (i * 3);
+                var duration = 30 + (i % 5) * 30;
+                
+                developmentProjects.Add(new Project
+                {
+                    Name = $"Project {i:D3} - {GetProjectNameSuffix(i)}",
+                    Description = $"Description for project {i}. This is a {status} project with various technical requirements and deliverables.",
+                    Status = status,
+                    Budget = 50000m + (i * 5000m),
+                    ClientName = clients[i % clients.Length],
+                    Priority = (i % 3) + 1,
+                    StartDate = DateTime.UtcNow.AddDays(startOffset),
+                    EndDate = DateTime.UtcNow.AddDays(startOffset + duration),
+                    Tags = string.Join(",", tags.Take(3 + (i % 3))),
+                    OwnerId = i % 2 == 0 ? SeedDataConstants.ManagerUserId : SeedDataConstants.EmployeeUserId
+                });
+            }
+
+            foreach (var project in developmentProjects)
+            {
+                var existing = await _context.Projects
+                    .FirstOrDefaultAsync(p => p.Name == project.Name, cancellationToken);
+                
+                if (existing == null)
+                {
+                    _context.Projects.Add(project);
+                    _logger.LogDebug("Added development project: {ProjectName}", project.Name);
+                }
             }
         }
 
         await _context.SaveChangesAsync(cancellationToken);
         _logger.LogInformation("Development data seeding completed");
+    }
+
+    /// <summary>
+    /// Helper method to generate descriptive project name suffixes
+    /// </summary>
+    private string GetProjectNameSuffix(int index)
+    {
+        var suffixes = new[]
+        {
+            "Website Redesign", "Mobile App", "API Development", "Database Migration",
+            "Cloud Migration", "Security Audit", "Performance Optimization", "UI/UX Refresh",
+            "Data Analytics", "Machine Learning POC", "Infrastructure Upgrade", "DevOps Implementation",
+            "E-commerce Platform", "CRM Integration", "Payment Gateway", "Reporting Dashboard",
+            "Microservices Architecture", "Legacy System Modernization", "Real-time Analytics", "IoT Integration"
+        };
+        
+        return suffixes[index % suffixes.Length];
     }
 
     /// <summary>

@@ -135,7 +135,6 @@ public static class AuthenticationExtensions
                         {
                             var frontendUrl = configuration["FRONTEND_URL"] ?? (isDevelopment ? "http://localhost:5173" : "/");
                             context.Response.Redirect($"{frontendUrl}/auth/error?message={context.Failure?.Message}");
-                            context.HandleResponse();
                             return Task.CompletedTask;
                         }
                     };
@@ -194,7 +193,6 @@ public static class AuthenticationExtensions
                         {
                             var frontendUrl = configuration["FRONTEND_URL"] ?? (isDevelopment ? "http://localhost:5173" : "/");
                             context.Response.Redirect($"{frontendUrl}/auth/error?message={context.Failure?.Message}");
-                            context.HandleResponse();
                             return Task.CompletedTask;
                         }
                     };
