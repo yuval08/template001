@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { User, UpdateUserRole, UserRoles, getUserRoleLabel, getUserRoleDescription } from '@/types/user';
+import type { UserId } from '@/shared/types/branded';
 import { Shield } from 'lucide-react';
 
 const updateUserRoleSchema = z.object({
@@ -17,7 +18,7 @@ type UpdateUserRoleFormData = z.infer<typeof updateUserRoleSchema>;
 
 interface UserRoleSelectProps {
   user: User | null;
-  currentUserId: string;
+  currentUserId: UserId;
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: UpdateUserRole) => void;

@@ -339,16 +339,16 @@ const UIShowcase: React.FC = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex flex-wrap gap-3">
-                <Button onClick={() => toast.success('Success message!')}>
+                <Button onClick={() => toast.success({ title: 'Success message!' })}>
                   Show Success Toast
                 </Button>
-                <Button variant="secondary" onClick={() => toast.info('Info message!')}>
+                <Button variant="secondary" onClick={() => toast.info({ title: 'Info message!' })}>
                   Show Info Toast
                 </Button>
-                <Button variant="outline" onClick={() => toast.warning('Warning message!')}>
+                <Button variant="outline" onClick={() => toast.warning({ title: 'Warning message!' })}>
                   Show Warning Toast
                 </Button>
-                <Button variant="destructive" onClick={() => toast.error('Error message!')}>
+                <Button variant="destructive" onClick={() => toast.error({ title: 'Error message!' })}>
                   Show Error Toast
                 </Button>
               </div>
@@ -441,7 +441,7 @@ const UIShowcase: React.FC = () => {
                     </Button>
                     <Button onClick={() => {
                       setDialogOpen(false);
-                      toast.success('Action confirmed!');
+                      toast.success({ title: 'Action confirmed!' });
                     }}>
                       Confirm
                     </Button>

@@ -74,7 +74,7 @@ export interface UpdateProjectRequest {
 export interface FileUploadRequest {
   file: File;
   category?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface TableState {

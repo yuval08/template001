@@ -11,13 +11,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace IntranetStarter.Infrastructure;
 
-public static class DependencyInjection
-{
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
-    {
+public static class DependencyInjection {
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration) {
         // Database
-        services.AddDbContext<ApplicationDbContext>(options =>
-        {
+        services.AddDbContext<ApplicationDbContext>(options => {
             var connectionString = configuration.GetConnectionString("DefaultConnection");
             options.UseNpgsql(connectionString);
         });
@@ -25,7 +22,7 @@ public static class DependencyInjection
         // Repository and Unit of Work
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-        
+
         // Data Seeding
         services.AddScoped<IDataSeeder, DataSeeder>();
 
@@ -44,48 +41,40 @@ public static class DependencyInjection
         return services;
     }
 
-    private static void AddFileStorage(IServiceCollection services, IConfiguration configuration)
-    {
+    private static void AddFileStorage(IServiceCollection services, IConfiguration configuration) {
         var storageDriver = configuration["STORAGE_DRIVER"] ?? "Local";
 
-        switch (storageDriver.ToLowerInvariant())
-        {
+        switch (storageDriver.ToLowerInvariant()) {
             case "s3":
                 services.AddScoped<IFileStore, S3FileStore>();
                 break;
-            case "azure":
-            case "azureblob":
+            case "azure" or "azureblob":
                 services.AddScoped<IFileStore, AzureBlobFileStore>();
                 break;
-            case "local":
             default:
                 services.AddScoped<IFileStore, LocalFileStore>();
                 break;
         }
     }
 
-    private static void AddHangfire(IServiceCollection services, IConfiguration configuration)
-    {
+    private static void AddHangfire(IServiceCollection services, IConfiguration configuration) {
         var connectionString = configuration.GetConnectionString("DefaultConnection");
-        
-        services.AddHangfire(config =>
-        {
-            config.UsePostgreSqlStorage(connectionString, new PostgreSqlStorageOptions
-            {
-                QueuePollInterval = TimeSpan.FromSeconds(15),
-                InvisibilityTimeout = TimeSpan.FromMinutes(5),
+
+        services.AddHangfire(config => {
+            config.UsePostgreSqlStorage(options => { options.UseNpgsqlConnection(connectionString); }, new PostgreSqlStorageOptions {
+                QueuePollInterval        = TimeSpan.FromSeconds(15),
+                InvisibilityTimeout      = TimeSpan.FromMinutes(5),
                 PrepareSchemaIfNecessary = true,
-                SchemaName = "hangfire"
+                SchemaName               = "hangfire"
             });
 
             config.UseSimpleAssemblyNameTypeSerializer();
             config.UseRecommendedSerializerSettings();
         });
 
-        services.AddHangfireServer(options =>
-        {
+        services.AddHangfireServer(options => {
             options.WorkerCount = Environment.ProcessorCount;
-            options.Queues = new[] { "default", "reports", "emails", "cleanup" };
+            options.Queues      = ["default", "reports", "emails", "cleanup"];
         });
     }
 }

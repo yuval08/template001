@@ -198,8 +198,8 @@ The application follows Clean Architecture with clear separation of concerns:
 
 ### Development
 - Frontend: http://localhost:5173
-- API: http://localhost:5001
-- Swagger: http://localhost:5001/swagger
+- API: http://localhost:5000
+- Swagger: http://localhost:5000/swagger
 - Hangfire: http://localhost:5002/hangfire
 - PostgreSQL: localhost:5433
 - Redis: localhost:6379

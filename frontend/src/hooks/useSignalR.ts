@@ -3,6 +3,7 @@ import { HubConnectionState } from '@microsoft/signalr';
 import { signalRService } from '@/services/signalr';
 import { useAuth } from './useAuth';
 import { NotificationMessage } from '@/types';
+import type { UserId } from '@/shared/types/branded';
 
 export const useSignalR = () => {
   const { isAuthenticated, user } = useAuth();
@@ -39,7 +40,7 @@ export const useSignalR = () => {
   }, [isAuthenticated, user]);
 
   const sendMessage = useCallback(
-    async (message: string, targetUserId?: string) => {
+    async (message: string, targetUserId?: UserId) => {
       await signalRService.sendMessage(message, targetUserId);
     },
     []

@@ -13,7 +13,7 @@ import {
 } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { User, getUserRoleLabel, getUserRoleBadgeColor } from '@/types/user';
+import { User, getUserRoleLabel, getUserRoleBadgeColor } from '@/entities/user';
 import { formatRelativeTime } from '@/utils/formatters';
 import { 
   Edit,

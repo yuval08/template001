@@ -16,9 +16,10 @@ import {
   useUpdateUserRole,
   useInvitations,
   useCreateInvitation,
-} from '@/hooks/useUsers';
-import { User, CreateUser, UpdateUserProfile, UpdateUserRole, CreateInvitation } from '@/types/user';
+  User
+} from '@/entities/user';
 import { useAuth } from '@/hooks/useAuth';
+import type { UserId } from '@/shared/types/branded';
 import { 
   UserPlus,
   Mail,
@@ -84,7 +85,14 @@ const Users: React.FC = () => {
   const totalInvitationsCount = invitationsResponse?.totalCount || 0;
 
   // Handlers
-  const handleCreateUser = async (data: CreateUser) => {
+  const handleCreateUser = async (data: {
+    email: string;
+    firstName: string;
+    lastName: string;
+    role: string;
+    department?: string;
+    jobTitle?: string;
+  }) => {
     try {
       await createUserMutation.mutateAsync(data);
       setIsCreateModalOpen(false);
@@ -93,7 +101,12 @@ const Users: React.FC = () => {
     }
   };
 
-  const handleInviteUser = async (data: CreateInvitation) => {
+  const handleInviteUser = async (data: {
+    email: string;
+    intendedRole: string;
+    invitedById: string;
+    expirationDays?: number;
+  }) => {
     try {
       await createInvitationMutation.mutateAsync(data);
       setIsInviteModalOpen(false);
@@ -106,20 +119,20 @@ const Users: React.FC = () => {
     setEditingUser(user);
   };
 
-  const handleUpdateUserProfile = async (data: UpdateUserProfile) => {
+  const handleUpdateUserProfile = async (data: {
+    userId: string;
+    firstName: string;
+    lastName: string;
+    department?: string;
+    jobTitle?: string;
+    isActive: boolean;
+  }) => {
     if (!editingUser) return;
     
     try {
       await updateUserProfileMutation.mutateAsync({
         id: editingUser.id,
-        data: {
-          userId: data.userId,
-          firstName: data.firstName,
-          lastName: data.lastName,
-          department: data.department,
-          jobTitle: data.jobTitle,
-          isActive: data.isActive,
-        },
+        data,
       });
       setEditingUser(null);
     } catch (error) {
@@ -131,17 +144,17 @@ const Users: React.FC = () => {
     setUserForRoleChange(user);
   };
 
-  const handleUpdateUserRole = async (data: UpdateUserRole) => {
+  const handleUpdateUserRole = async (data: {
+    userId: string;
+    newRole: string;
+    updatedById: string;
+  }) => {
     if (!userForRoleChange) return;
     
     try {
       await updateUserRoleMutation.mutateAsync({
         id: userForRoleChange.id,
-        data: {
-          userId: data.userId,
-          newRole: data.newRole,
-          updatedById: data.updatedById,
-        },
+        data,
       });
       setUserForRoleChange(null);
     } catch (error) {
@@ -262,7 +275,7 @@ const Users: React.FC = () => {
 
       {/* Invite User Modal */}
       <InviteUserDialog
-        currentUserId={currentUser?.id || ''}
+        currentUserId={(currentUser?.id || '') as UserId}
         isOpen={isInviteModalOpen}
         onClose={() => setIsInviteModalOpen(false)}
         onSubmit={handleInviteUser}
@@ -281,7 +294,7 @@ const Users: React.FC = () => {
       {/* Edit Role Modal */}
       <UserRoleSelect
         user={userForRoleChange}
-        currentUserId={currentUser?.id || ''}
+        currentUserId={(currentUser?.id || '') as UserId}
         isOpen={!!userForRoleChange}
         onClose={() => setUserForRoleChange(null)}
         onSubmit={handleUpdateUserRole}

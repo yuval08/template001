@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { CreateInvitation, UserRoles, getUserRoleLabel, getUserRoleDescription } from '@/types/user';
+import type { UserId } from '@/shared/types/branded';
 import { emailSchema } from '@/utils/validation';
 import { Mail } from 'lucide-react';
 
@@ -20,7 +21,7 @@ const inviteUserSchema = z.object({
 type InviteUserFormData = z.infer<typeof inviteUserSchema>;
 
 interface InviteUserDialogProps {
-  currentUserId: string;
+  currentUserId: UserId;
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: CreateInvitation) => void;

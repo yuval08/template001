@@ -672,7 +672,7 @@ const Inputs: React.FC = () => {
                 max={50}
                 step={1}
                 className="w-full"
-                onValueChange={(value) => toast.info(`Temperature: ${value[0]}°C`)}
+                onValueChange={(value) => toast.info({ title: `Temperature: ${value[0]}°C` })}
               />
               <div className="flex justify-between text-xs text-gray-400 mt-1">
                 <span>-10°C</span>
@@ -809,7 +809,7 @@ const Inputs: React.FC = () => {
                   onChange={(e) => {
                     const files = e.target.files;
                     if (files && files.length > 0) {
-                      toast.success(`Selected ${files.length} file(s)`);
+                      toast.success({ title: `Selected ${files.length} file(s)` });
                     }
                   }}
                 />
@@ -820,7 +820,7 @@ const Inputs: React.FC = () => {
           <div className="pt-4 border-t">
             <Button 
               onClick={() => {
-                toast.success('Form submitted!', 'All input values have been captured.');
+                toast.success({ title: 'Form submitted!', description: 'All input values have been captured.' });
               }}
               className="w-full md:w-auto"
             >

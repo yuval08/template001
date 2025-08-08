@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useSampleReport } from '@/hooks/useApi';
+import { useSampleReport } from '@/entities/report';
 import { 
   Download, 
   FileText, 
@@ -39,9 +39,9 @@ const Reports: React.FC = () => {
       setPageNumber(1);
       setScale(1.0);
       setRotation(0);
-      toast.success('Report loaded successfully');
+      toast.success({ title: 'Report loaded successfully' });
     } catch (error) {
-      toast.error('Failed to load report');
+      toast.error({ title: 'Failed to load report' });
     }
   };
 
@@ -57,7 +57,7 @@ const Reports: React.FC = () => {
     document.body.removeChild(a);
     window.URL.revokeObjectURL(url);
     
-    toast.success('Report downloaded');
+    toast.success({ title: 'Report downloaded' });
   };
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
@@ -66,7 +66,7 @@ const Reports: React.FC = () => {
 
   const onDocumentLoadError = (error: Error) => {
     console.error('Error loading PDF:', error);
-    toast.error('Error loading PDF document');
+    toast.error({ title: 'Error loading PDF document' });
   };
 
   const changePage = (delta: number) => {

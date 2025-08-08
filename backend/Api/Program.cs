@@ -1,15 +1,13 @@
 using Hangfire;
 using Hangfire.Dashboard;
 using IntranetStarter.Api.Extensions;
-using IntranetStarter.Api.Hubs;
+using IntranetStarter.Api.Middleware;
 using IntranetStarter.Application;
 using IntranetStarter.Infrastructure;
 using IntranetStarter.Infrastructure.BackgroundJobs;
 using IntranetStarter.Infrastructure.Data;
-using IntranetStarter.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using System.Security.Claims;
 
 #if DEBUG
 DotNetEnv.Env.Load();
@@ -67,8 +65,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy.WithOrigins(
-                builder.Configuration["CorsSettings:AllowedOrigins"]?.Split(',') ?? 
-                new[] { "http://localhost:3000", "http://localhost:5173", "https://localhost:3000", "https://localhost:5173" }
+                builder.Configuration["CorsSettings:AllowedOrigins"]?.Split(',') ??
+                ["http://localhost:3000", "http://localhost:5173", "https://localhost:3000", "https://localhost:5173"]
             )
             .AllowAnyMethod()
             .AllowAnyHeader()
@@ -109,6 +107,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Add global exception middleware
+app.UseMiddleware<GlobalExceptionMiddleware>();
+
 app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
@@ -116,13 +118,13 @@ app.UseAuthorization();
 // Use Hangfire Dashboard (only in development or for admins)
 if (app.Environment.IsDevelopment())
 {
-    app.UseHangfireDashboard("/hangfire");
+    app.UseHangfireDashboard();
 }
 else
 {
     app.UseHangfireDashboard("/hangfire", new DashboardOptions
     {
-        Authorization = new[] { new HangfireAuthorizationFilter() }
+        Authorization = [new HangfireAuthorizationFilter()]
     });
 }
 
@@ -144,7 +146,7 @@ using (var scope = app.Services.CreateScope())
         await context.Database.MigrateAsync();
         
         // Seed data using the data seeding service
-        var dataSeeder = scope.ServiceProvider.GetRequiredService<IntranetStarter.Infrastructure.Data.IDataSeeder>();
+        var dataSeeder = scope.ServiceProvider.GetRequiredService<IDataSeeder>();
         await dataSeeder.SeedAsync();
         
         // Schedule recurring jobs

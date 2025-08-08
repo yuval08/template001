@@ -28,7 +28,7 @@ const Buttons: React.FC = () => {
     await new Promise(resolve => setTimeout(resolve, 2000));
     
     setLoadingStates(prev => ({ ...prev, [buttonId]: false }));
-    toast.success(`${actionName} completed!`);
+    toast.success({ title: `${actionName} completed!` });
   };
 
   const CodeBlock: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -58,22 +58,22 @@ const Buttons: React.FC = () => {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex flex-wrap gap-4">
-            <Button variant="default" onClick={() => toast.info('Default button clicked!')}>
+            <Button variant="default" onClick={() => toast.info({ title: 'Default button clicked!' })}>
               Default
             </Button>
-            <Button variant="destructive" onClick={() => toast.error('Destructive action!')}>
+            <Button variant="destructive" onClick={() => toast.error({ title: 'Destructive action!' })}>
               Destructive
             </Button>
-            <Button variant="outline" onClick={() => toast.info('Outline button clicked!')}>
+            <Button variant="outline" onClick={() => toast.info({ title: 'Outline button clicked!' })}>
               Outline
             </Button>
-            <Button variant="secondary" onClick={() => toast.info('Secondary button clicked!')}>
+            <Button variant="secondary" onClick={() => toast.info({ title: 'Secondary button clicked!' })}>
               Secondary
             </Button>
-            <Button variant="ghost" onClick={() => toast.info('Ghost button clicked!')}>
+            <Button variant="ghost" onClick={() => toast.info({ title: 'Ghost button clicked!' })}>
               Ghost
             </Button>
-            <Button variant="link" onClick={() => toast.info('Link button clicked!')}>
+            <Button variant="link" onClick={() => toast.info({ title: 'Link button clicked!' })}>
               Link
             </Button>
           </div>
@@ -99,16 +99,16 @@ const Buttons: React.FC = () => {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex items-center gap-4">
-            <Button size="sm" onClick={() => toast.info('Small button clicked!')}>
+            <Button size="sm" onClick={() => toast.info({ title: 'Small button clicked!' })}>
               Small
             </Button>
-            <Button size="default" onClick={() => toast.info('Default size clicked!')}>
+            <Button size="default" onClick={() => toast.info({ title: 'Default size clicked!' })}>
               Default
             </Button>
-            <Button size="lg" onClick={() => toast.info('Large button clicked!')}>
+            <Button size="lg" onClick={() => toast.info({ title: 'Large button clicked!' })}>
               Large
             </Button>
-            <Button size="icon" onClick={() => toast.info('Icon button clicked!')}>
+            <Button size="icon" onClick={() => toast.info({ title: 'Icon button clicked!' })}>
               <Settings className="h-4 w-4" />
             </Button>
           </div>
@@ -134,7 +134,7 @@ const Buttons: React.FC = () => {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex flex-wrap gap-4">
-            <Button onClick={() => toast.success('Active button clicked!')}>
+            <Button onClick={() => toast.success({ title: 'Active button clicked!' })}>
               Active
             </Button>
             <Button disabled>
@@ -211,15 +211,15 @@ const Buttons: React.FC = () => {
             <div>
               <h4 className="text-sm font-medium mb-3 text-gray-900 dark:text-white">Left Icons</h4>
               <div className="flex flex-wrap gap-3">
-                <Button onClick={() => toast.info('Download started!')}>
+                <Button onClick={() => toast.info({ title: 'Download started!' })}>
                   <Download className="mr-2 h-4 w-4" />
                   Download
                 </Button>
-                <Button variant="outline" onClick={() => toast.info('Email sent!')}>
+                <Button variant="outline" onClick={() => toast.info({ title: 'Email sent!' })}>
                   <Mail className="mr-2 h-4 w-4" />
                   Send Email
                 </Button>
-                <Button variant="secondary" onClick={() => toast.success('Item added!')}>
+                <Button variant="secondary" onClick={() => toast.success({ title: 'Item added!' })}>
                   <Plus className="mr-2 h-4 w-4" />
                   Add Item
                 </Button>
@@ -230,11 +230,11 @@ const Buttons: React.FC = () => {
             <div>
               <h4 className="text-sm font-medium mb-3 text-gray-900 dark:text-white">Right Icons</h4>
               <div className="flex flex-wrap gap-3">
-                <Button onClick={() => toast.info('Proceeding...')}>
+                <Button onClick={() => toast.info({ title: 'Proceeding...' })}>
                   Continue
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
-                <Button variant="ghost" onClick={() => toast.info('Searching...')}>
+                <Button variant="ghost" onClick={() => toast.info({ title: 'Searching...' })}>
                   Search
                   <Search className="ml-2 h-4 w-4" />
                 </Button>
@@ -245,16 +245,16 @@ const Buttons: React.FC = () => {
             <div>
               <h4 className="text-sm font-medium mb-3 text-gray-900 dark:text-white">Icon Only</h4>
               <div className="flex gap-3">
-                <Button size="icon" onClick={() => toast.info('Settings opened!')}>
+                <Button size="icon" onClick={() => toast.info({ title: 'Settings opened!' })}>
                   <Settings className="h-4 w-4" />
                 </Button>
-                <Button size="icon" variant="outline" onClick={() => toast.success('Liked!')}>
+                <Button size="icon" variant="outline" onClick={() => toast.success({ title: 'Liked!' })}>
                   <Heart className="h-4 w-4" />
                 </Button>
-                <Button size="icon" variant="ghost" onClick={() => toast.warning('Starred!')}>
+                <Button size="icon" variant="ghost" onClick={() => toast.warning({ title: 'Starred!' })}>
                   <Star className="h-4 w-4" />
                 </Button>
-                <Button size="icon" variant="secondary" onClick={() => toast.info('Upvoted!')}>
+                <Button size="icon" variant="secondary" onClick={() => toast.info({ title: 'Upvoted!' })}>
                   <ThumbsUp className="h-4 w-4" />
                 </Button>
               </div>
@@ -299,21 +299,21 @@ const Buttons: React.FC = () => {
                 <Button 
                   variant="outline" 
                   className="rounded-r-none border-r-0"
-                  onClick={() => toast.info('Previous page')}
+                  onClick={() => toast.info({ title: 'Previous page' })}
                 >
                   Previous
                 </Button>
                 <Button 
                   variant="outline" 
                   className="rounded-none border-r-0"
-                  onClick={() => toast.info('Current: Page 2')}
+                  onClick={() => toast.info({ title: 'Current: Page 2' })}
                 >
                   2
                 </Button>
                 <Button 
                   variant="outline" 
                   className="rounded-l-none"
-                  onClick={() => toast.info('Next page')}
+                  onClick={() => toast.info({ title: 'Next page' })}
                 >
                   Next
                 </Button>
@@ -324,13 +324,13 @@ const Buttons: React.FC = () => {
             <div>
               <h4 className="text-sm font-medium mb-3 text-gray-900 dark:text-white">Action Group</h4>
               <div className="flex gap-2">
-                <Button onClick={() => toast.success('Document saved!')}>
+                <Button onClick={() => toast.success({ title: 'Document saved!' })}>
                   Save
                 </Button>
-                <Button variant="outline" onClick={() => toast.info('Preview opened!')}>
+                <Button variant="outline" onClick={() => toast.info({ title: 'Preview opened!' })}>
                   Preview
                 </Button>
-                <Button variant="ghost" onClick={() => toast.warning('Action cancelled!')}>
+                <Button variant="ghost" onClick={() => toast.warning({ title: 'Action cancelled!' })}>
                   Cancel
                 </Button>
               </div>
@@ -340,10 +340,10 @@ const Buttons: React.FC = () => {
             <div>
               <h4 className="text-sm font-medium mb-3 text-gray-900 dark:text-white">Primary/Secondary Actions</h4>
               <div className="flex gap-3">
-                <Button onClick={() => toast.success('Form submitted!')}>
+                <Button onClick={() => toast.success({ title: 'Form submitted!' })}>
                   Submit Form
                 </Button>
-                <Button variant="outline" onClick={() => toast.info('Draft saved!')}>
+                <Button variant="outline" onClick={() => toast.info({ title: 'Draft saved!' })}>
                   Save as Draft
                 </Button>
               </div>
@@ -409,7 +409,7 @@ const Buttons: React.FC = () => {
               className="hidden" 
               onChange={(e) => {
                 if (e.target.files?.[0]) {
-                  toast.success(`File selected: ${e.target.files[0].name}`);
+                  toast.success({ title: `File selected: ${e.target.files[0].name}` });
                 }
               }}
             />
@@ -452,7 +452,7 @@ const Buttons: React.FC = () => {
                   <Button 
                     variant="outline"
                     size="sm"
-                    onClick={() => toast.info('Form reset!')}
+                    onClick={() => toast.info({ title: 'Form reset!' })}
                   >
                     Reset
                   </Button>
@@ -460,13 +460,13 @@ const Buttons: React.FC = () => {
                     <Button 
                       variant="ghost" 
                       size="sm"
-                      onClick={() => toast.warning('Draft saved!')}
+                      onClick={() => toast.warning({ title: 'Draft saved!' })}
                     >
                       Save Draft
                     </Button>
                     <Button 
                       size="sm"
-                      onClick={() => toast.success('Form submitted!')}
+                      onClick={() => toast.success({ title: 'Form submitted!' })}
                     >
                       Submit
                     </Button>
@@ -483,7 +483,7 @@ const Buttons: React.FC = () => {
                   <Button 
                     size="sm" 
                     variant="outline"
-                    onClick={() => toast.info('Edit mode activated!')}
+                    onClick={() => toast.info({ title: 'Edit mode activated!' })}
                   >
                     <Settings className="mr-1 h-3 w-3" />
                     Edit
@@ -491,7 +491,7 @@ const Buttons: React.FC = () => {
                   <Button 
                     size="sm" 
                     variant="outline"
-                    onClick={() => toast.info('Item duplicated!')}
+                    onClick={() => toast.info({ title: 'Item duplicated!' })}
                   >
                     <Plus className="mr-1 h-3 w-3" />
                     Duplicate
@@ -499,7 +499,7 @@ const Buttons: React.FC = () => {
                   <Button 
                     size="sm" 
                     variant="destructive"
-                    onClick={() => toast.error('Item deleted!')}
+                    onClick={() => toast.error({ title: 'Item deleted!' })}
                   >
                     <Trash2 className="mr-1 h-3 w-3" />
                     Delete

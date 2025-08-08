@@ -16,9 +16,9 @@ interface TopbarProps {
 
 export const Topbar: React.FC<TopbarProps> = ({ onMenuToggle }) => {
   const { theme, setTheme } = useThemeStore();
-  const { toasts } = useToastStore();
+  const items = useToastStore((state) => state.items);
 
-  const unreadNotifications = toasts.filter(toast => toast.type === 'info').length;
+  const unreadNotifications = items.filter(item => item.type === 'info').length;
 
   return (
     <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 h-16">

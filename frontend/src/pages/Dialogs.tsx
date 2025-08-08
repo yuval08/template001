@@ -74,7 +74,7 @@ const Dialogs: React.FC = () => {
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success('Form submitted!', `Hello ${formData.name}, your message has been sent.`);
+    toast.success({ title: 'Form submitted!', description: `Hello ${formData.name}, your message has been sent.` });
     setFormData({ name: '', email: '', message: '' });
   };
 
@@ -128,7 +128,7 @@ const Dialogs: React.FC = () => {
                   <DialogClose asChild>
                     <Button variant="outline">Close</Button>
                   </DialogClose>
-                  <Button onClick={() => toast.info('Thanks for reading!')}>
+                  <Button onClick={() => toast.info({ title: 'Thanks for reading!' })}>
                     Got it
                   </Button>
                 </DialogFooter>
@@ -195,7 +195,7 @@ const Dialogs: React.FC = () => {
                   <DialogClose asChild>
                     <Button variant="outline">Decline</Button>
                   </DialogClose>
-                  <Button onClick={() => toast.success('Terms accepted!')}>
+                  <Button onClick={() => toast.success({ title: 'Terms accepted!' })}>
                     Accept
                   </Button>
                 </DialogFooter>
@@ -342,7 +342,7 @@ const Dialogs: React.FC = () => {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={() => toast.error('Item deleted!')}>
+                  <AlertDialogAction onClick={() => toast.error({ title: 'Item deleted!' })}>
                     Delete
                   </AlertDialogAction>
                 </AlertDialogFooter>
@@ -365,7 +365,7 @@ const Dialogs: React.FC = () => {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Stay Signed In</AlertDialogCancel>
-                  <AlertDialogAction onClick={() => toast.info('Signed out successfully')}>
+                  <AlertDialogAction onClick={() => toast.info({ title: 'Signed out successfully' })}>
                     Sign Out
                   </AlertDialogAction>
                 </AlertDialogFooter>
@@ -434,15 +434,15 @@ const Dialogs: React.FC = () => {
                 <div className="space-y-2">
                   <h4 className="font-medium">Quick Actions</h4>
                   <div className="grid gap-2">
-                    <Button size="sm" className="justify-start" onClick={() => toast.success('Schedule created!')}>
+                    <Button size="sm" className="justify-start" onClick={() => toast.success({ title: 'Schedule created!' })}>
                       <Calendar className="mr-2 h-4 w-4" />
                       Schedule Meeting
                     </Button>
-                    <Button size="sm" variant="outline" className="justify-start" onClick={() => toast.info('Reminder set!')}>
+                    <Button size="sm" variant="outline" className="justify-start" onClick={() => toast.info({ title: 'Reminder set!' })}>
                       <Bell className="mr-2 h-4 w-4" />
                       Set Reminder
                     </Button>
-                    <Button size="sm" variant="ghost" className="justify-start" onClick={() => toast.info('Exported successfully!')}>
+                    <Button size="sm" variant="ghost" className="justify-start" onClick={() => toast.info({ title: 'Exported successfully!' })}>
                       <Download className="mr-2 h-4 w-4" />
                       Export Data
                     </Button>
@@ -470,7 +470,7 @@ const Dialogs: React.FC = () => {
                         key={color}
                         className="w-8 h-8 rounded-full border-2 border-white dark:border-gray-800"
                         style={{ backgroundColor: color }}
-                        onClick={() => toast.info(`Selected color: ${color}`)}
+                        onClick={() => toast.info({ title: `Selected color: ${color}` })}
                       />
                     ))}
                   </div>
@@ -518,16 +518,16 @@ const Dialogs: React.FC = () => {
               <DropdownMenuContent>
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => toast.info('Profile opened!')}>
+                <DropdownMenuItem onClick={() => toast.info({ title: 'Profile opened!' })}>
                   <User className="mr-2 h-4 w-4" />
                   Profile
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => toast.info('Settings opened!')}>
+                <DropdownMenuItem onClick={() => toast.info({ title: 'Settings opened!' })}>
                   <Settings className="mr-2 h-4 w-4" />
                   Settings
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => toast.info('Signed out!')}>
+                <DropdownMenuItem onClick={() => toast.info({ title: 'Signed out!' })}>
                   <LogOut className="mr-2 h-4 w-4" />
                   Sign Out
                 </DropdownMenuItem>
@@ -541,24 +541,24 @@ const Dialogs: React.FC = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem onClick={() => toast.info('Editing...')}>
+                <DropdownMenuItem onClick={() => toast.info({ title: 'Editing...' })}>
                   <Edit className="mr-2 h-4 w-4" />
                   Edit
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => toast.info('Copied!')}>
+                <DropdownMenuItem onClick={() => toast.info({ title: 'Copied!' })}>
                   <Copy className="mr-2 h-4 w-4" />
                   Copy
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => toast.info('Shared!')}>
+                <DropdownMenuItem onClick={() => toast.info({ title: 'Shared!' })}>
                   <Share className="mr-2 h-4 w-4" />
                   Share
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => toast.warning('Archived!')}>
+                <DropdownMenuItem onClick={() => toast.warning({ title: 'Archived!' })}>
                   <Archive className="mr-2 h-4 w-4" />
                   Archive
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => toast.error('Deleted!')}>
+                <DropdownMenuItem onClick={() => toast.error({ title: 'Deleted!' })}>
                   <Trash2 className="mr-2 h-4 w-4" />
                   Delete
                 </DropdownMenuItem>
@@ -606,11 +606,11 @@ const Dialogs: React.FC = () => {
                 Right-click here for context menu
               </ContextMenuTrigger>
               <ContextMenuContent>
-                <ContextMenuItem onClick={() => toast.info('Opened!')}>
+                <ContextMenuItem onClick={() => toast.info({ title: 'Opened!' })}>
                   <Monitor className="mr-2 h-4 w-4" />
                   Open
                 </ContextMenuItem>
-                <ContextMenuItem onClick={() => toast.info('Copied!')}>
+                <ContextMenuItem onClick={() => toast.info({ title: 'Copied!' })}>
                   <Copy className="mr-2 h-4 w-4" />
                   Copy
                 </ContextMenuItem>
@@ -620,23 +620,23 @@ const Dialogs: React.FC = () => {
                     Share
                   </ContextMenuSubTrigger>
                   <ContextMenuSubContent>
-                    <ContextMenuItem onClick={() => toast.info('Shared via email!')}>
+                    <ContextMenuItem onClick={() => toast.info({ title: 'Shared via email!' })}>
                       Email
                     </ContextMenuItem>
-                    <ContextMenuItem onClick={() => toast.info('Link copied!')}>
+                    <ContextMenuItem onClick={() => toast.info({ title: 'Link copied!' })}>
                       Copy Link
                     </ContextMenuItem>
-                    <ContextMenuItem onClick={() => toast.info('Shared on social media!')}>
+                    <ContextMenuItem onClick={() => toast.info({ title: 'Shared on social media!' })}>
                       Social Media
                     </ContextMenuItem>
                   </ContextMenuSubContent>
                 </ContextMenuSub>
                 <ContextMenuSeparator />
-                <ContextMenuItem onClick={() => toast.warning('Archived!')}>
+                <ContextMenuItem onClick={() => toast.warning({ title: 'Archived!' })}>
                   <Archive className="mr-2 h-4 w-4" />
                   Archive
                 </ContextMenuItem>
-                <ContextMenuItem onClick={() => toast.error('Deleted!')}>
+                <ContextMenuItem onClick={() => toast.error({ title: 'Deleted!' })}>
                   <Trash2 className="mr-2 h-4 w-4" />
                   Delete
                 </ContextMenuItem>

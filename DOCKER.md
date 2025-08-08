@@ -54,8 +54,8 @@ docker compose up -d
 
 Access your development environment:
 - **Frontend**: http://localhost:5173
-- **API**: http://localhost:5001
-- **API Docs**: http://localhost:5001/swagger
+- **API**: http://localhost:5000
+- **API Docs**: http://localhost:5000/swagger
 - **Hangfire Dashboard**: http://localhost:5002/hangfire
 
 ## Architecture Overview

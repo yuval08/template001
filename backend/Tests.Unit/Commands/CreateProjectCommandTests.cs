@@ -55,7 +55,7 @@ public class CreateProjectCommandTests
             ClientName: "Test Client",
             Tags: "test,project",
             Priority: 1,
-            TeamMemberIds: new List<Guid> { userId }
+            TeamMemberIds: [userId]
         );
 
         var command = new CreateProjectCommand(createProjectDto);
@@ -105,7 +105,7 @@ public class CreateProjectCommandTests
             ClientName: "Test Client",
             Tags: "test,project",
             Priority: 1,
-            TeamMemberIds: new List<Guid>()
+            TeamMemberIds: []
         );
 
         var command = new CreateProjectCommand(createProjectDto);
@@ -158,7 +158,7 @@ public class CreateProjectCommandTests
             ClientName: "Test Client",
             Tags: "test,project",
             Priority: 1,
-            TeamMemberIds: new List<Guid> { existingUserId, nonExistentUserId }
+            TeamMemberIds: [existingUserId, nonExistentUserId]
         );
 
         var command = new CreateProjectCommand(createProjectDto);

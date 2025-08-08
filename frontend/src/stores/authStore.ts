@@ -1,6 +1,7 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import { AuthUser } from '@/types';
+
+// DEPRECATED: This file is deprecated. Please use the new store structure from @/stores
+// This file is kept for backward compatibility only.
 
 interface AuthState {
   user: AuthUser | null;
@@ -11,33 +12,8 @@ interface AuthState {
   logout: () => void;
 }
 
-export const useAuthStore = create<AuthState>()(
-  persist(
-    (set) => ({
-      user: null,
-      isAuthenticated: false,
-      isLoading: true,
-      
-      setUser: (user) => set({ 
-        user, 
-        isAuthenticated: !!user,
-        isLoading: false 
-      }),
-      
-      setLoading: (isLoading) => set({ isLoading }),
-      
-      logout: () => set({ 
-        user: null, 
-        isAuthenticated: false,
-        isLoading: false 
-      }),
-    }),
-    {
-      name: 'auth-storage',
-      partialize: (state) => ({
-        user: state.user,
-        isAuthenticated: state.isAuthenticated,
-      }),
-    }
-  )
-);
+// Re-export the new auth store with backward compatibility
+export { useAuthStore } from './core/auth.store';
+
+// For components that still use the old interface, we maintain compatibility
+// but recommend migrating to the new hooks and store structure

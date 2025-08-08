@@ -17,7 +17,7 @@ import {
   Area,
 } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useProjectSummary } from '@/hooks/useApi';
+import { useProjectSummary } from '@/entities/project';
 import { 
   TrendingUp, 
   TrendingDown,

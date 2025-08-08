@@ -1,5 +1,7 @@
-import { create } from 'zustand';
 import { Toast } from '@/types';
+
+// DEPRECATED: This file is deprecated. Please use the new store structure from @/stores
+// This file is kept for backward compatibility only.
 
 interface ToastState {
   toasts: Toast[];
@@ -8,64 +10,9 @@ interface ToastState {
   clearAll: () => void;
 }
 
-export const useToastStore = create<ToastState>((set, get) => ({
-  toasts: [],
-  
-  addToast: (toast) => {
-    const id = Math.random().toString(36).substring(2, 9);
-    const newToast: Toast = {
-      ...toast,
-      id,
-      duration: toast.duration ?? 5000,
-    };
-    
-    set((state) => ({
-      toasts: [...state.toasts, newToast],
-    }));
-    
-    // Auto-remove toast after duration
-    if (newToast.duration && newToast.duration > 0) {
-      setTimeout(() => {
-        get().removeToast(id);
-      }, newToast.duration);
-    }
-  },
-  
-  removeToast: (id) => set((state) => ({
-    toasts: state.toasts.filter((toast) => toast.id !== id),
-  })),
-  
-  clearAll: () => set({ toasts: [] }),
-}));
+// Re-export the new notification store with backward compatibility
+export { useNotificationStore as useToastStore } from './core/notification.store';
+export { notificationService as toast } from './services/notification.service';
 
-// Helper function to easily add toasts
-export const toast = {
-  success: (title: string, description?: string) => {
-    useToastStore.getState().addToast({
-      title,
-      description,
-      type: 'success',
-    });
-  },
-  error: (title: string, description?: string) => {
-    useToastStore.getState().addToast({
-      title,
-      description,
-      type: 'error',
-    });
-  },
-  warning: (title: string, description?: string) => {
-    useToastStore.getState().addToast({
-      title,
-      description,
-      type: 'warning',
-    });
-  },
-  info: (title: string, description?: string) => {
-    useToastStore.getState().addToast({
-      title,
-      description,
-      type: 'info',
-    });
-  },
-};
+// The toast helper functions are now provided by notificationService
+// Please use the new notificationService or the updated useToast hook

@@ -5,18 +5,35 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { router } from './router';
 import { useSignalR } from '@/hooks/useSignalR';
 import { AuthProvider } from '@/providers/AuthProvider';
+import { ErrorBoundary } from '@/components/error/ErrorBoundary';
+import { errorHandler, createErrorHandler } from '@/utils/errorHandler';
 import '@/stores/themeStore'; // Initialize theme store
 
-// Create a client instance
+// Enhanced query client with error handling
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 1,
+      retry: (failureCount, error: any) => {
+        // Don't retry on authentication errors
+        if (error?.type === 'AuthenticationError') return false;
+        // Don't retry on validation errors
+        if (error?.type === 'ValidationError') return false;
+        // Don't retry on business errors
+        if (error?.type === 'BusinessError') return false;
+        // Retry up to 2 times for other errors
+        return failureCount < 2;
+      },
       refetchOnWindowFocus: false,
       staleTime: 5 * 60 * 1000, // 5 minutes
     },
     mutations: {
-      retry: 1,
+      retry: (failureCount, error: any) => {
+        // Similar retry logic for mutations
+        if (error?.type === 'AuthenticationError') return false;
+        if (error?.type === 'ValidationError') return false;
+        if (error?.type === 'BusinessError') return false;
+        return failureCount < 1; // Only retry once for mutations
+      },
     },
   },
 });
@@ -29,14 +46,21 @@ const SignalRProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <SignalRProvider>
-          <RouterProvider router={router} />
-          <ReactQueryDevtools initialIsOpen={false} />
-        </SignalRProvider>
-      </AuthProvider>
-    </QueryClientProvider>
+    <ErrorBoundary 
+      onError={createErrorHandler({ 
+        showToast: true, 
+        logError: true 
+      })}
+    >
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <SignalRProvider>
+            <RouterProvider router={router} />
+            <ReactQueryDevtools initialIsOpen={false} />
+          </SignalRProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 

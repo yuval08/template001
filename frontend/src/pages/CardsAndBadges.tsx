@@ -138,7 +138,7 @@ const CardsAndBadges: React.FC = () => {
                     key={tech}
                     variant="outline" 
                     className="cursor-pointer hover:bg-accent"
-                    onClick={() => toast.info(`Selected: ${tech}`)}
+                    onClick={() => toast.info({ title: `Selected: ${tech}` })}
                   >
                     {tech}
                   </Badge>
@@ -252,11 +252,11 @@ const CardsAndBadges: React.FC = () => {
                   </div>
                 </div>
                 <div className="flex gap-2 mt-4">
-                  <Button size="sm" onClick={() => toast.info('Profile viewed!')}>
+                  <Button size="sm" onClick={() => toast.info({ title: 'Profile viewed!' })}>
                     <User className="mr-2 h-4 w-4" />
                     View Profile
                   </Button>
-                  <Button variant="outline" size="sm" onClick={() => toast.info('Message sent!')}>
+                  <Button variant="outline" size="sm" onClick={() => toast.info({ title: 'Message sent!' })}>
                     <MessageSquare className="mr-2 h-4 w-4" />
                     Message
                   </Button>
@@ -279,7 +279,7 @@ const CardsAndBadges: React.FC = () => {
                     <Badge variant="outline">Featured</Badge>
                     <span className="text-lg font-bold">$99</span>
                   </div>
-                  <Button className="w-full" onClick={() => toast.success('Added to cart!')}>
+                  <Button className="w-full" onClick={() => toast.success({ title: 'Added to cart!' })}>
                     Add to Cart
                   </Button>
                 </div>
@@ -677,7 +677,7 @@ const CardsAndBadges: React.FC = () => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => toast.info('Card clicked!')}>
+            <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => toast.info({ title: 'Card clicked!' })}>
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <Badge variant="outline">New</Badge>
@@ -728,11 +728,11 @@ const CardsAndBadges: React.FC = () => {
                   <Badge variant="secondary">Pro</Badge>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
-                  <Button size="sm" variant="outline" onClick={() => toast.success('Exported!')}>
+                  <Button size="sm" variant="outline" onClick={() => toast.success({ title: 'Exported!' })}>
                     <Download className="mr-2 h-3 w-3" />
                     Export
                   </Button>
-                  <Button size="sm" variant="outline" onClick={() => toast.info('Shared!')}>
+                  <Button size="sm" variant="outline" onClick={() => toast.info({ title: 'Shared!' })}>
                     <Share2 className="mr-2 h-3 w-3" />
                     Share
                   </Button>

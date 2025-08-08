@@ -14,8 +14,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useProjects } from '@/hooks/useApi';
-import { Project } from '@/types';
+import { useProjects, Project } from '@/entities/project';
 import { formatDate } from '@/utils/formatters';
 import { 
   ChevronLeft, 

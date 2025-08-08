@@ -1,4 +1,5 @@
 using IntranetStarter.Application.Services;
+using IntranetStarter.Domain.Entities;
 using IntranetStarter.Domain.Interfaces;
 using Microsoft.Extensions.Logging;
 using QuestPDF.Fluent;
@@ -7,37 +8,22 @@ using QuestPDF.Infrastructure;
 
 namespace IntranetStarter.Infrastructure.Services;
 
-public class PdfService : IPdfService
-{
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly ILogger<PdfService> _logger;
-
-    static PdfService()
-    {
+public class PdfService(IUnitOfWork unitOfWork, ILogger<PdfService> logger) : IPdfService {
+    static PdfService() {
         QuestPDF.Settings.License = LicenseType.Community;
     }
 
-    public PdfService(IUnitOfWork unitOfWork, ILogger<PdfService> logger)
-    {
-        _unitOfWork = unitOfWork;
-        _logger = logger;
-    }
+    public async Task<byte[]> GenerateProjectReportAsync(Guid projectId, CancellationToken cancellationToken = default) {
+        try {
+            logger.LogInformation("Generating PDF report for project: {ProjectId}", projectId);
 
-    public async Task<byte[]> GenerateProjectReportAsync(Guid projectId, CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            _logger.LogInformation("Generating PDF report for project: {ProjectId}", projectId);
+            var project = await unitOfWork.Repository<Project>().GetByIdAsync(projectId, cancellationToken);
 
-            var project = await _unitOfWork.Repository<Domain.Entities.Project>().GetByIdAsync(projectId, cancellationToken);
-            
             if (project == null)
                 throw new ArgumentException($"Project with ID {projectId} not found");
 
-            var document = Document.Create(container =>
-            {
-                container.Page(page =>
-                {
+            var document = Document.Create(container => {
+                container.Page(page => {
                     page.Size(PageSizes.A4);
                     page.Margin(2, Unit.Centimetre);
                     page.PageColor(Colors.White);
@@ -49,76 +35,66 @@ public class PdfService : IPdfService
 
                     page.Content()
                         .PaddingVertical(1, Unit.Centimetre)
-                        .Column(x =>
-                        {
+                        .Column(x => {
                             x.Item().Text($"Project Name: {project.Name}").FontSize(16).SemiBold();
                             x.Item().PaddingTop(10).Text($"Description: {project.Description}");
                             x.Item().PaddingTop(10).Text($"Status: {project.Status}");
                             x.Item().PaddingTop(10).Text($"Budget: ${project.Budget:N2}");
-                            
+
                             if (project.StartDate.HasValue)
                                 x.Item().PaddingTop(10).Text($"Start Date: {project.StartDate.Value:yyyy-MM-dd}");
-                            
+
                             if (project.EndDate.HasValue)
                                 x.Item().PaddingTop(10).Text($"End Date: {project.EndDate.Value:yyyy-MM-dd}");
-                            
+
                             if (!string.IsNullOrEmpty(project.ClientName))
                                 x.Item().PaddingTop(10).Text($"Client: {project.ClientName}");
-                            
+
                             x.Item().PaddingTop(10).Text($"Priority: {project.Priority}");
                             x.Item().PaddingTop(10).Text($"Created: {project.CreatedAt:yyyy-MM-dd HH:mm}");
 
-                            if (!string.IsNullOrEmpty(project.Tags))
-                            {
+                            if (!string.IsNullOrEmpty(project.Tags)) {
                                 x.Item().PaddingTop(20).Text("Tags:").SemiBold();
                                 x.Item().PaddingTop(5).Text(project.Tags);
                             }
 
                             // Team members section
-                            if (project.TeamMembers?.Any() == true)
-                            {
-                                x.Item().PaddingTop(20).Text("Team Members:").SemiBold();
-                                foreach (var member in project.TeamMembers)
-                                {
-                                    x.Item().PaddingTop(5).Text($"• {member.FullName} ({member.Role})");
-                                }
+                            if (project.TeamMembers.Count == 0) 
+                                return;
+                            x.Item().PaddingTop(20).Text("Team Members:").SemiBold();
+                            foreach (var member in project.TeamMembers) {
+                                x.Item().PaddingTop(5).Text($"• {member.FullName} ({member.Role})");
                             }
                         });
 
                     page.Footer()
                         .AlignCenter()
-                        .Text(x =>
-                        {
+                        .Text(x => {
                             x.Span("Generated on ");
                             x.Span(DateTime.Now.ToString("yyyy-MM-dd HH:mm")).SemiBold();
                         });
                 });
             });
 
-            var pdfBytes = document.GeneratePdf();
-            
-            _logger.LogInformation("PDF report generated successfully for project: {ProjectId}, Size: {Size} bytes", 
+            byte[] pdfBytes = document.GeneratePdf();
+
+            logger.LogInformation("PDF report generated successfully for project: {ProjectId}, Size: {Size} bytes",
                 projectId, pdfBytes.Length);
 
             return pdfBytes;
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error generating PDF report for project: {ProjectId}", projectId);
+        catch (Exception ex) {
+            logger.LogError(ex, "Error generating PDF report for project: {ProjectId}", projectId);
             throw;
         }
     }
 
-    public async Task<byte[]> GenerateSampleReportAsync(CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            _logger.LogInformation("Generating sample PDF report");
+    public async Task<byte[]> GenerateSampleReportAsync(CancellationToken cancellationToken = default) {
+        try {
+            logger.LogInformation("Generating sample PDF report");
 
-            var document = Document.Create(container =>
-            {
-                container.Page(page =>
-                {
+            var document = Document.Create(container => {
+                container.Page(page => {
                     page.Size(PageSizes.A4);
                     page.Margin(2, Unit.Centimetre);
                     page.PageColor(Colors.White);
@@ -130,15 +106,13 @@ public class PdfService : IPdfService
 
                     page.Content()
                         .PaddingVertical(1, Unit.Centimetre)
-                        .Column(x =>
-                        {
+                        .Column(x => {
                             x.Item().Text("Welcome to the Intranet Starter!").FontSize(18).SemiBold();
-                            
+
                             x.Item().PaddingTop(20).Text("This is a sample PDF report generated using QuestPDF.")
                                 .FontSize(14);
 
-                            x.Item().PaddingTop(20).Column(column =>
-                            {
+                            x.Item().PaddingTop(20).Column(column => {
                                 column.Item().Text("Features included:").SemiBold().FontSize(14);
                                 column.Item().PaddingTop(10).Text("• Clean Architecture with Domain-Driven Design");
                                 column.Item().PaddingTop(5).Text("• ASP.NET Core 9 with modern C# features");
@@ -165,15 +139,14 @@ public class PdfService : IPdfService
                 });
             });
 
-            var pdfBytes = document.GeneratePdf();
-            
-            _logger.LogInformation("Sample PDF report generated successfully, Size: {Size} bytes", pdfBytes.Length);
+            byte[] pdfBytes = document.GeneratePdf();
+
+            logger.LogInformation("Sample PDF report generated successfully, Size: {Size} bytes", pdfBytes.Length);
 
             return await Task.FromResult(pdfBytes);
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error generating sample PDF report");
+        catch (Exception ex) {
+            logger.LogError(ex, "Error generating sample PDF report");
             throw;
         }
     }
