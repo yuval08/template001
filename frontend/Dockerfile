@@ -5,8 +5,9 @@ WORKDIR /app
 # Copy package files for better layer caching
 COPY package.json package-lock.json* ./
 
-# Install dependencies
-RUN npm ci --only=production --ignore-scripts
+# Install dependencies with error handling for peer dependency conflicts
+RUN npm ci --legacy-peer-deps --ignore-scripts || \
+    npm install --legacy-peer-deps --ignore-scripts
 
 # Copy source code
 COPY . .

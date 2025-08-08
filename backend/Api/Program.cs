@@ -12,6 +12,10 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System.Security.Claims;
 
+#if DEBUG
+DotNetEnv.Env.Load();
+#endif
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Configure Serilog
@@ -215,8 +219,9 @@ using (var scope = app.Services.CreateScope())
         // Apply migrations
         await context.Database.MigrateAsync();
         
-        // Seed admin user if configured
-        await SeedAdminUser(scope.ServiceProvider, builder.Configuration);
+        // Seed data using the data seeding service
+        var dataSeeder = scope.ServiceProvider.GetRequiredService<IntranetStarter.Infrastructure.Data.IDataSeeder>();
+        await dataSeeder.SeedAsync();
         
         // Schedule recurring jobs
         var recurringJobManager = scope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
@@ -233,34 +238,6 @@ using (var scope = app.Services.CreateScope())
 
 app.Run();
 
-static async Task SeedAdminUser(IServiceProvider serviceProvider, IConfiguration configuration)
-{
-    var adminEmail = configuration["ADMIN_EMAIL"];
-    if (string.IsNullOrEmpty(adminEmail))
-        return;
-
-    var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
-    
-    var existingUser = await context.Users.FirstOrDefaultAsync(u => u.Email == adminEmail);
-    if (existingUser == null)
-    {
-        var adminUser = new IntranetStarter.Domain.Entities.User
-        {
-            Email = adminEmail,
-            FirstName = "System",
-            LastName = "Administrator",
-            Role = "Admin",
-            Department = "IT",
-            JobTitle = "System Administrator",
-            IsActive = true
-        };
-        
-        context.Users.Add(adminUser);
-        await context.SaveChangesAsync();
-        
-        Log.Information("Admin user created: {AdminEmail}", adminEmail);
-    }
-}
 
 // Make Program class public for integration tests
 public partial class Program { }

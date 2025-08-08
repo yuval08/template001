@@ -1,4 +1,5 @@
-version: '3.8'
+# Docker Compose file for Intranet Starter
+# Removed version directive as it's obsolete in modern Docker Compose
 
 services:
   postgres:
@@ -8,15 +9,13 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-intranet_starter}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     networks:
       - intranet-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-intranet_starter}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-intranet_starter} || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -24,14 +23,12 @@ services:
   redis:
     image: redis:7-alpine
     container_name: intranet-redis
-    ports:
-      - "6379:6379"
     volumes:
       - redis_data:/data
     networks:
       - intranet-network
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "redis-cli", "ping" ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -74,7 +71,7 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health" ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -106,7 +103,7 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8081/hangfire"]
+      test: ["CMD", "curl", "-f", "http://localhost:8081/hangfire" ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -130,7 +127,7 @@ services:
       api:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:80/health" ]
       interval: 30s
       timeout: 10s
       retries: 5

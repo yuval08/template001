@@ -25,6 +25,9 @@ public static class DependencyInjection
         // Repository and Unit of Work
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+        
+        // Data Seeding
+        services.AddScoped<IDataSeeder, DataSeeder>();
 
         // File Storage
         AddFileStorage(services, configuration);

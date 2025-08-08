@@ -60,25 +60,15 @@ public class CreateProjectCommandTests
 
         var command = new CreateProjectCommand(createProjectDto);
 
-        var expectedProject = new Project
-        {
-            Id = Guid.NewGuid(),
-            Name = createProjectDto.Name,
-            Description = createProjectDto.Description,
-            Status = createProjectDto.Status,
-            Budget = createProjectDto.Budget,
-            ClientName = createProjectDto.ClientName,
-            Tags = createProjectDto.Tags,
-            Priority = createProjectDto.Priority,
-            StartDate = createProjectDto.StartDate,
-            EndDate = createProjectDto.EndDate
-        };
-
         _mockUserRepository.Setup(x => x.GetByIdAsync(userId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(user);
 
         _mockProjectRepository.Setup(x => x.AddAsync(It.IsAny<Project>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(expectedProject);
+            .ReturnsAsync((Project p, CancellationToken _) => 
+            {
+                p.Id = Guid.NewGuid();
+                return p;
+            });
 
         _mockUnitOfWork.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
@@ -120,16 +110,12 @@ public class CreateProjectCommandTests
 
         var command = new CreateProjectCommand(createProjectDto);
 
-        var expectedProject = new Project
-        {
-            Id = Guid.NewGuid(),
-            Name = createProjectDto.Name,
-            Description = createProjectDto.Description,
-            TeamMembers = new List<User>()
-        };
-
         _mockProjectRepository.Setup(x => x.AddAsync(It.IsAny<Project>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(expectedProject);
+            .ReturnsAsync((Project p, CancellationToken _) => 
+            {
+                p.Id = Guid.NewGuid();
+                return p;
+            });
 
         _mockUnitOfWork.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
@@ -177,13 +163,6 @@ public class CreateProjectCommandTests
 
         var command = new CreateProjectCommand(createProjectDto);
 
-        var expectedProject = new Project
-        {
-            Id = Guid.NewGuid(),
-            Name = createProjectDto.Name,
-            TeamMembers = new List<User> { existingUser }
-        };
-
         _mockUserRepository.Setup(x => x.GetByIdAsync(existingUserId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(existingUser);
 
@@ -191,7 +170,11 @@ public class CreateProjectCommandTests
             .ReturnsAsync((User?)null);
 
         _mockProjectRepository.Setup(x => x.AddAsync(It.IsAny<Project>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(expectedProject);
+            .ReturnsAsync((Project p, CancellationToken _) => 
+            {
+                p.Id = Guid.NewGuid();
+                return p;
+            });
 
         _mockUnitOfWork.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);

@@ -65,86 +65,11 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
 
     private static void SeedData(ModelBuilder modelBuilder)
     {
-        var adminUserId = Guid.NewGuid();
-        var managerUserId = Guid.NewGuid();
-        var employeeUserId = Guid.NewGuid();
+        // Seed Users with deterministic data to prevent migration warnings
+        modelBuilder.Entity<User>().HasData(SeedDataConstants.GetSeedUsers());
 
-        // Seed Users
-        modelBuilder.Entity<User>().HasData(
-            new User
-            {
-                Id = adminUserId,
-                Email = "admin@company.com",
-                FirstName = "System",
-                LastName = "Administrator",
-                Role = "Admin",
-                Department = "IT",
-                JobTitle = "System Administrator",
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow
-            },
-            new User
-            {
-                Id = managerUserId,
-                Email = "manager@company.com",
-                FirstName = "Project",
-                LastName = "Manager",
-                Role = "Manager",
-                Department = "Operations",
-                JobTitle = "Project Manager",
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow
-            },
-            new User
-            {
-                Id = employeeUserId,
-                Email = "employee@company.com",
-                FirstName = "John",
-                LastName = "Employee",
-                Role = "Employee",
-                Department = "Development",
-                JobTitle = "Software Developer",
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow
-            }
-        );
-
-        // Seed Projects
-        var projectId1 = Guid.NewGuid();
-        var projectId2 = Guid.NewGuid();
-
-        modelBuilder.Entity<Project>().HasData(
-            new Project
-            {
-                Id = projectId1,
-                Name = "Company Intranet",
-                Description = "Internal company portal for employee management and project tracking",
-                Status = Domain.Entities.ProjectStatus.InProgress,
-                Budget = 50000m,
-                ClientName = "Internal",
-                Priority = 1,
-                OwnerId = managerUserId,
-                StartDate = DateTime.UtcNow.AddDays(-30),
-                EndDate = DateTime.UtcNow.AddDays(60),
-                Tags = "internal,portal,management",
-                CreatedAt = DateTime.UtcNow
-            },
-            new Project
-            {
-                Id = projectId2,
-                Name = "Customer Portal",
-                Description = "External customer-facing portal for service management",
-                Status = Domain.Entities.ProjectStatus.Planning,
-                Budget = 75000m,
-                ClientName = "Acme Corp",
-                Priority = 2,
-                OwnerId = managerUserId,
-                StartDate = DateTime.UtcNow.AddDays(14),
-                EndDate = DateTime.UtcNow.AddDays(120),
-                Tags = "external,customer,portal",
-                CreatedAt = DateTime.UtcNow
-            }
-        );
+        // Seed Projects with deterministic data to prevent migration warnings
+        modelBuilder.Entity<Project>().HasData(SeedDataConstants.GetSeedProjects());
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

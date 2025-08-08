@@ -2,6 +2,31 @@
 
 This guide covers the complete Docker and DevOps setup for the Intranet Starter project.
 
+## Recent Improvements (August 2025)
+
+✅ **Docker Build Issues Fixed**:
+- Resolved NuGet package restore failures in .NET backend
+- Added retry mechanisms and better error handling in Dockerfiles
+- Fixed React 19 dependency conflicts in frontend build
+- Optimized Docker layer caching for faster builds
+
+✅ **Dynamic Port Management**:
+- Automatic port conflict detection and resolution
+- Configurable ports via environment variables
+- Port manager script for manual conflict checking
+
+✅ **Enhanced Development Scripts**:
+- Improved `dev-setup.sh` with comprehensive error handling
+- New `prod-deploy.sh` with staging and production environments
+- Docker build testing script for validation
+- Better health checks and service monitoring
+
+✅ **Docker Compose Improvements**:
+- Removed obsolete version directives
+- Enhanced health checks with proper error handling
+- Better service dependency management
+- Configurable resource limits
+
 ## Quick Start
 
 ### Prerequisites
@@ -17,11 +42,13 @@ This guide covers the complete Docker and DevOps setup for the Intranet Starter 
 git clone <repository-url>
 cd intranet-starter
 
-# Quick setup (automated)
+# Quick setup (automated with port conflict detection)
 ./scripts/dev-setup.sh
 
 # Manual setup
 cp .env.development .env
+# Check for port conflicts and configure accordingly
+./scripts/port-manager.sh
 docker compose up -d
 ```
 
@@ -292,14 +319,16 @@ open http://localhost:3001  # Grafana
 
 ### Common Issues
 
-1. **Port Conflicts**:
+1. **Port Conflicts** (Now Automatically Resolved):
    ```bash
-   # Check port usage
-   lsof -i :5432
+   # Automatic port conflict detection and resolution
+   ./scripts/port-manager.sh
    
-   # Change ports in docker-compose.yml
-   ports:
-     - "5433:5432"  # Use different external port
+   # Manual port checking
+   ./scripts/port-manager.sh --check-only
+   
+   # Check current port usage
+   lsof -i :5432
    ```
 
 2. **Permission Issues**:
@@ -315,7 +344,19 @@ open http://localhost:3001  # Grafana
    docker compose up -d postgres
    ```
 
-4. **Memory Issues**:
+4. **Docker Build Issues** (Now Fixed):
+   ```bash
+   # Test Docker builds individually
+   ./scripts/test-docker-build.sh
+   
+   # Rebuild specific service without cache
+   docker compose build --no-cache api
+   
+   # Check build logs for specific issues
+   docker compose build api 2>&1 | tee build.log
+   ```
+
+5. **Memory Issues**:
    ```bash
    # Increase Docker memory limit
    # Docker Desktop: Settings > Resources > Memory
