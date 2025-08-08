@@ -1,0 +1,62 @@
+# Build outputs
+bin/
+obj/
+out/
+publish/
+
+# IDE and editor files
+.vs/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Uploads and temporary files
+uploads/
+temp/
+tmp/
+
+# Package files
+*.nupkg
+*.snupkg
+
+# Test results
+TestResults/
+coverage/
+*.trx
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Docker files
+Dockerfile*
+.dockerignore
+
+# Documentation
+*.md
+docs/
+
+# Local development database
+*.db
+*.sqlite
+*.sqlite3

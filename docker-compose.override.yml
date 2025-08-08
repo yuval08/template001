@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      target: development
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      Jwt__RequireHttpsMetadata: "false"
+    volumes:
+      # Mount source code for development
+      - ./backend:/app/src:ro
+      - api_uploads:/app/uploads
+      - api_logs:/app/logs
+    ports:
+      - "5001:8080"
+      - "5002:8081"  # Debug port
+
+  hangfire:
+    build:
+      target: development
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    volumes:
+      - ./backend:/app/src:ro
+      - api_uploads:/app/uploads
+      - api_logs:/app/logs
+
+  frontend:
+    build:
+      target: development
+      args:
+        VITE_API_URL: http://localhost:5001
+        VITE_SIGNALR_URL: http://localhost:5001
+    volumes:
+      # Mount source code for development
+      - ./frontend:/app/src:ro
+      - frontend_node_modules:/app/src/node_modules
+    ports:
+      - "5173:80"
+    environment:
+      NODE_ENV: development
+
+  postgres:
+    environment:
+      POSTGRES_DB: intranet_starter_dev
+    ports:
+      - "5433:5432"
+
+volumes:
+  frontend_node_modules:
+    driver: local

@@ -1,0 +1,284 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  backend-tests:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: intranet_starter_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET 9
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+
+    - name: Cache NuGet packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
+    - name: Restore dependencies
+      run: dotnet restore
+      working-directory: ./backend
+
+    - name: Build
+      run: dotnet build --no-restore --configuration Release
+      working-directory: ./backend
+
+    - name: Run unit tests
+      run: dotnet test Tests.Unit/Tests.Unit.csproj --no-build --configuration Release --logger trx --collect:"XPlat Code Coverage"
+      working-directory: ./backend
+
+    - name: Run integration tests
+      run: dotnet test Tests.Integration/Tests.Integration.csproj --no-build --configuration Release --logger trx --collect:"XPlat Code Coverage"
+      working-directory: ./backend
+      env:
+        ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=intranet_starter_test;Username=postgres;Password=postgres"
+
+    - name: Code Coverage Report
+      uses: danielpalme/ReportGenerator-GitHub-Action@5.2.0
+      if: success() || failure()
+      with:
+        reports: './backend/**/coverage.cobertura.xml'
+        targetdir: 'coverage-report'
+        reporttypes: 'HtmlInline;Cobertura;MarkdownSummaryGithub'
+
+    - name: Upload coverage reports
+      uses: actions/upload-artifact@v4
+      if: success() || failure()
+      with:
+        name: coverage-report-backend
+        path: coverage-report/
+
+    - name: Add Coverage PR Comment
+      uses: marocchino/sticky-pull-request-comment@v2
+      if: github.event_name == 'pull_request'
+      with:
+        recreate: true
+        path: coverage-report/SummaryGithub.md
+
+  frontend-tests:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: './frontend/package-lock.json'
+
+    - name: Install dependencies
+      run: npm ci
+      working-directory: ./frontend
+
+    - name: Lint code
+      run: npm run lint
+      working-directory: ./frontend
+
+    - name: Type check
+      run: npx tsc --noEmit
+      working-directory: ./frontend
+
+    - name: Build
+      run: npm run build
+      working-directory: ./frontend
+      env:
+        VITE_API_URL: http://localhost:8080
+        VITE_SIGNALR_URL: http://localhost:8080
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: frontend-build
+        path: frontend/dist/
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: [backend-tests, frontend-tests]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v3
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+    - name: .NET Security Scan
+      run: |
+        dotnet list package --vulnerable --include-transitive 2>&1 | tee vulnerabilities.txt
+        if grep -q "has the following vulnerable packages" vulnerabilities.txt; then
+          echo "❌ Vulnerable packages found!"
+          cat vulnerabilities.txt
+          exit 1
+        else
+          echo "✅ No vulnerable packages found"
+        fi
+      working-directory: ./backend
+
+    - name: Frontend Security Audit
+      run: npm audit --audit-level high
+      working-directory: ./frontend
+
+  build-images:
+    name: Build Docker Images
+    runs-on: ubuntu-latest
+    needs: [backend-tests, frontend-tests, security-scan]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Log in to Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Extract metadata for backend
+      id: backend-meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/backend
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,prefix={{branch}}-
+          type=raw,value=latest,enable={{is_default_branch}}
+
+    - name: Build and push backend image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./backend
+        push: true
+        tags: ${{ steps.backend-meta.outputs.tags }}
+        labels: ${{ steps.backend-meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        platforms: linux/amd64,linux/arm64
+
+    - name: Extract metadata for frontend
+      id: frontend-meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/frontend
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,prefix={{branch}}-
+          type=raw,value=latest,enable={{is_default_branch}}
+
+    - name: Build and push frontend image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./frontend
+        push: true
+        tags: ${{ steps.frontend-meta.outputs.tags }}
+        labels: ${{ steps.frontend-meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        platforms: linux/amd64,linux/arm64
+        build-args: |
+          VITE_API_URL=https://api.yourdomain.com
+          VITE_SIGNALR_URL=https://api.yourdomain.com
+
+  docker-compose-test:
+    name: Docker Compose Integration Test
+    runs-on: ubuntu-latest
+    needs: [backend-tests, frontend-tests]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Create test environment file
+      run: |
+        cp .env.development .env
+        echo "POSTGRES_PASSWORD=test_password_123" >> .env
+
+    - name: Build and start services
+      run: |
+        docker compose -f docker-compose.yml -f docker-compose.override.yml build
+        docker compose -f docker-compose.yml -f docker-compose.override.yml up -d
+
+    - name: Wait for services to be healthy
+      run: |
+        timeout 300 bash -c '
+        until docker compose ps | grep -E "(healthy|running).*healthy" | wc -l | grep -q "3"; do
+          echo "Waiting for services to be healthy..."
+          sleep 10
+        done
+        '
+
+    - name: Test API health endpoint
+      run: |
+        curl -f http://localhost:8080/health || exit 1
+        echo "✅ API health check passed"
+
+    - name: Test Frontend health endpoint  
+      run: |
+        curl -f http://localhost:3000/health || exit 1
+        echo "✅ Frontend health check passed"
+
+    - name: Show logs on failure
+      if: failure()
+      run: docker compose logs
+
+    - name: Cleanup
+      if: always()
+      run: docker compose down -v

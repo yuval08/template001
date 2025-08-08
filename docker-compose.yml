@@ -1,0 +1,191 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: intranet-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-intranet_starter}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - intranet-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-intranet_starter}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: intranet-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - intranet-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: ${BUILD_TARGET:-production}
+    container_name: intranet-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Production}
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-intranet_starter};Username=${POSTGRES_USER:-postgres};Password=${POSTGRES_PASSWORD:-postgres}"
+      ConnectionStrings__Redis: "redis:6379"
+      Jwt__Authority: ${JWT_AUTHORITY:-http://localhost:8080}
+      Jwt__Audience: ${JWT_AUDIENCE:-intranet-api}
+      Jwt__RequireHttpsMetadata: ${JWT_REQUIRE_HTTPS:-false}
+      CorsSettings__AllowedOrigins: ${CORS_ALLOWED_ORIGINS:-http://localhost:3000,http://localhost:5173,http://frontend:80}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ALLOWED_DOMAIN: ${ALLOWED_DOMAIN}
+      FileStorage__LocalPath: /app/uploads
+      Email__SmtpHost: ${SMTP_HOST}
+      Email__SmtpPort: ${SMTP_PORT:-587}
+      Email__Username: ${SMTP_USERNAME}
+      Email__Password: ${SMTP_PASSWORD}
+      Email__UseSsl: ${SMTP_USE_SSL:-true}
+      Email__FromName: ${EMAIL_FROM_NAME:-Intranet Starter}
+      Email__FromAddress: ${EMAIL_FROM_ADDRESS:-noreply@company.com}
+    ports:
+      - "8080:8080"
+    volumes:
+      - api_uploads:/app/uploads
+      - api_logs:/app/logs
+    networks:
+      - intranet-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    restart: unless-stopped
+
+  hangfire:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: ${BUILD_TARGET:-production}
+    container_name: intranet-hangfire
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Production}
+      ASPNETCORE_URLS: http://+:8081
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=${POSTGRES_DB:-intranet_starter};Username=${POSTGRES_USER:-postgres};Password=${POSTGRES_PASSWORD:-postgres}"
+      ConnectionStrings__Redis: "redis:6379"
+      HANGFIRE_ONLY: "true"
+    ports:
+      - "8081:8081"
+    volumes:
+      - api_uploads:/app/uploads
+      - api_logs:/app/logs
+    networks:
+      - intranet-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/hangfire"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: ${BUILD_TARGET:-production}
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8080}
+        VITE_SIGNALR_URL: ${VITE_SIGNALR_URL:-http://localhost:8080}
+    container_name: intranet-frontend
+    ports:
+      - "3000:80"
+    networks:
+      - intranet-network
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+
+  # Optional monitoring stack (uncomment to enable)
+  # prometheus:
+  #   image: prom/prometheus:latest
+  #   container_name: intranet-prometheus
+  #   command:
+  #     - '--config.file=/etc/prometheus/prometheus.yml'
+  #     - '--storage.tsdb.path=/prometheus'
+  #     - '--web.console.libraries=/etc/prometheus/console_libraries'
+  #     - '--web.console.templates=/etc/prometheus/consoles'
+  #     - '--storage.tsdb.retention.time=200h'
+  #     - '--web.enable-lifecycle'
+  #   ports:
+  #     - "9090:9090"
+  #   volumes:
+  #     - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+  #     - prometheus_data:/prometheus
+  #   networks:
+  #     - intranet-network
+  #   depends_on:
+  #     - api
+
+  # grafana:
+  #   image: grafana/grafana:latest
+  #   container_name: intranet-grafana
+  #   ports:
+  #     - "3001:3000"
+  #   environment:
+  #     GF_SECURITY_ADMIN_USER: ${GRAFANA_USER:-admin}
+  #     GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
+  #   volumes:
+  #     - grafana_data:/var/lib/grafana
+  #   networks:
+  #     - intranet-network
+  #   depends_on:
+  #     - prometheus
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  api_uploads:
+    driver: local
+  api_logs:
+    driver: local
+  # prometheus_data:
+  #   driver: local
+  # grafana_data:
+  #   driver: local
+
+networks:
+  intranet-network:
+    driver: bridge
