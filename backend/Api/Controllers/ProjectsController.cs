@@ -22,6 +22,41 @@ public class ProjectsController : ControllerBase
     }
 
     /// <summary>
+    /// Get project summary statistics
+    /// </summary>
+    /// <returns>Project summary data</returns>
+    [HttpGet("summary")]
+    public async Task<ActionResult<object>> GetProjectSummary()
+    {
+        try
+        {
+            // For now, return mock data. In a real app, you'd implement GetProjectSummaryQuery
+            var summary = new
+            {
+                TotalProjects = 12,
+                ActiveProjects = 8,
+                CompletedProjects = 4,
+                TotalBudget = 450000,
+                ProjectsThisMonth = 3,
+                CompletionRate = 85.5,
+                RecentProjects = new[]
+                {
+                    new { Name = "Website Redesign", Status = "In Progress", Progress = 75 },
+                    new { Name = "Mobile App", Status = "Planning", Progress = 10 },
+                    new { Name = "Database Migration", Status = "Completed", Progress = 100 }
+                }
+            };
+
+            return Ok(summary);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving project summary");
+            return StatusCode(500, "An error occurred while retrieving project summary");
+        }
+    }
+
+    /// <summary>
     /// Get all projects with pagination and search
     /// </summary>
     /// <param name="page">Page number (default: 1)</param>

@@ -6,28 +6,19 @@ export const useAuth = () => {
   const { user, isAuthenticated, isLoading, setUser, setLoading, logout } = useAuthStore();
   const [authConfig, setAuthConfig] = useState<{ googleEnabled: boolean; microsoftEnabled: boolean; allowedDomain?: string }>({ googleEnabled: true, microsoftEnabled: false });
 
+  // Only fetch auth config, not user data (that's handled by AuthProvider)
   useEffect(() => {
-    const initializeAuth = async () => {
+    const fetchAuthConfig = async () => {
       try {
-        setLoading(true);
-        
-        // Get auth configuration
         const config = await authService.getAuthConfig();
         setAuthConfig(config);
-        
-        // Check if user is already authenticated
-        const currentUser = await authService.getUser();
-        setUser(currentUser);
       } catch (error) {
-        console.error('Error initializing auth:', error);
-        setUser(null);
-      } finally {
-        setLoading(false);
+        console.error('Error fetching auth config:', error);
       }
     };
 
-    initializeAuth();
-  }, [setUser, setLoading]);
+    fetchAuthConfig();
+  }, []); // Only run once for config
 
   const login = async (provider: 'google' | 'microsoft' = 'google') => {
     try {

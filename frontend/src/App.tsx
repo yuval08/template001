@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { router } from './router';
 import { useSignalR } from '@/hooks/useSignalR';
+import { AuthProvider } from '@/providers/AuthProvider';
 import '@/stores/themeStore'; // Initialize theme store
 
 // Create a client instance
@@ -29,10 +30,12 @@ const SignalRProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <SignalRProvider>
-        <RouterProvider router={router} />
-        <ReactQueryDevtools initialIsOpen={false} />
-      </SignalRProvider>
+      <AuthProvider>
+        <SignalRProvider>
+          <RouterProvider router={router} />
+          <ReactQueryDevtools initialIsOpen={false} />
+        </SignalRProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

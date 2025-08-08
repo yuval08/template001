@@ -68,7 +68,7 @@ export class AuthService {
   }
 
   public hasRole(user: AuthUser | null, role: string): boolean {
-    return user?.role === role ?? false;
+    return user?.role === role;
   }
 
   public hasAnyRole(user: AuthUser | null, roles: string[]): boolean {

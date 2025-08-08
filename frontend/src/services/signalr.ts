@@ -19,16 +19,17 @@ class SignalRService {
       return;
     }
 
-    const { user } = useAuthStore.getState();
-    if (!user?.token) {
-      console.warn('No authentication token available for SignalR connection');
+    const { user, isAuthenticated } = useAuthStore.getState();
+    if (!isAuthenticated || !user) {
+      console.warn('User not authenticated for SignalR connection');
       return;
     }
 
     try {
       this.connection = new HubConnectionBuilder()
         .withUrl(this.hubUrl, {
-          accessTokenFactory: () => user.token,
+          // Use cookies for authentication instead of tokens
+          withCredentials: true
         })
         .withAutomaticReconnect({
           nextRetryDelayInMilliseconds: (retryContext) => {
@@ -47,8 +48,8 @@ class SignalRService {
       console.log('SignalR connection established');
       this.reconnectAttempts = 0;
 
-      // Join user-specific group
-      await this.joinUserGroup(user.id);
+      // Join user-specific group  
+      await this.joinUserGroup(user.Id || user.id);
 
     } catch (error) {
       console.error('Error starting SignalR connection:', error);
@@ -78,7 +79,7 @@ class SignalRService {
       // Re-join user group after reconnection
       const { user } = useAuthStore.getState();
       if (user) {
-        this.joinUserGroup(user.id);
+        this.joinUserGroup(user.Id || user.id);
       }
     });
 
