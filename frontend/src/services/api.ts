@@ -16,14 +16,10 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000
 
 class ApiClient {
   private getAuthHeaders(): Record<string, string> {
-    const { user } = useAuthStore.getState();
+    // Only return content-type header since we're using cookie-based auth
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
-
-    if (user?.token) {
-      headers.Authorization = `Bearer ${user.token}`;
-    }
 
     return headers;
   }
@@ -49,6 +45,7 @@ class ApiClient {
     const url = `${API_BASE_URL}${endpoint}`;
     const config: RequestInit = {
       ...options,
+      credentials: 'include', // Include cookies for authentication
       headers: {
         ...this.getAuthHeaders(),
         ...options.headers,
@@ -113,11 +110,18 @@ class ApiClient {
     sortDirection?: 'asc' | 'desc';
   } = {}): Promise<PaginatedResponse<Project>> {
     const searchParams = new URLSearchParams();
-    Object.entries(params).forEach(([key, value]) => {
-      if (value !== undefined) {
-        searchParams.append(key, String(value));
-      }
-    });
+    
+    // Map frontend params to backend expected params
+    if (params.pageNumber !== undefined) {
+      searchParams.append('page', String(params.pageNumber));
+    }
+    if (params.pageSize !== undefined) {
+      searchParams.append('pageSize', String(params.pageSize));
+    }
+    if (params.search !== undefined) {
+      searchParams.append('search', params.search);
+    }
+    // Note: backend doesn't support status, sortBy, sortDirection yet
 
     return this.request<PaginatedResponse<Project>>(
       `/api/projects?${searchParams.toString()}`

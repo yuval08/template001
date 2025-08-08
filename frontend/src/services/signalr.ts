@@ -15,7 +15,9 @@ class SignalRService {
   }
 
   async startConnection(): Promise<void> {
-    if (this.connection?.state === HubConnectionState.Connected) {
+    // Prevent starting if already connected or connecting
+    if (this.connection?.state === HubConnectionState.Connected || 
+        this.connection?.state === HubConnectionState.Connecting) {
       return;
     }
 

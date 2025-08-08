@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Security.Claims;
+using System.Text.Json;
 using IntranetStarter.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
@@ -32,11 +33,16 @@ public static class AuthenticationExtensions
             
             options.Events.OnRedirectToLogin = context =>
             {
-                // For API calls, return 401 instead of redirect
+                // For API calls, return 401 and prevent further processing
                 if (context.Request.Path.StartsWithSegments("/api"))
                 {
                     context.Response.StatusCode = 401;
-                    return Task.CompletedTask;
+                    context.Response.ContentType = "application/json";
+                    var json = JsonSerializer.Serialize(new { 
+                        message = "Unauthorized", 
+                        status = 401 
+                    });
+                    return context.Response.WriteAsync(json);
                 }
                 return Task.CompletedTask;
             };
