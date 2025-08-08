@@ -7,7 +7,13 @@ import {
   Table, 
   ClipboardList,
   LogOut,
-  X
+  X,
+  MousePointer,
+  Bell,
+  MessageSquare,
+  CreditCard,
+  Type,
+  Palette
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/utils/cn';
@@ -21,6 +27,12 @@ const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Forms', href: '/forms', icon: ClipboardList },
   { name: 'Tables', href: '/tables', icon: Table },
+  { name: 'UI Showcase', href: '/ui-showcase', icon: Palette },
+  { name: 'Buttons', href: '/buttons', icon: MousePointer },
+  { name: 'Alerts', href: '/alerts', icon: Bell },
+  { name: 'Dialogs', href: '/dialogs', icon: MessageSquare },
+  { name: 'Cards & Badges', href: '/cards-and-badges', icon: CreditCard },
+  { name: 'Inputs', href: '/inputs', icon: Type },
   { name: 'Users', href: '/users', icon: Users, roles: ['admin'] },
   { name: 'Reports', href: '/reports', icon: FileText },
 ];

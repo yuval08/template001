@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
 import { ToastContainer } from '@/components/ui/toast-container';
+import { ScrollToTop } from '@/components/ScrollToTop';
 
 export const Layout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -13,6 +14,7 @@ export const Layout: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <ScrollToTop />
       <div className="flex h-screen">
         <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
         

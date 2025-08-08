@@ -12,7 +12,7 @@ import {
 } from '@/types/api';
 import { User, Project, ProjectSummary, FileUploadResponse } from '@/types';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001';
 
 class ApiClient {
   private getAuthHeaders(): Record<string, string> {
@@ -178,6 +178,7 @@ class ApiClient {
 
     const response = await fetch(`${API_BASE_URL}/api/files`, {
       method: 'POST',
+      credentials: 'include', // Include cookies for authentication
       headers,
       body: formData,
     });
@@ -187,6 +188,7 @@ class ApiClient {
 
   async downloadFile(id: string): Promise<Blob> {
     const response = await fetch(`${API_BASE_URL}/api/files/${id}`, {
+      credentials: 'include', // Include cookies for authentication
       headers: this.getAuthHeaders(),
     });
 
@@ -200,6 +202,7 @@ class ApiClient {
   // Reports API
   async getSampleReport(): Promise<Blob> {
     const response = await fetch(`${API_BASE_URL}/api/reports/sample`, {
+      credentials: 'include', // Include cookies for authentication
       headers: this.getAuthHeaders(),
     });
 

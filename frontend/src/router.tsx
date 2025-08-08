@@ -8,6 +8,12 @@ import Forms from '@/pages/Forms';
 import Tables from '@/pages/Tables';
 import Users from '@/pages/Users';
 import Reports from '@/pages/Reports';
+import Buttons from '@/pages/Buttons';
+import Alerts from '@/pages/Alerts';
+import Dialogs from '@/pages/Dialogs';
+import CardsAndBadges from '@/pages/CardsAndBadges';
+import Inputs from '@/pages/Inputs';
+import UIShowcase from '@/pages/UIShowcase';
 
 export const router = createBrowserRouter([
   {
@@ -57,6 +63,30 @@ export const router = createBrowserRouter([
       {
         path: 'reports',
         element: <Reports />,
+      },
+      {
+        path: 'buttons',
+        element: <Buttons />,
+      },
+      {
+        path: 'alerts',
+        element: <Alerts />,
+      },
+      {
+        path: 'dialogs',
+        element: <Dialogs />,
+      },
+      {
+        path: 'cards-and-badges',
+        element: <CardsAndBadges />,
+      },
+      {
+        path: 'inputs',
+        element: <Inputs />,
+      },
+      {
+        path: 'ui-showcase',
+        element: <UIShowcase />,
       },
     ],
   },
