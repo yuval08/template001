@@ -53,6 +53,10 @@ parse_arguments() {
                 SETUP_MODE="full"
                 shift
                 ;;
+            --dependencies-only|-d)
+                SETUP_MODE="dependencies"
+                shift
+                ;;
             --reset)
                 RESET_DATA=true
                 shift
@@ -88,6 +92,7 @@ show_help() {
     echo "  -i, --interactive     Interactive setup with guided options"
     echo "  -q, --quick          Quick setup with minimal prompts (default)"
     echo "  -f, --full           Full setup with all services and monitoring"
+    echo "  -d, --dependencies-only Dependencies only (postgres, redis - for local development)"
     echo ""
     echo -e "${YELLOW}Options:${NC}"
     echo "  --reset              Reset all data (remove volumes)"
@@ -96,10 +101,11 @@ show_help() {
     echo "  -h, --help           Show this help message"
     echo ""
     echo -e "${YELLOW}Examples:${NC}"
-    echo "  $0                   # Quick setup (default)"
-    echo "  $0 --interactive     # Interactive setup with options"
-    echo "  $0 --full --verbose  # Full setup with verbose output"
-    echo "  $0 --reset --quick   # Reset data and quick setup"
+    echo "  $0                       # Quick setup (default)"
+    echo "  $0 --dependencies-only   # Dependencies only for local development"
+    echo "  $0 --interactive         # Interactive setup with options"
+    echo "  $0 --full --verbose      # Full setup with verbose output"
+    echo "  $0 --reset --quick       # Reset data and quick setup"
 }
 
 show_banner
@@ -344,34 +350,41 @@ interactive_setup() {
     
     # Setup mode selection
     echo -e "${BLUE}📝 Choose your development setup:${NC}"
-    echo "  1) 🚀 Quick Start (default services only)"
-    echo "  2) 🔧 Full Development (all services + monitoring)"
-    echo "  3) 🎯 Custom Setup (choose specific services)"
+    echo "  1) 🗄️  Dependencies Only (postgres, redis - for local API/frontend development)"
+    echo "  2) 🚀 Quick Start (all services in Docker)"
+    echo "  3) 🔧 Full Development (all services + monitoring)"
+    echo "  4) 🎯 Custom Setup (choose specific services)"
     echo
     
     while true; do
-        read -p "Select option (1-3) [1]: " setup_choice
+        read -p "Select option (1-4) [1]: " setup_choice
         setup_choice=${setup_choice:-1}
         
         case $setup_choice in
             1)
+                SETUP_MODE="dependencies"
+                echo -e "${GREEN}✅ Dependencies Only selected - perfect for local development${NC}"
+                echo -e "${BLUE}   You can run the API and frontend locally while using containerized dependencies${NC}"
+                break
+                ;;
+            2)
                 SETUP_MODE="quick"
                 echo -e "${GREEN}✅ Quick Start selected${NC}"
                 break
                 ;;
-            2)
+            3)
                 SETUP_MODE="full"
                 echo -e "${GREEN}✅ Full Development selected${NC}"
                 break
                 ;;
-            3)
+            4)
                 SETUP_MODE="custom"
                 echo -e "${GREEN}✅ Custom Setup selected${NC}"
                 custom_service_selection
                 break
                 ;;
             *)
-                echo -e "${RED}❌ Invalid selection. Please choose 1-3.${NC}"
+                echo -e "${RED}❌ Invalid selection. Please choose 1-4.${NC}"
                 ;;
         esac
     done
@@ -652,19 +665,37 @@ start_services() {
     # Clean up any previous containers
     docker compose down --remove-orphans &> /dev/null || true
     
-    # Start services
-    if ! docker compose up -d; then
-        echo -e "${RED}❌ Failed to start services${NC}"
-        echo -e "${BLUE}📋 Container status:${NC}"
-        docker compose ps
-        echo -e "${BLUE}📋 Recent logs:${NC}"
-        docker compose logs --tail=20
-        
-        echo -e "${BLUE}💡 Troubleshooting steps:${NC}"
-        echo "  1. Check if ports are already in use: ./scripts/port-manager.sh --check-only"
-        echo "  2. Try resetting: $0 --reset"
-        echo "  3. View detailed logs: docker compose logs [service-name]"
-        exit 1
+    # Start services based on setup mode
+    if [ "$SETUP_MODE" = "dependencies" ]; then
+        echo -e "${BLUE}🗄️ Starting dependencies only (postgres, redis)...${NC}"
+        if ! docker compose up -d postgres redis; then
+            echo -e "${RED}❌ Failed to start dependencies${NC}"
+            echo -e "${BLUE}📋 Container status:${NC}"
+            docker compose ps
+            echo -e "${BLUE}📋 Recent logs:${NC}"
+            docker compose logs --tail=20 postgres redis
+            
+            echo -e "${BLUE}💡 Troubleshooting steps:${NC}"
+            echo "  1. Check if ports are already in use: ./scripts/port-manager.sh --check-only"
+            echo "  2. Try resetting: $0 --reset"
+            echo "  3. View detailed logs: docker compose logs postgres redis"
+            exit 1
+        fi
+    else
+        echo -e "${BLUE}🚀 Starting all services...${NC}"
+        if ! docker compose up -d; then
+            echo -e "${RED}❌ Failed to start services${NC}"
+            echo -e "${BLUE}📋 Container status:${NC}"
+            docker compose ps
+            echo -e "${BLUE}📋 Recent logs:${NC}"
+            docker compose logs --tail=20
+            
+            echo -e "${BLUE}💡 Troubleshooting steps:${NC}"
+            echo "  1. Check if ports are already in use: ./scripts/port-manager.sh --check-only"
+            echo "  2. Try resetting: $0 --reset"
+            echo "  3. View detailed logs: docker compose logs [service-name]"
+            exit 1
+        fi
     fi
     
     echo -e "${GREEN}✅ Services started${NC}"
@@ -699,10 +730,19 @@ wait_for_services() {
             fi
         done < <(docker compose ps 2>/dev/null | grep -E "(Up|healthy)" || echo "")
         
-        # Check if core services are ready (postgres, redis at minimum)
-        if [ $healthy_services -ge 2 ] && [ $total_services -ge 4 ]; then
-            echo -e "\\r${GREEN}✅ All services are ready!${NC}                    "
-            break
+        # Check if services are ready based on setup mode
+        if [ "$SETUP_MODE" = "dependencies" ]; then
+            # For dependencies-only mode, just need postgres and redis
+            if [ $healthy_services -ge 2 ] && [ $total_services -ge 2 ]; then
+                echo -e "\\r${GREEN}✅ Dependencies are ready!${NC}                    "
+                break
+            fi
+        else
+            # For other modes, need all services
+            if [ $healthy_services -ge 2 ] && [ $total_services -ge 4 ]; then
+                echo -e "\\r${GREEN}✅ All services are ready!${NC}                    "
+                break
+            fi
         fi
         
         # Show spinner and status
@@ -764,24 +804,30 @@ comprehensive_health_checks() {
         ((failed_checks++))
     fi
     
-    # API health endpoint
-    echo -e "${BLUE}  Checking API health...${NC}"
-    local api_url="http://localhost:5001"
-    if timeout 10 curl -f "$api_url/health" &> /dev/null; then
-        echo -e "${GREEN}  ✅ API health endpoint responding${NC}"
+    # Skip API and frontend checks in dependencies-only mode
+    if [ "$SETUP_MODE" != "dependencies" ]; then
+        # API health endpoint
+        echo -e "${BLUE}  Checking API health...${NC}"
+        local api_url="http://localhost:5001"
+        if timeout 10 curl -f "$api_url/health" &> /dev/null; then
+            echo -e "${GREEN}  ✅ API health endpoint responding${NC}"
+        else
+            echo -e "${RED}  ❌ API health check failed${NC}"
+            ((failed_checks++))
+        fi
+        
+        # Frontend accessibility
+        echo -e "${BLUE}  Checking Frontend accessibility...${NC}"
+        local frontend_url="http://localhost:5173"
+        if timeout 10 curl -f "$frontend_url" &> /dev/null; then
+            echo -e "${GREEN}  ✅ Frontend is accessible${NC}"
+        else
+            echo -e "${RED}  ❌ Frontend accessibility failed${NC}"
+            ((failed_checks++))
+        fi
     else
-        echo -e "${RED}  ❌ API health check failed${NC}"
-        ((failed_checks++))
-    fi
-    
-    # Frontend accessibility
-    echo -e "${BLUE}  Checking Frontend accessibility...${NC}"
-    local frontend_url="http://localhost:5173"
-    if timeout 10 curl -f "$frontend_url" &> /dev/null; then
-        echo -e "${GREEN}  ✅ Frontend is accessible${NC}"
-    else
-        echo -e "${RED}  ❌ Frontend accessibility failed${NC}"
-        ((failed_checks++))
+        echo -e "${BLUE}  Skipping API/Frontend checks (dependencies-only mode)${NC}"
+        echo -e "${YELLOW}  💡 You can now run your API and frontend locally${NC}"
     fi
     
     # Database migration status
@@ -822,12 +868,21 @@ show_status_dashboard() {
     
     # Service URLs section
     echo -e "${BLUE}🌐 Service URLs:${NC}"
-    echo -e "  ${GREEN}┌─ Frontend (Dev):${NC}     http://localhost:5173"
-    echo -e "  ${GREEN}├─ API:${NC}               http://localhost:5001"
-    echo -e "  ${GREEN}├─ API Documentation:${NC} http://localhost:5001/swagger"
-    echo -e "  ${GREEN}├─ Hangfire Dashboard:${NC} http://localhost:5002/hangfire"
-    echo -e "  ${GREEN}├─ Database:${NC}          localhost:$postgres_port (user: postgres, password: postgres)"
-    echo -e "  ${GREEN}└─ Redis:${NC}             localhost:$redis_port"
+    if [ "$SETUP_MODE" = "dependencies" ]; then
+        echo -e "  ${GREEN}┌─ Database:${NC}          localhost:$postgres_port (user: postgres, password: postgres)"
+        echo -e "  ${GREEN}└─ Redis:${NC}             localhost:$redis_port"
+        echo
+        echo -e "${YELLOW}📝 To start local development:${NC}"
+        echo -e "  ${CYAN}Backend API:${NC}          cd backend/Api && dotnet run --urls \"http://localhost:5001\""
+        echo -e "  ${CYAN}Frontend:${NC}             cd frontend && npm run dev"
+    else
+        echo -e "  ${GREEN}┌─ Frontend (Dev):${NC}     http://localhost:5173"
+        echo -e "  ${GREEN}├─ API:${NC}               http://localhost:5001"
+        echo -e "  ${GREEN}├─ API Documentation:${NC} http://localhost:5001/swagger"
+        echo -e "  ${GREEN}├─ Hangfire Dashboard:${NC} http://localhost:5002/hangfire"
+        echo -e "  ${GREEN}├─ Database:${NC}          localhost:$postgres_port (user: postgres, password: postgres)"
+        echo -e "  ${GREEN}└─ Redis:${NC}             localhost:$redis_port"
+    fi
     
     # Service status section
     echo
