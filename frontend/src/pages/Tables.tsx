@@ -136,16 +136,31 @@ const Tables: React.FC = () => {
           )
         },
         cell: ({ row }) => {
-          const status = row.getValue('status') as string;
-          const statusColors = {
-            active: 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400',
-            completed: 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400',
-            paused: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400',
+          const statusValue = row.getValue('status') as number;
+          
+          // Map numeric status to string
+          const statusMap: Record<number, string> = {
+            1: 'Planning',
+            2: 'In Progress',
+            3: 'On Hold',
+            4: 'Completed',
+            5: 'Cancelled'
           };
           
+          const statusColors: Record<number, string> = {
+            1: 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400',
+            2: 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400',
+            3: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400',
+            4: 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400',
+            5: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
+          };
+          
+          const statusText = statusMap[statusValue] || 'Unknown';
+          const statusColor = statusColors[statusValue] || 'bg-gray-100 text-gray-800';
+          
           return (
-            <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[status as keyof typeof statusColors]}`}>
-              {capitalizeFirst(status)}
+            <span className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${statusColor}`}>
+              {statusText}
             </span>
           );
         },

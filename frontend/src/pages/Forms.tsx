@@ -20,6 +20,16 @@ const categoryOptions = [
   { value: 'other', label: 'Other' },
 ];
 
+const industryOptions = [
+  { value: 'technology', label: 'Technology' },
+  { value: 'healthcare', label: 'Healthcare' },
+  { value: 'finance', label: 'Finance' },
+  { value: 'retail', label: 'Retail' },
+  { value: 'education', label: 'Education' },
+  { value: 'manufacturing', label: 'Manufacturing' },
+  { value: 'other', label: 'Other' },
+];
+
 const Forms: React.FC = () => {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const fileUploadMutation = useFileUpload();
@@ -40,10 +50,13 @@ const Forms: React.FC = () => {
       timeline: 'flexible',
       priority: 'medium',
       category: [],
+      industry: '',
     },
   });
 
   const watchedCategory = watch('category');
+  const watchedIndustry = watch('industry');
+  const watchedPriority = watch('priority');
 
   const onSubmit = async (data: ContactFormData) => {
     try {
@@ -207,24 +220,44 @@ const Forms: React.FC = () => {
               )}
             </div>
 
-            {/* Category (Multi-select) */}
-            <div className="space-y-2">
-              <Label>Services of Interest *</Label>
-              <ReactSelect
-                isMulti
-                options={categoryOptions}
-                value={categoryOptions.filter(option => watchedCategory.includes(option.value))}
-                onChange={(selectedOptions) => {
-                  const values = selectedOptions ? selectedOptions.map(option => option.value) : [];
-                  setValue('category', values, { shouldValidate: true });
-                }}
-                className="react-select-container"
-                classNamePrefix="react-select"
-                placeholder="Select services..."
-              />
-              {errors.category && (
-                <p className="text-sm text-red-500">{errors.category.message}</p>
-              )}
+            {/* Category (Multi-select) and Industry (Single-select) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Services of Interest * (Multi-select)</Label>
+                <ReactSelect
+                  isMulti
+                  options={categoryOptions}
+                  value={categoryOptions.filter(option => watchedCategory.includes(option.value))}
+                  onChange={(selectedOptions) => {
+                    const values = selectedOptions ? selectedOptions.map(option => option.value) : [];
+                    setValue('category', values, { shouldValidate: true });
+                  }}
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                  placeholder="Select services..."
+                />
+                {errors.category && (
+                  <p className="text-sm text-red-500">{errors.category.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label>Industry (Single-select)</Label>
+                <ReactSelect
+                  options={industryOptions}
+                  value={industryOptions.find(option => option.value === watchedIndustry)}
+                  onChange={(selectedOption) => {
+                    setValue('industry', selectedOption ? selectedOption.value : '', { shouldValidate: true });
+                  }}
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                  placeholder="Select industry..."
+                  isClearable
+                />
+                {errors.industry && (
+                  <p className="text-sm text-red-500">{errors.industry.message}</p>
+                )}
+              </div>
             </div>
 
             {/* Radio buttons */}
@@ -298,24 +331,24 @@ const Forms: React.FC = () => {
 
             {/* Range/Priority */}
             <div className="space-y-2">
-              <Label htmlFor="priority">Priority Level: {watch('priority')}</Label>
+              <Label htmlFor="priority">Priority Level: {watchedPriority}</Label>
               <input
                 type="range"
                 id="priority"
                 min="1"
                 max="3"
                 step="1"
-                {...register('priority')}
+                value={watchedPriority === 'low' ? 1 : watchedPriority === 'medium' ? 2 : 3}
                 onChange={(e) => {
                   const priorities = ['low', 'medium', 'high'];
                   setValue('priority', priorities[parseInt(e.target.value) - 1] as any);
                 }}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700 accent-primary"
               />
               <div className="flex justify-between text-sm text-gray-500">
-                <span>Low</span>
-                <span>Medium</span>
-                <span>High</span>
+                <span className={watchedPriority === 'low' ? 'text-primary font-semibold' : ''}>Low</span>
+                <span className={watchedPriority === 'medium' ? 'text-primary font-semibold' : ''}>Medium</span>
+                <span className={watchedPriority === 'high' ? 'text-primary font-semibold' : ''}>High</span>
               </div>
             </div>
 

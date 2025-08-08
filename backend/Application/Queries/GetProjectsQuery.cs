@@ -9,9 +9,9 @@ namespace IntranetStarter.Application.Queries;
 public record GetProjectsQuery(int Page = 1, int PageSize = 10, string? Search = null) : IRequest<ProjectsResponse>;
 
 public record ProjectsResponse(
-    List<ProjectDto> Projects,
+    List<ProjectDto> Data,
     int TotalCount,
-    int Page,
+    int PageNumber,
     int PageSize,
     int TotalPages
 );

@@ -93,6 +93,7 @@ export const contactFormSchema = z.object({
   timeline: z.enum(['asap', '1-month', '3-months', '6-months', 'flexible']),
   priority: z.enum(['low', 'medium', 'high']),
   category: z.array(z.string()).min(1, 'Please select at least one category'),
+  industry: z.string().optional(),
 });
 
 export type ContactFormData = z.infer<typeof contactFormSchema>;
