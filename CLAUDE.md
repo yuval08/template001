@@ -1,78 +1,133 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to developers when working with this repository. Our goal is to provide a streamlined, efficient development experience.
 
-## Development Commands
+## 🚀 Quick Start Guide
+
+### Prerequisites
+- Docker
+- Docker Compose
+- Git
+- (Optional) VS Code or JetBrains Rider
+
+### One-Command Setup
+```bash
+# Start everything - local dev environment in minutes!
+./scripts/dev-setup.sh
+```
+
+## Development Workflow
+
+### 🔧 Development Scripts Overview
+
+#### `./scripts/dev-setup.sh`
+Comprehensive project initialization script with multiple modes:
+```bash
+# Standard setup (recommended)
+./scripts/dev-setup.sh
+
+# Interactive mode with custom configuration
+./scripts/dev-setup.sh --interactive
+
+# Quick, minimal output setup
+./scripts/dev-setup.sh --quick
+
+# Complete reset (warning: destroys all local data)
+./scripts/dev-setup.sh --reset
+```
+
+#### `./scripts/dev-status.sh`
+Real-time project status and monitoring:
+```bash
+# Show comprehensive development dashboard
+./scripts/dev-status.sh
+
+# Real-time service monitoring
+./scripts/dev-status.sh --watch
+
+# Quick system health check
+./scripts/dev-status.sh --health
+
+# Display service URLs
+./scripts/dev-status.sh --urls
+```
+
+#### `./scripts/dev-tools.sh`
+Powerful development utility with multiple commands:
+```bash
+# Database Management
+./scripts/dev-tools.sh db-shell     # PostgreSQL interactive shell
+./scripts/dev-tools.sh db-reset     # Reset entire database
+./scripts/dev-tools.sh db-migrate   # Run pending migrations
+
+# Service Management
+./scripts/dev-tools.sh restart api  # Restart specific service
+./scripts/dev-tools.sh logs frontend # View service logs
+./scripts/dev-tools.sh rebuild      # Rebuild all services
+
+# Development Utilities
+./scripts/dev-tools.sh test Unit    # Run unit tests
+./scripts/dev-tools.sh fresh        # Complete environment refresh
+./scripts/dev-tools.sh open         # Open all development URLs
+```
+
+## Troubleshooting
+
+### Common Issues & Solutions
+
+1. **Port Conflicts**
+   - Our scripts automatically detect and resolve port conflicts
+   - If a port is in use, the system will:
+     * Attempt to use an alternative port
+     * Provide clear error messages
+     * Suggest manual resolution steps
+
+2. **Database Migration Problems**
+   - `./scripts/dev-tools.sh db-migrate` handles most migration scenarios
+   - Automatic rollback on failed migrations
+   - Detailed error logging for debugging
+
+3. **Docker-Related Challenges**
+   - Ensure Docker daemon is running
+   - Check Docker version compatibility (minimum Docker Compose v2)
+   - Verify sufficient system resources
+
+### Debugging Tips
+- Always start with `./scripts/dev-status.sh --health`
+- Use `./scripts/dev-tools.sh logs [service]` for detailed logs
+- Run `./scripts/dev-setup.sh --interactive` for guided troubleshooting
+
+## Manual Commands (Advanced Users)
 
 ### Backend (.NET)
 ```bash
 # Build backend
-cd backend && dotnet build
-
-# Run backend API
-cd backend/Api && dotnet run
+dotnet build backend/
 
 # Run tests
-cd backend && dotnet test
+dotnet test backend/Tests.Unit
+dotnet test backend/Tests.Integration
 
-# Run specific test project
-cd backend/Tests.Unit && dotnet test
-cd backend/Tests.Integration && dotnet test
-
-# Apply database migrations
-cd backend/Api && dotnet ef database update
-
-# Create new migration
-cd backend/Api && dotnet ef migrations add <MigrationName> -p ../Infrastructure -c ApplicationDbContext
+# Create migration
+dotnet ef migrations add <MigrationName> \
+  -p backend/Infrastructure \
+  -c ApplicationDbContext \
+  -s backend/Api
 ```
 
-### Frontend (React/TypeScript)
+### Frontend (React)
 ```bash
 # Install dependencies
-cd frontend && npm install
+npm install --prefix frontend
 
-# Run development server
-cd frontend && npm run dev
+# Development server
+npm run dev --prefix frontend
 
 # Build for production
-cd frontend && npm run build
-
-# Run linting
-cd frontend && npm run lint
-
-# Preview production build
-cd frontend && npm run preview
+npm run build --prefix frontend
 ```
 
-### Docker Development
-```bash
-# Start full development environment
-docker compose -f docker-compose.yml -f docker-compose.override.yml up --build
-
-# Start in detached mode
-docker compose -f docker-compose.yml -f docker-compose.override.yml up -d
-
-# View logs
-docker compose logs -f [service]  # services: api, frontend, postgres, redis, hangfire
-
-# Reset database
-docker compose down -v && docker compose up -d
-
-# Quick setup script
-./scripts/dev-setup.sh
-```
-
-### Production Deployment
-```bash
-# Deploy to production
-./scripts/prod-deploy.sh
-
-# Build production images
-docker compose -f docker-compose.yml -f docker-compose.prod.yml build
-
-# Start production services
-docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
-```
+📌 Pro Tip: Prefer our scripts (`dev-setup.sh`, `dev-tools.sh`) over manual commands when possible!
 
 ## Architecture Overview
 
