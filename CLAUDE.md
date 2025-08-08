@@ -142,8 +142,8 @@ The application follows Clean Architecture with clear separation of concerns:
 
 2. **Application Layer** (`backend/Application/`)
    - CQRS pattern implementation using MediatR
-   - Commands: CreateProjectCommand, UpdateProjectCommand, etc.
-   - Queries: GetProjectsQuery, GetUserQuery, etc.
+   - Commands: CreateProjectCommand, UpdateProjectCommand, CreateUserCommand, UpdateUserRoleCommand, UpdateUserProfileCommand, etc.
+   - Queries: GetProjectsQuery, GetUsersQuery, GetUserByIdQuery, GetPendingInvitationsQuery, etc.
    - Service interfaces and DTOs
    - Business logic orchestration
 
@@ -156,8 +156,9 @@ The application follows Clean Architecture with clear separation of concerns:
 
 4. **API Layer** (`backend/Api/`)
    - ASP.NET Core Web API
-   - Controllers: AuthController, ProjectsController, ReportsController, FilesController
-   - Authentication/Authorization middleware
+   - Controllers: AuthController, ProjectsController, ReportsController, FilesController, UsersController
+   - Simplified cookie-based OAuth authentication
+   - Role-based authorization (Admin, Manager, Employee)
    - SignalR hubs for real-time notifications
    - Program.cs contains service configuration and startup
 
@@ -174,7 +175,8 @@ The application follows Clean Architecture with clear separation of concerns:
 
 ### Backend
 - **.NET 9** with C# nullable reference types enabled
-- **Authentication**: JWT Bearer tokens with OAuth2/OIDC support (Azure AD, Google)
+- **Authentication**: Simplified cookie-based OAuth2/OIDC (Azure AD, Google)
+- **User Management**: Pre-provisioning, role assignment, invitation system
 - **Database**: PostgreSQL with Entity Framework Core
 - **Caching**: Redis
 - **Background Jobs**: Hangfire for scheduled tasks
@@ -232,10 +234,12 @@ The application uses Code-First migrations with Entity Framework Core:
 
 ## Authentication & Authorization
 
-- OAuth2/OIDC integration with Azure AD and Google
-- JWT Bearer token authentication
+- Simplified cookie-based OAuth2/OIDC integration with Azure AD and Google
+- Session-based authentication with HTTP-only secure cookies
 - Role-based authorization policies: AdminOnly, ManagerOrAdmin, AllUsers
 - Domain restriction support via ALLOWED_DOMAIN environment variable
+- User pre-provisioning with role assignment
+- Automatic admin creation based on ADMIN_EMAIL environment variable
 - Custom claims added during token validation
 
 ## Real-time Features

@@ -3,17 +3,34 @@
 ## Core Features
 
 ### 1. User Management
-- User registration and profile management
-- Role-based access control
-- User directory integration
-- Profile picture upload
-- Personal dashboard
+- User pre-provisioning and invitation system
+- Role-based access control (Admin, Manager, Employee)
+- User profile management
+- Bulk user import capabilities
+- User activity tracking
+- Domain-based access restriction
+- Automatic admin assignment via ADMIN_EMAIL
+
+#### Key Features
+- **Pre-provisioning**: Admins can create user accounts before users log in
+- **Invitation System**: Send email invitations to pre-provisioned users
+- **Role Management**: Dynamic role assignment and updates
+- **Profile Updates**: Comprehensive profile editing (name, department, job title, etc.)
+- **Search & Filter**: Advanced user search with pagination and filtering
 
 #### Usage Example
 ```typescript
 // Accessing user profile
 const { user } = useAuth();
-console.log(user.name, user.email, user.roles);
+console.log(user.name, user.email, user.role);
+
+// Managing users (Admin only)
+const { data: users } = useUsers({
+  pageNumber: 1,
+  pageSize: 10,
+  searchTerm: 'john',
+  roleFilter: 'Manager'
+});
 ```
 
 ### 2. Project Management
@@ -76,11 +93,13 @@ const generateReport = async (reportConfig) => {
 ```
 
 ### 6. Authentication
-- Multi-provider OAuth2
+- Simplified cookie-based OAuth2 authentication
 - Azure AD integration
 - Google Workspace support
-- Role-based access control
-- Single Sign-On (SSO)
+- Session-based authentication with HTTP-only secure cookies
+- Domain-based access restriction (ALLOWED_DOMAIN)
+- Automatic user creation on first login
+- Role assignment based on email patterns
 
 ### 7. Dashboard
 - Personalized user dashboards

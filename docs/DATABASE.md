@@ -9,15 +9,20 @@
 
 ### Entity Relationships
 ```
-+---------------+       +---------------+
-|     User      |       |    Project    |
-+---------------+       +---------------+
-| PK: Id        |       | PK: Id        |
-| Username      |       | Name          |
-| Email         | 1   * | Description   |
-| Roles         |-------|  StartDate    |
-| Department    |       |  EndDate      |
-+---------------+       +---------------+
++--------------------+       +---------------+       +--------------------+
+|       User         |       |    Project    |       | PendingInvitation  |
++--------------------+       +---------------+       +--------------------+
+| PK: Id             |       | PK: Id        |       | PK: Id             |
+| Email              | 1   * | Name          |       | Email              |
+| Name               |-------| Description   |       | Role               |
+| Role               |       | StartDate     |       | InvitedBy          |
+| Department         |       | EndDate       |       | InvitedAt          |
+| JobTitle           |       | Status        |       | Token              |
+| IsProvisioned      |       | OwnerId (FK)  |       | ExpiresAt          |
+| InvitedById        |       +---------------+       +--------------------+
+| ActivatedAt        |
+| IsActive           |
++--------------------+
 ```
 
 ### Tables and Schemas
@@ -26,13 +31,34 @@
 ```sql
 CREATE TABLE "Users" (
     "Id" uuid PRIMARY KEY,
-    "Username" varchar(100) NOT NULL,
     "Email" varchar(255) NOT NULL UNIQUE,
-    "PasswordHash" varchar(255),
-    "Roles" text[],
+    "Name" varchar(100),
+    "ProfilePicture" text,
+    "Role" varchar(50) NOT NULL DEFAULT 'Employee',
     "Department" varchar(100),
+    "JobTitle" varchar(100),
+    "Phone" varchar(50),
+    "Location" varchar(100),
+    "IsActive" boolean DEFAULT true,
+    "IsProvisioned" boolean DEFAULT false,
+    "InvitedById" uuid REFERENCES "Users"("Id"),
+    "InvitedAt" timestamp with time zone,
+    "ActivatedAt" timestamp with time zone,
     "CreatedAt" timestamp with time zone DEFAULT now(),
-    "LastLogin" timestamp with time zone
+    "UpdatedAt" timestamp with time zone DEFAULT now()
+);
+```
+
+#### PendingInvitations Table
+```sql
+CREATE TABLE "PendingInvitations" (
+    "Id" uuid PRIMARY KEY,
+    "Email" varchar(255) NOT NULL,
+    "Role" varchar(50) NOT NULL,
+    "InvitedBy" varchar(255),
+    "InvitedAt" timestamp with time zone DEFAULT now(),
+    "Token" varchar(255) NOT NULL UNIQUE,
+    "ExpiresAt" timestamp with time zone NOT NULL
 );
 ```
 
@@ -68,17 +94,33 @@ dotnet ef database update LastGoodMigration
 
 ### Development Seed Data
 ```csharp
-public class DatabaseSeeder 
+public class DataSeeder 
 {
-    public void SeedData(ModelBuilder modelBuilder) 
+    public async Task SeedAsync(ApplicationDbContext context) 
     {
-        modelBuilder.Entity<User>().HasData(
-            new User { 
-                Id = Guid.NewGuid(), 
-                Username = "admin", 
-                Email = "admin@company.com" 
-            }
-        );
+        // Auto-create admin from ADMIN_EMAIL environment variable
+        var adminEmail = Environment.GetEnvironmentVariable("ADMIN_EMAIL");
+        if (!string.IsNullOrEmpty(adminEmail))
+        {
+            var adminUser = new User 
+            { 
+                Id = Guid.NewGuid(),
+                Email = adminEmail,
+                Name = "System Administrator",
+                Role = "Admin",
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow
+            };
+            context.Users.Add(adminUser);
+        }
+
+        // Seed sample projects if needed
+        if (!context.Projects.Any())
+        {
+            // Add sample projects
+        }
+
+        await context.SaveChangesAsync();
     }
 }
 ```
@@ -90,8 +132,20 @@ public class DatabaseSeeder
 -- User email lookup
 CREATE INDEX idx_users_email ON "Users" ("Email");
 
+-- User role filtering
+CREATE INDEX idx_users_role ON "Users" ("Role");
+
+-- Active users filtering
+CREATE INDEX idx_users_active ON "Users" ("IsActive");
+
 -- Project status filtering
 CREATE INDEX idx_projects_status ON "Projects" ("Status");
+
+-- Pending invitations by email
+CREATE INDEX idx_invitations_email ON "PendingInvitations" ("Email");
+
+-- Pending invitations expiry
+CREATE INDEX idx_invitations_expiry ON "PendingInvitations" ("ExpiresAt");
 ```
 
 ## Backup & Recovery

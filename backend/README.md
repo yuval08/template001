@@ -22,12 +22,14 @@ This backend follows Clean Architecture with four distinct layers:
 - ✅ Comprehensive error handling and logging
 
 ### Authentication & Authorization
-- ✅ JWT Bearer token authentication
+- ✅ Simplified cookie-based OAuth flow
 - ✅ Azure AD OpenID Connect integration
 - ✅ Google OAuth integration
 - ✅ Domain-based access restriction
 - ✅ Role-based authorization (Admin, Manager, Employee)
 - ✅ Policy-based authorization
+- ✅ User pre-provisioning and invitation system
+- ✅ Automatic role assignment based on email patterns
 
 ### File Storage
 - ✅ Multiple storage providers (Local, AWS S3, Azure Blob)
@@ -113,7 +115,7 @@ The API will be available at:
 ```
 backend/
 ├── Domain/                     # Core business logic and entities
-│   ├── Entities/              # Domain entities (User, Project)
+│   ├── Entities/              # Domain entities (User, Project, PendingInvitation)
 │   ├── Interfaces/            # Repository and service interfaces
 │   └── Common/                # Base classes and shared types
 ├── Application/               # Application layer (CQRS, DTOs)
@@ -202,6 +204,15 @@ EMAIL_PASSWORD=your_app_password
 - `GET /api/reports/project/{id}` - Generate project PDF report
 - `POST /api/reports/sample/email` - Email sample report
 - `POST /api/reports/project/{id}/email` - Email project report
+
+### Users
+- `GET /api/users` - Get users list (Admin only, paginated, searchable)
+- `GET /api/users/{id}` - Get user by ID (Admin only)
+- `POST /api/users` - Create/pre-provision user (Admin only)
+- `PUT /api/users/{id}/profile` - Update user profile (Admin only)
+- `PUT /api/users/{id}/role` - Update user role (Admin only)
+- `POST /api/users/{id}/invite` - Send invitation email (Admin only)
+- `GET /api/users/pending-invitations` - Get pending invitations (Admin only)
 
 ### Files
 - `POST /api/files/upload` - Upload file

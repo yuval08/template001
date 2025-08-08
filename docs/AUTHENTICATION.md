@@ -1,32 +1,37 @@
 # Authentication Guide
 
 ## Overview
-The Intranet Starter Project implements a robust, secure authentication system using OAuth2/OpenID Connect (OIDC) with multiple identity providers.
+The Intranet Starter Project implements a simplified, secure cookie-based authentication system using OAuth2/OpenID Connect (OIDC) with multiple identity providers.
 
 ## Supported Authentication Providers
 1. Azure Active Directory
 2. Google Workspace
-3. Local Development Identity (for testing)
 
-## OAuth2/OIDC Flow
+## Simplified Cookie-Based Authentication Flow
 ```
 +-------------+                 +---------------+
-|   User      |     Redirect    | Identity      |
+|   User      |     Redirect    | OAuth         |
 |             | --------------> | Provider      |
 +-------------+                 +-------+-------+
       ^                                 |
       |                                 |
-      |         Authorization Code      |
+      |     Session Cookie Created      |
       +---------------------------------+
 ```
 
 ### Authentication Steps
-1. User initiates login
-2. Redirected to chosen identity provider
+1. User initiates login via `/api/auth/login/google` or `/api/auth/login/azure`
+2. Redirected to chosen OAuth provider
 3. Provider validates credentials
-4. Returns authorization code
-5. Backend exchanges code for access token
-6. Token validated and user authenticated
+4. OAuth callback creates server-side session
+5. HTTP-only secure cookie sent to browser
+6. All subsequent requests authenticated via session cookie
+
+### Cookie Security Features
+- HTTP-only flag prevents JavaScript access
+- Secure flag ensures HTTPS-only transmission
+- SameSite attribute prevents CSRF attacks
+- Session expiration after inactivity
 
 ## Azure AD Configuration
 
@@ -102,16 +107,23 @@ services.AddAuthentication()
 ## Role-Based Access Control (RBAC)
 
 ### Role Hierarchy
-- `Anonymous`: No access
-- `User`: Basic access
-- `Editor`: Content modification
-- `Admin`: Full system access
+- `Employee`: Basic access to application features
+- `Manager`: Extended access with management capabilities
+- `Admin`: Full system access including user management
 
-### Role Assignment
-Roles assigned based on:
-- Group membership
-- Directory attributes
-- Custom claims
+### Automatic Role Assignment
+Roles are assigned based on:
+- Email patterns configured in environment variables
+- Pre-provisioned user settings
+- ADMIN_EMAIL environment variable for automatic admin assignment
+- Manual assignment by existing admins
+
+### User Pre-provisioning
+Admins can pre-provision users before they log in:
+1. Create user account with email and role
+2. Send invitation email
+3. User logs in via OAuth and inherits pre-configured role
+4. Profile automatically populated from OAuth provider
 
 ### RBAC Example
 ```csharp
@@ -121,17 +133,23 @@ public IActionResult AdminDashboard() {
 }
 ```
 
-## Token Management
+## Session Management
 
-### Access Token
-- JWT format
-- Short-lived (default 1 hour)
-- Contains user claims
+### Cookie-Based Sessions
+- Server-side session storage
+- Session ID stored in HTTP-only cookie
+- No client-side token management required
+- Automatic session cleanup on logout
 
-### Refresh Token
-- Long-lived token
-- Used to obtain new access tokens
-- Securely stored server-side
+### Session Configuration
+```csharp
+services.AddSession(options => {
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+});
+```
 
 ## Security Recommendations
 - Use HTTPS everywhere

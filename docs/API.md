@@ -9,45 +9,116 @@ https://api.yourcompany.com/api/v1
 ```
 
 ## Authentication
-All API endpoints require authentication via Bearer Token.
+The API uses cookie-based authentication with OAuth2 providers.
 
 ### Authentication Methods
-1. OAuth2 with Azure AD
-2. OAuth2 with Google
-3. JWT Token-based authorization
+1. OAuth2 with Azure AD (cookie-based)
+2. OAuth2 with Google (cookie-based)
+3. Session cookies with HTTP-only secure flags
 
-### Request Headers
-```http
-Authorization: Bearer {access_token}
-Content-Type: application/json
-```
+### Authentication Flow
+1. User initiates login via `/api/auth/login/google` or `/api/auth/login/azure`
+2. OAuth provider handles authentication
+3. Successful auth creates a session cookie
+4. All subsequent requests use the session cookie for authentication
 
 ## API Endpoints
 
-### User Management
+### Authentication
 
 #### Get Current User
-- **Endpoint**: `/users/me`
+- **Endpoint**: `/auth/me`
 - **Method**: GET
-- **Description**: Retrieve current user's profile information
+- **Description**: Retrieve current authenticated user's information
 - **Response**:
 ```json
 {
   "id": "uuid",
-  "name": "John Doe",
   "email": "john.doe@company.com",
-  "roles": ["Admin", "User"],
-  "department": "IT"
+  "name": "John Doe",
+  "role": "Admin",
+  "department": "IT",
+  "jobTitle": "Senior Developer",
+  "isActive": true
 }
 ```
+
+#### Logout
+- **Endpoint**: `/auth/logout`
+- **Method**: POST
+- **Description**: Logout and clear authentication session
+
+### User Management
 
 #### List Users
 - **Endpoint**: `/users`
 - **Method**: GET
-- **Permissions**: Admin
+- **Permissions**: Admin only
 - **Query Parameters**:
-  - `page`: Page number (default: 1)
-  - `pageSize`: Items per page (default: 10)
+  - `pageNumber`: Page number (default: 1)
+  - `pageSize`: Items per page (default: 10, max: 100)
+  - `searchTerm`: Search by email, name, department, or job title
+  - `roleFilter`: Filter by role (Admin, Manager, Employee)
+  - `isActiveFilter`: Filter by active status
+
+#### Get User by ID
+- **Endpoint**: `/users/{id}`
+- **Method**: GET
+- **Permissions**: Admin only
+- **Description**: Get detailed user information
+
+#### Create/Pre-provision User
+- **Endpoint**: `/users`
+- **Method**: POST
+- **Permissions**: Admin only
+- **Request Body**:
+```json
+{
+  "email": "newuser@company.com",
+  "name": "New User",
+  "role": "Employee",
+  "department": "Sales",
+  "jobTitle": "Sales Representative"
+}
+```
+
+#### Update User Profile
+- **Endpoint**: `/users/{id}/profile`
+- **Method**: PUT
+- **Permissions**: Admin only
+- **Request Body**:
+```json
+{
+  "name": "Updated Name",
+  "department": "Marketing",
+  "jobTitle": "Marketing Manager",
+  "phone": "+1234567890",
+  "location": "New York"
+}
+```
+
+#### Update User Role
+- **Endpoint**: `/users/{id}/role`
+- **Method**: PUT
+- **Permissions**: Admin only
+- **Request Body**:
+```json
+{
+  "role": "Manager"
+}
+```
+
+#### Send User Invitation
+- **Endpoint**: `/users/{id}/invite`
+- **Method**: POST
+- **Permissions**: Admin only
+- **Description**: Send invitation email to pre-provisioned user
+
+#### Get Pending Invitations
+- **Endpoint**: `/users/pending-invitations`
+- **Method**: GET
+- **Permissions**: Admin only
+- **Description**: List all pending user invitations
 
 ### Projects
 
