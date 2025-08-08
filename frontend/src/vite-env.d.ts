@@ -33,3 +33,11 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+// Global type declarations for development
+declare global {
+  interface Window {
+    __STORE_DEVTOOLS_ENABLED__?: boolean;
+    __STORE_LOGGING_ENABLED__?: boolean;
+  }
+}

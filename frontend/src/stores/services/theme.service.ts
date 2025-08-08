@@ -2,25 +2,27 @@ import { themeActions, themeSelectors } from '../core/theme.store';
 import { Theme } from '../types';
 
 class ThemeService {
-  private mediaQuery: MediaQueryList;
+  private mediaQuery: MediaQueryList | undefined;
   private initialized = false;
 
   constructor() {
-    this.mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    this.handleSystemThemeChange = this.handleSystemThemeChange.bind(this);
+    if (typeof window !== 'undefined') {
+      this.mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      this.handleSystemThemeChange = this.handleSystemThemeChange.bind(this);
+    }
   }
 
   /**
    * Initialize theme service - sets up listeners and applies initial theme
    */
   initialize() {
-    if (this.initialized) return;
+    if (this.initialized || typeof window === 'undefined') return;
 
     // Set initial system theme
     this.updateSystemTheme();
     
     // Listen for system theme changes
-    this.mediaQuery.addEventListener('change', this.handleSystemThemeChange);
+    this.mediaQuery?.addEventListener('change', this.handleSystemThemeChange);
     
     // Apply current theme to DOM
     this.applyTheme();
@@ -57,6 +59,8 @@ class ThemeService {
    * Apply theme to DOM
    */
   private applyTheme() {
+    if (typeof window === 'undefined') return;
+    
     const root = window.document.documentElement;
     const resolvedTheme = this.getResolvedTheme();
     
@@ -83,6 +87,8 @@ class ThemeService {
    * Update system theme state
    */
   private updateSystemTheme() {
+    if (!this.mediaQuery) return;
+    
     const systemTheme = this.mediaQuery.matches ? 'dark' : 'light';
     themeActions.setSystemTheme(systemTheme);
   }
@@ -91,6 +97,8 @@ class ThemeService {
    * Update theme-color meta tag for mobile browsers
    */
   private updateThemeColor(theme: 'light' | 'dark') {
+    if (typeof document === 'undefined') return;
+    
     const metaThemeColor = document.querySelector('meta[name="theme-color"]');
     const color = theme === 'dark' ? '#0f172a' : '#ffffff';
     
@@ -100,7 +108,7 @@ class ThemeService {
       const meta = document.createElement('meta');
       meta.name = 'theme-color';
       meta.content = color;
-      document.getElementsByTagName('head')[0].appendChild(meta);
+      document.getElementsByTagName('head')[0]?.appendChild(meta);
     }
   }
 }

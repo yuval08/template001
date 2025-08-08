@@ -1,5 +1,3 @@
-import { StateCreator } from 'zustand';
-
 export interface LoggerConfig {
   enabled?: boolean;
   name?: string;
@@ -7,9 +5,9 @@ export interface LoggerConfig {
 }
 
 export const logger = <T>(config: LoggerConfig = {}) => 
-  (createState: StateCreator<T, [], [], T>): StateCreator<T, [], [], T> =>
-  (set, get, api) => {
-    const loggedSet: typeof set = (...args) => {
+  (createState: (...args: any[]) => T) =>
+  (set: any, get: any, api: any): T => {
+    const loggedSet = (...args: any[]) => {
       if (config.enabled && typeof window !== 'undefined') {
         const prevState = get();
         set(...args);

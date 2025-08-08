@@ -24,6 +24,7 @@ export interface AuthActions {
   setError: (error: string | null) => void;
   setAuthConfig: (config: AuthState['authConfig']) => void;
   logout: () => void;
+  reset: () => void;
 }
 
 // Theme types

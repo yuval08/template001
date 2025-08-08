@@ -1,6 +1,6 @@
 import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
 import { Project, ProjectSummary } from '@/types';
-import { devtools, logger } from '../middleware';
 
 interface ProjectState {
   // Cache for frequently accessed data
@@ -45,38 +45,33 @@ const initialState: ProjectState = {
 
 export const useProjectStore = create<ProjectStore>()(
   devtools(
-    { name: 'ProjectStore', enabled: process.env.NODE_ENV === 'development' }
-  )(
-    logger(
-      { name: 'Project', enabled: process.env.NODE_ENV === 'development', collapsed: true }
-    )(
-      (set, get) => ({
-        ...initialState,
-        
-        setSelectedProject: (selectedProjectId) => set({ selectedProjectId }),
-        
-        setRecentProjects: (recentProjects) => set({ recentProjects }),
-        
-        addRecentProject: (project) => set((state) => {
-          const filtered = state.recentProjects.filter(p => p.id !== project.id);
-          return {
-            recentProjects: [project, ...filtered].slice(0, 5) // Keep only 5 recent projects
-          };
-        }),
-        
-        setProjectSummary: (projectSummary) => set({ projectSummary }),
-        
-        setProjectListView: (projectListView) => set({ projectListView }),
-        
-        setProjectFilters: (filters) => set((state) => ({
-          projectFilters: { ...state.projectFilters, ...filters }
-        })),
-        
-        resetFilters: () => set({ 
-          projectFilters: initialState.projectFilters 
-        }),
-      })
-    )
+    (set) => ({
+      ...initialState,
+      
+      setSelectedProject: (selectedProjectId: string | null) => set({ selectedProjectId }),
+      
+      setRecentProjects: (recentProjects: Project[]) => set({ recentProjects }),
+      
+      addRecentProject: (project: Project) => set((state) => {
+        const filtered = state.recentProjects.filter(p => p.id !== project.id);
+        return {
+          recentProjects: [project, ...filtered].slice(0, 5) // Keep only 5 recent projects
+        };
+      }),
+      
+      setProjectSummary: (projectSummary: ProjectSummary) => set({ projectSummary }),
+      
+      setProjectListView: (projectListView: 'grid' | 'list') => set({ projectListView }),
+      
+      setProjectFilters: (filters: Partial<ProjectState['projectFilters']>) => set((state) => ({
+        projectFilters: { ...state.projectFilters, ...filters }
+      })),
+      
+      resetFilters: () => set({ 
+        projectFilters: initialState.projectFilters 
+      }),
+    }),
+    { name: 'ProjectStore' }
   )
 );
 

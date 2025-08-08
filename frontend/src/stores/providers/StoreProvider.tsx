@@ -29,8 +29,8 @@ export const StoreProvider: React.FC<StoreProviderProps> = ({
   // Set development flags
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      (window as Record<string, unknown>).__STORE_DEVTOOLS_ENABLED__ = enableDevtools;
-      (window as Record<string, unknown>).__STORE_LOGGING_ENABLED__ = enableLogging;
+      (window as unknown as Record<string, unknown>).__STORE_DEVTOOLS_ENABLED__ = enableDevtools;
+      (window as unknown as Record<string, unknown>).__STORE_LOGGING_ENABLED__ = enableLogging;
     }
   }, [enableDevtools, enableLogging]);
 
@@ -42,11 +42,11 @@ export const StoreProvider: React.FC<StoreProviderProps> = ({
  */
 export const useStoreConfig = () => {
   const isDevToolsEnabled = typeof window !== 'undefined' 
-    ? (window as Record<string, unknown>).__STORE_DEVTOOLS_ENABLED__ ?? false
+    ? (window as unknown as Record<string, unknown>).__STORE_DEVTOOLS_ENABLED__ ?? false
     : false;
   
   const isLoggingEnabled = typeof window !== 'undefined'
-    ? (window as Record<string, unknown>).__STORE_LOGGING_ENABLED__ ?? false
+    ? (window as unknown as Record<string, unknown>).__STORE_LOGGING_ENABLED__ ?? false
     : false;
 
   return {

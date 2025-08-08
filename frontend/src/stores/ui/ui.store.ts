@@ -1,7 +1,6 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, devtools } from 'zustand/middleware';
 import { UIStore } from '../types';
-import { devtools, logger } from '../middleware';
 
 const initialState = {
   sidebarOpen: true,
@@ -11,47 +10,42 @@ const initialState = {
 
 export const useUIStore = create<UIStore>()(
   devtools(
-    { name: 'UIStore', enabled: process.env.NODE_ENV === 'development' }
-  )(
-    logger(
-      { name: 'UI', enabled: process.env.NODE_ENV === 'development', collapsed: true }
-    )(
-      persist(
-        (set, get) => ({
-          ...initialState,
-          
-          setSidebarOpen: (sidebarOpen) => set({ sidebarOpen }),
-          
-          setSidebarCollapsed: (sidebarCollapsed) => set({ sidebarCollapsed }),
-          
-          toggleSidebar: () => set((state) => ({ 
-            sidebarOpen: !state.sidebarOpen 
-          })),
-          
-          openModal: (modalId) => set((state) => ({
-            modals: { ...state.modals, [modalId]: true },
-          })),
-          
-          closeModal: (modalId) => set((state) => ({
-            modals: { ...state.modals, [modalId]: false },
-          })),
-          
-          toggleModal: (modalId) => set((state) => ({
-            modals: { 
-              ...state.modals, 
-              [modalId]: !state.modals[modalId] 
-            },
-          })),
+    persist(
+      (set, get) => ({
+        ...initialState,
+        
+        setSidebarOpen: (sidebarOpen: boolean) => set({ sidebarOpen }),
+        
+        setSidebarCollapsed: (sidebarCollapsed: boolean) => set({ sidebarCollapsed }),
+        
+        toggleSidebar: () => set((state) => ({ 
+          sidebarOpen: !state.sidebarOpen 
+        })),
+        
+        openModal: (modalId: string) => set((state) => ({
+          modals: { ...state.modals, [modalId]: true },
+        })),
+        
+        closeModal: (modalId: string) => set((state) => ({
+          modals: { ...state.modals, [modalId]: false },
+        })),
+        
+        toggleModal: (modalId: string) => set((state) => ({
+          modals: { 
+            ...state.modals, 
+            [modalId]: !state.modals[modalId] 
+          },
+        })),
+      }),
+      {
+        name: 'ui-storage',
+        version: 1,
+        partialize: (state) => ({
+          sidebarCollapsed: state.sidebarCollapsed,
         }),
-        {
-          name: 'ui-storage',
-          version: 1,
-          partialize: (state) => ({
-            sidebarCollapsed: state.sidebarCollapsed,
-          }),
-        }
-      )
-    )
+      }
+    ),
+    { name: 'UIStore' }
   )
 );
 

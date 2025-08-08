@@ -4,7 +4,7 @@ import { StoreApi, UseBoundStore } from 'zustand';
  * Utility for combining multiple stores into a single hook
  * Useful for components that need multiple store states
  */
-export function combineStores<T extends Record<string, any>>(stores: T) {
+export function combineStores<T extends Record<string, UseBoundStore<any>>>(stores: T) {
   return () => {
     const result = {} as {
       [K in keyof T]: T[K] extends UseBoundStore<infer S> ? S : never;
@@ -23,7 +23,7 @@ export function combineStores<T extends Record<string, any>>(stores: T) {
 /**
  * Create a selector that combines multiple store states
  */
-export function createCombinedSelector<TStores extends Record<string, any>, TResult>(
+export function createCombinedSelector<TStores extends Record<string, UseBoundStore<any>>, TResult>(
   stores: TStores,
   selector: (states: {
     [K in keyof TStores]: TStores[K] extends UseBoundStore<infer S> ? S : never;

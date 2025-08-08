@@ -1,7 +1,7 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, devtools } from 'zustand/middleware';
 import { AuthStore } from '../types';
-import { devtools, logger, reset } from '../middleware';
+import { AuthUser } from '@/types';
 
 const initialState = {
   user: null,
@@ -14,51 +14,53 @@ const initialState = {
 
 export const useAuthStore = create<AuthStore>()(
   devtools(
-    { name: 'AuthStore', enabled: process.env.NODE_ENV === 'development' }
-  )(
-    logger(
-      { name: 'Auth', enabled: process.env.NODE_ENV === 'development', collapsed: true }
-    )(
-      persist(
-        reset((set, get) => ({
-          ...initialState,
-          
-          setUser: (user) => set({ 
-            user, 
-            isAuthenticated: !!user,
-            isLoading: false,
-            error: null,
+    persist(
+      (set, get) => ({
+        ...initialState,
+        
+        setUser: (user: AuthUser | null) => set({ 
+          user, 
+          isAuthenticated: !!user,
+          isLoading: false,
+          error: null,
+          lastUpdated: new Date(),
+        }),
+        
+        setLoading: (isLoading: boolean) => set({ isLoading }),
+        
+        setError: (error: string | null) => set({ error, isLoading: false }),
+        
+        setAuthConfig: (authConfig: AuthStore['authConfig']) => set({ 
+          authConfig,
+          lastUpdated: new Date(),
+        }),
+        
+        logout: () => set({ 
+          user: null, 
+          isAuthenticated: false,
+          isLoading: false,
+          error: null,
+          lastUpdated: new Date(),
+        }),
+
+        reset: () => {
+          set({ 
+            ...initialState,
             lastUpdated: new Date(),
-          }),
-          
-          setLoading: (isLoading) => set({ isLoading }),
-          
-          setError: (error) => set({ error, isLoading: false }),
-          
-          setAuthConfig: (authConfig) => set({ 
-            authConfig,
-            lastUpdated: new Date(),
-          }),
-          
-          logout: () => set({ 
-            user: null, 
-            isAuthenticated: false,
-            isLoading: false,
-            error: null,
-            lastUpdated: new Date(),
-          }),
-        })),
-        {
-          name: 'auth-storage',
-          version: 1,
-          partialize: (state) => ({
-            user: state.user,
-            isAuthenticated: state.isAuthenticated,
-            authConfig: state.authConfig,
-          }),
-        }
-      )
-    )
+          }, true);
+        },
+      }),
+      {
+        name: 'auth-storage',
+        version: 1,
+        partialize: (state) => ({
+          user: state.user,
+          isAuthenticated: state.isAuthenticated,
+          authConfig: state.authConfig,
+        }),
+      }
+    ),
+    { name: 'AuthStore' }
   )
 );
 

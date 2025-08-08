@@ -1,57 +1,52 @@
 import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
 import { NotificationStore, NotificationItem } from '../types';
-import { devtools, logger } from '../middleware';
 
 const initialState = {
-  items: [],
+  items: [] as NotificationItem[],
 };
 
 export const useNotificationStore = create<NotificationStore>()(
   devtools(
-    { name: 'NotificationStore', enabled: process.env.NODE_ENV === 'development' }
-  )(
-    logger(
-      { name: 'Notification', enabled: process.env.NODE_ENV === 'development', collapsed: true }
-    )(
-      (set, get) => ({
-        ...initialState,
+    (set, get) => ({
+      ...initialState,
+      
+      add: (notification: Omit<NotificationItem, 'id' | 'timestamp'>) => {
+        const id = Math.random().toString(36).substring(2, 9);
+        const newNotification: NotificationItem = {
+          ...notification,
+          id,
+          timestamp: new Date(),
+          duration: notification.duration ?? 5000,
+        };
         
-        add: (notification) => {
-          const id = Math.random().toString(36).substring(2, 9);
-          const newNotification: NotificationItem = {
-            ...notification,
-            id,
-            timestamp: new Date(),
-            duration: notification.duration ?? 5000,
-          };
-          
-          set((state) => ({
-            items: [...state.items, newNotification],
-          }));
-          
-          // Auto-remove notification after duration
-          if (newNotification.duration && newNotification.duration > 0) {
-            setTimeout(() => {
-              get().remove(id);
-            }, newNotification.duration);
-          }
-          
-          return id;
-        },
+        set((state) => ({
+          items: [...state.items, newNotification],
+        }));
         
-        remove: (id) => set((state) => ({
-          items: state.items.filter((item) => item.id !== id),
-        })),
+        // Auto-remove notification after duration
+        if (newNotification.duration && newNotification.duration > 0) {
+          setTimeout(() => {
+            get().remove(id);
+          }, newNotification.duration);
+        }
         
-        clear: () => set({ items: [] }),
-        
-        markAsRead: (id) => set((state) => ({
-          items: state.items.map((item) => 
-            item.id === id ? { ...item, read: true } : item
-          ),
-        })),
-      })
-    )
+        return id;
+      },
+      
+      remove: (id: string) => set((state) => ({
+        items: state.items.filter((item) => item.id !== id),
+      })),
+      
+      clear: () => set({ items: [] }),
+      
+      markAsRead: (id: string) => set((state) => ({
+        items: state.items.map((item) => 
+          item.id === id ? { ...item, read: true } : item
+        ),
+      })),
+    }),
+    { name: 'NotificationStore' }
   )
 );
 

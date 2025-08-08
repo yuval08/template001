@@ -1,5 +1,4 @@
 import { devtools as zustandDevtools } from 'zustand/middleware';
-import type { StateCreator } from 'zustand';
 
 export interface DevtoolsConfig {
   name: string;
@@ -7,7 +6,7 @@ export interface DevtoolsConfig {
 }
 
 export const devtools = <T>(config: DevtoolsConfig) => 
-  (createState: StateCreator<T, [], [], T>) =>
+  (createState: (...args: any[]) => T) =>
     config.enabled !== false 
       ? zustandDevtools(createState, { name: config.name })
       : createState;
