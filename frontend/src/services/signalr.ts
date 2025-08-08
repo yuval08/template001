@@ -51,7 +51,7 @@ class SignalRService {
       this.reconnectAttempts = 0;
 
       // Join user-specific group  
-      await this.joinUserGroup(user.Id || user.id);
+      await this.joinUserGroup(user.id);
 
     } catch (error) {
       console.error('Error starting SignalR connection:', error);
@@ -81,7 +81,7 @@ class SignalRService {
       // Re-join user group after reconnection
       const { user } = useAuthStore.getState();
       if (user) {
-        this.joinUserGroup(user.Id || user.id);
+        this.joinUserGroup(user.id);
       }
     });
 

@@ -13,6 +13,7 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
 
     public new DbSet<User> Users { get; set; }
     public DbSet<Project> Projects { get; set; }
+    public DbSet<PendingInvitation> PendingInvitations { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -31,6 +32,12 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
             entity.Property(e => e.Avatar).HasMaxLength(500);
             
             entity.HasIndex(e => e.Email).IsUnique();
+
+            // Configure self-referencing relationship for InvitedBy
+            entity.HasOne(e => e.InvitedBy)
+                  .WithMany()
+                  .HasForeignKey(e => e.InvitedById)
+                  .OnDelete(DeleteBehavior.SetNull);
         });
 
         // Configure Project entity
@@ -57,6 +64,24 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
                       "ProjectUser",
                       j => j.HasOne<User>().WithMany().HasForeignKey("UserId"),
                       j => j.HasOne<Project>().WithMany().HasForeignKey("ProjectId"));
+        });
+
+        // Configure PendingInvitation entity
+        modelBuilder.Entity<PendingInvitation>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Email).IsRequired().HasMaxLength(256);
+            entity.Property(e => e.IntendedRole).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.InvitedAt).IsRequired();
+            entity.Property(e => e.ExpiresAt).IsRequired();
+
+            entity.HasIndex(e => new { e.Email, e.IsUsed });
+
+            // Configure relationship with User who sent the invitation
+            entity.HasOne(e => e.InvitedBy)
+                  .WithMany()
+                  .HasForeignKey(e => e.InvitedById)
+                  .OnDelete(DeleteBehavior.Cascade);
         });
 
         // Seed data

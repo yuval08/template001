@@ -36,14 +36,27 @@ export const createUserSchema = z.object({
   email: emailSchema,
   firstName: nameSchema,
   lastName: nameSchema,
-  roles: z.array(z.string()).min(1, 'At least one role is required'),
+  role: z.string().min(1, 'Role is required'),
+  department: z.string().optional(),
+  jobTitle: z.string().optional(),
 });
 
-export const updateUserSchema = z.object({
-  firstName: nameSchema.optional(),
-  lastName: nameSchema.optional(),
-  roles: z.array(z.string()).min(1, 'At least one role is required').optional(),
-  isActive: z.boolean().optional(),
+export const updateUserProfileSchema = z.object({
+  firstName: nameSchema,
+  lastName: nameSchema,
+  department: z.string().optional(),
+  jobTitle: z.string().optional(),
+  isActive: z.boolean(),
+});
+
+export const updateUserRoleSchema = z.object({
+  newRole: z.string().min(1, 'Role is required'),
+});
+
+export const inviteUserSchema = z.object({
+  email: emailSchema,
+  intendedRole: z.string().min(1, 'Role is required'),
+  expirationDays: z.number().min(1, 'Must be at least 1 day').max(90, 'Cannot exceed 90 days'),
 });
 
 // Project validation schemas
@@ -98,6 +111,8 @@ export const contactFormSchema = z.object({
 
 export type ContactFormData = z.infer<typeof contactFormSchema>;
 export type CreateUserData = z.infer<typeof createUserSchema>;
-export type UpdateUserData = z.infer<typeof updateUserSchema>;
+export type UpdateUserProfileData = z.infer<typeof updateUserProfileSchema>;
+export type UpdateUserRoleData = z.infer<typeof updateUserRoleSchema>;
+export type InviteUserData = z.infer<typeof inviteUserSchema>;
 export type CreateProjectData = z.infer<typeof createProjectSchema>;
 export type UpdateProjectData = z.infer<typeof updateProjectSchema>;

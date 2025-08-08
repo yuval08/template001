@@ -22,14 +22,31 @@ export interface CreateUserRequest {
   email: string;
   firstName: string;
   lastName: string;
-  roles: string[];
+  role: string;
+  department?: string;
+  jobTitle?: string;
 }
 
-export interface UpdateUserRequest {
-  firstName?: string;
-  lastName?: string;
-  roles?: string[];
-  isActive?: boolean;
+export interface UpdateUserProfileRequest {
+  userId: string;
+  firstName: string;
+  lastName: string;
+  department?: string;
+  jobTitle?: string;
+  isActive: boolean;
+}
+
+export interface UpdateUserRoleRequest {
+  userId: string;
+  newRole: string;
+  updatedById: string;
+}
+
+export interface CreateInvitationRequest {
+  email: string;
+  intendedRole: string;
+  invitedById: string;
+  expirationDays?: number;
 }
 
 export interface CreateProjectRequest {

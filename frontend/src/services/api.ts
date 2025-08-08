@@ -4,13 +4,22 @@ import {
   PaginatedResponse, 
   ApiError,
   CreateUserRequest,
-  UpdateUserRequest,
+  UpdateUserProfileRequest,
+  UpdateUserRoleRequest,
+  CreateInvitationRequest,
   CreateProjectRequest,
   UpdateProjectRequest,
   FileUploadRequest,
- 
 } from '@/types/api';
-import { User, Project, ProjectSummary, FileUploadResponse } from '@/types';
+import { 
+  User, 
+  DetailedUser, 
+  UsersResponse, 
+  PendingInvitationsResponse,
+  Project, 
+  ProjectSummary, 
+  FileUploadResponse 
+} from '@/types';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001';
 
@@ -61,42 +70,80 @@ class ApiClient {
     pageNumber?: number;
     pageSize?: number;
     search?: string;
-    sortBy?: string;
-    sortDirection?: 'asc' | 'desc';
-  } = {}): Promise<PaginatedResponse<User>> {
+    roleFilter?: string;
+    isActiveFilter?: boolean;
+  } = {}): Promise<UsersResponse> {
     const searchParams = new URLSearchParams();
-    Object.entries(params).forEach(([key, value]) => {
-      if (value !== undefined) {
-        searchParams.append(key, String(value));
-      }
-    });
+    
+    if (params.pageNumber !== undefined) {
+      searchParams.append('pageNumber', String(params.pageNumber));
+    }
+    if (params.pageSize !== undefined) {
+      searchParams.append('pageSize', String(params.pageSize));
+    }
+    if (params.search !== undefined) {
+      searchParams.append('searchTerm', params.search);
+    }
+    if (params.roleFilter !== undefined) {
+      searchParams.append('roleFilter', params.roleFilter);
+    }
+    if (params.isActiveFilter !== undefined) {
+      searchParams.append('isActiveFilter', String(params.isActiveFilter));
+    }
 
-    return this.request<PaginatedResponse<User>>(
+    return this.request<UsersResponse>(
       `/api/users?${searchParams.toString()}`
     );
   }
 
-  async getUser(id: string): Promise<ApiResponse<User>> {
-    return this.request<ApiResponse<User>>(`/api/users/${id}`);
+  async getUser(id: string): Promise<DetailedUser> {
+    return this.request<DetailedUser>(`/api/users/${id}`);
   }
 
-  async createUser(data: CreateUserRequest): Promise<ApiResponse<User>> {
-    return this.request<ApiResponse<User>>('/api/users', {
+  async createUser(data: CreateUserRequest): Promise<User> {
+    return this.request<User>('/api/users', {
       method: 'POST',
       body: JSON.stringify(data),
     });
   }
 
-  async updateUser(id: string, data: UpdateUserRequest): Promise<ApiResponse<User>> {
-    return this.request<ApiResponse<User>>(`/api/users/${id}`, {
+  async updateUserProfile(id: string, data: UpdateUserProfileRequest): Promise<void> {
+    return this.request<void>(`/api/users/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),
     });
   }
 
-  async deleteUser(id: string): Promise<ApiResponse<void>> {
-    return this.request<ApiResponse<void>>(`/api/users/${id}`, {
-      method: 'DELETE',
+  async updateUserRole(id: string, data: UpdateUserRoleRequest): Promise<void> {
+    return this.request<void>(`/api/users/${id}/role`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  // Invitations API
+  async getInvitations(params: {
+    pageNumber?: number;
+    pageSize?: number;
+  } = {}): Promise<PendingInvitationsResponse> {
+    const searchParams = new URLSearchParams();
+    
+    if (params.pageNumber !== undefined) {
+      searchParams.append('pageNumber', String(params.pageNumber));
+    }
+    if (params.pageSize !== undefined) {
+      searchParams.append('pageSize', String(params.pageSize));
+    }
+
+    return this.request<PendingInvitationsResponse>(
+      `/api/users/invitations?${searchParams.toString()}`
+    );
+  }
+
+  async createInvitation(data: CreateInvitationRequest): Promise<void> {
+    return this.request<void>('/api/users/invite', {
+      method: 'POST',
+      body: JSON.stringify(data),
     });
   }
 

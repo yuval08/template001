@@ -47,6 +47,22 @@ public static class AuthenticationExtensions
                 return Task.CompletedTask;
             };
             
+            options.Events.OnRedirectToAccessDenied = context =>
+            {
+                // For API calls, return 403 Forbidden instead of redirecting
+                if (context.Request.Path.StartsWithSegments("/api"))
+                {
+                    context.Response.StatusCode = 403;
+                    context.Response.ContentType = "application/json";
+                    var json = JsonSerializer.Serialize(new { 
+                        message = "Access denied. Insufficient permissions.", 
+                        status = 403 
+                    });
+                    return context.Response.WriteAsync(json);
+                }
+                return Task.CompletedTask;
+            };
+            
             options.Events.OnValidatePrincipal = async context =>
             {
                 var email = context.Principal?.FindFirst(ClaimTypes.Email)?.Value;
@@ -63,7 +79,7 @@ public static class AuthenticationExtensions
                     }
                 }
                 
-                // Update user last login in database
+                // Update user last login in database and add role claim
                 var dbContext = context.HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>();
                 if (!string.IsNullOrEmpty(email))
                 {
@@ -72,6 +88,13 @@ public static class AuthenticationExtensions
                     {
                         user.LastLoginAt = DateTime.UtcNow;
                         await dbContext.SaveChangesAsync();
+                        
+                        // Add role claim to the principal if not already present
+                        var claimsIdentity = context.Principal?.Identity as ClaimsIdentity;
+                        if (claimsIdentity != null && !claimsIdentity.HasClaim(ClaimTypes.Role, user.Role))
+                        {
+                            claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, user.Role));
+                        }
                     }
                 }
             };
@@ -128,8 +151,16 @@ public static class AuthenticationExtensions
                                 }
                             }
 
-                            // Create or update user in database
-                            await CreateOrUpdateUser(context.HttpContext, email, context.Principal?.FindFirst(ClaimTypes.Name)?.Value);
+                            // Create or update user in database and add role claim
+                            var user = await CreateOrUpdateUser(context.HttpContext, email, context.Principal?.FindFirst(ClaimTypes.Name)?.Value);
+                            if (user != null && !string.IsNullOrEmpty(user.Role))
+                            {
+                                var claimsIdentity = context.Principal?.Identity as ClaimsIdentity;
+                                if (claimsIdentity != null && !claimsIdentity.HasClaim(ClaimTypes.Role, user.Role))
+                                {
+                                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, user.Role));
+                                }
+                            }
                         },
                         OnRemoteFailure = context =>
                         {
@@ -186,8 +217,16 @@ public static class AuthenticationExtensions
                                 }
                             }
 
-                            // Create or update user in database
-                            await CreateOrUpdateUser(context.HttpContext, email, context.Principal?.FindFirst(ClaimTypes.Name)?.Value);
+                            // Create or update user in database and add role claim
+                            var user = await CreateOrUpdateUser(context.HttpContext, email, context.Principal?.FindFirst(ClaimTypes.Name)?.Value);
+                            if (user != null && !string.IsNullOrEmpty(user.Role))
+                            {
+                                var claimsIdentity = context.Principal?.Identity as ClaimsIdentity;
+                                if (claimsIdentity != null && !claimsIdentity.HasClaim(ClaimTypes.Role, user.Role))
+                                {
+                                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, user.Role));
+                                }
+                            }
                         },
                         OnRemoteFailure = context =>
                         {
@@ -202,9 +241,9 @@ public static class AuthenticationExtensions
         return services;
     }
 
-    private static async Task CreateOrUpdateUser(HttpContext httpContext, string? email, string? name)
+    private static async Task<Domain.Entities.User?> CreateOrUpdateUser(HttpContext httpContext, string? email, string? name)
     {
-        if (string.IsNullOrEmpty(email)) return;
+        if (string.IsNullOrEmpty(email)) return null;
 
         var dbContext = httpContext.RequestServices.GetRequiredService<ApplicationDbContext>();
         var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
@@ -216,13 +255,37 @@ public static class AuthenticationExtensions
             var firstName = nameParts.Length > 0 ? nameParts[0] : "Unknown";
             var lastName = nameParts.Length > 1 ? string.Join(" ", nameParts.Skip(1)) : "";
 
+            // Check for pending invitations first
+            var pendingInvitation = await dbContext.PendingInvitations
+                .FirstOrDefaultAsync(i => i.Email == email && !i.IsUsed && i.ExpiresAt > DateTime.UtcNow);
+
+            var defaultRole = "Employee";
+            Guid? invitedById = null;
+            DateTime? invitedAt = null;
+
+            if (pendingInvitation != null)
+            {
+                // Use role from invitation
+                defaultRole = pendingInvitation.IntendedRole;
+                invitedById = pendingInvitation.InvitedById;
+                invitedAt = pendingInvitation.InvitedAt;
+
+                // Mark invitation as used
+                pendingInvitation.IsUsed = true;
+                pendingInvitation.UsedAt = DateTime.UtcNow;
+            }
+
             user = new Domain.Entities.User
             {
                 Email = email,
                 FirstName = firstName,
                 LastName = lastName,
-                Role = "Employee", // Default role
+                Role = defaultRole,
                 IsActive = true,
+                IsProvisioned = false, // New user from OAuth is not pre-provisioned
+                InvitedById = invitedById,
+                InvitedAt = invitedAt,
+                ActivatedAt = DateTime.UtcNow,
                 LastLoginAt = DateTime.UtcNow
             };
 
@@ -230,10 +293,50 @@ public static class AuthenticationExtensions
         }
         else
         {
+            // Update existing user
             user.LastLoginAt = DateTime.UtcNow;
+
+            // Handle pre-provisioned user activation
+            if (user.IsProvisioned)
+            {
+                // Keep their assigned role (don't override)
+                user.IsProvisioned = false;
+                user.ActivatedAt = DateTime.UtcNow;
+
+                // Update name from OAuth if FirstName was "Unknown"
+                if (user.FirstName == "Unknown" && !string.IsNullOrEmpty(name))
+                {
+                    var nameParts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                    user.FirstName = nameParts.Length > 0 ? nameParts[0] : "Unknown";
+                    user.LastName = nameParts.Length > 1 ? string.Join(" ", nameParts.Skip(1)) : "";
+                }
+            }
+            else
+            {
+                // Check for pending invitations for existing non-provisioned users
+                var pendingInvitation = await dbContext.PendingInvitations
+                    .FirstOrDefaultAsync(i => i.Email == email && !i.IsUsed && i.ExpiresAt > DateTime.UtcNow);
+
+                if (pendingInvitation != null)
+                {
+                    // Apply role from invitation if user doesn't have Admin role
+                    if (user.Role != "Admin")
+                    {
+                        user.Role = pendingInvitation.IntendedRole;
+                    }
+                    
+                    user.InvitedById = pendingInvitation.InvitedById;
+                    user.InvitedAt = pendingInvitation.InvitedAt;
+
+                    // Mark invitation as used
+                    pendingInvitation.IsUsed = true;
+                    pendingInvitation.UsedAt = DateTime.UtcNow;
+                }
+            }
         }
 
         await dbContext.SaveChangesAsync();
+        return user;
     }
 
     public static IServiceCollection AddCustomAuthorization(this IServiceCollection services)

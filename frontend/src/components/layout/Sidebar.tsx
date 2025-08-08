@@ -33,7 +33,7 @@ const navigation = [
   { name: 'Dialogs', href: '/dialogs', icon: MessageSquare },
   { name: 'Cards & Badges', href: '/cards-and-badges', icon: CreditCard },
   { name: 'Inputs', href: '/inputs', icon: Type },
-  { name: 'Users', href: '/users', icon: Users, roles: ['admin'] },
+  { name: 'Users', href: '/users', icon: Users, roles: ['Admin'] },
   { name: 'Reports', href: '/reports', icon: FileText },
 ];
 
