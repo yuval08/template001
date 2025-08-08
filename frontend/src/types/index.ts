@@ -61,8 +61,19 @@ export interface NotificationMessage {
 
 export type Theme = 'light' | 'dark' | 'system';
 
-export interface AuthUser extends User {
-  token: string;
-  refreshToken: string;
-  expiresAt: number;
+export interface AuthUser {
+  email: string;
+  name: string;
+  isAuthenticated: boolean;
+  // Additional user details from database
+  id: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  role: string;
+  department?: string;
+  jobTitle?: string;
+  avatar?: string;
+  isActive: boolean;
+  lastLoginAt?: string;
 }

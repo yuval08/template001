@@ -1,13 +1,12 @@
 using Hangfire;
 using Hangfire.Dashboard;
+using IntranetStarter.Api.Extensions;
 using IntranetStarter.Api.Hubs;
 using IntranetStarter.Application;
 using IntranetStarter.Infrastructure;
 using IntranetStarter.Infrastructure.BackgroundJobs;
 using IntranetStarter.Infrastructure.Data;
 using IntranetStarter.Infrastructure.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System.Security.Claims;
@@ -81,84 +80,9 @@ builder.Services.AddCors(options =>
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
-// Add Identity
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
-{
-    options.Password.RequireDigit = true;
-    options.Password.RequiredLength = 8;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequireUppercase = true;
-    options.Password.RequireLowercase = true;
-    
-    options.User.RequireUniqueEmail = true;
-    options.SignIn.RequireConfirmedEmail = false;
-})
-.AddEntityFrameworkStores<ApplicationDbContext>()
-.AddDefaultTokenProviders();
-
-// Configure JWT Authentication
-var jwtSection = builder.Configuration.GetSection("Jwt");
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.Authority = jwtSection["Authority"];
-    options.Audience = jwtSection["Audience"];
-    options.RequireHttpsMetadata = bool.Parse(jwtSection["RequireHttpsMetadata"] ?? "true");
-    
-    options.Events = new JwtBearerEvents
-    {
-        OnTokenValidated = async context =>
-        {
-            // Add custom claims or user information
-            var userEmail = context.Principal?.FindFirst(ClaimTypes.Email)?.Value;
-            if (!string.IsNullOrEmpty(userEmail))
-            {
-                // Check domain restriction
-                var allowedDomain = builder.Configuration["ALLOWED_DOMAIN"];
-                if (!string.IsNullOrEmpty(allowedDomain) && !userEmail.EndsWith($"@{allowedDomain}"))
-                {
-                    context.Fail($"Email domain not allowed. Must be @{allowedDomain}");
-                    return;
-                }
-                
-                // Add role claims from database
-                var dbContext = context.HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>();
-                var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
-                
-                if (user != null)
-                {
-                    var claims = new List<Claim>
-                    {
-                        new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                        new(ClaimTypes.Name, user.FullName),
-                        new(ClaimTypes.Role, user.Role),
-                        new("department", user.Department ?? ""),
-                        new("job_title", user.JobTitle ?? "")
-                    };
-                    
-                    var appIdentity = new ClaimsIdentity(claims);
-                    context.Principal?.AddIdentity(appIdentity);
-                    
-                    // Update last login
-                    user.LastLoginAt = DateTime.UtcNow;
-                    await dbContext.SaveChangesAsync();
-                }
-            }
-        }
-    };
-});
-
-// Add Authorization
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
-    options.AddPolicy("ManagerOrAdmin", policy => policy.RequireRole("Manager", "Admin"));
-    options.AddPolicy("AllUsers", policy => policy.RequireAuthenticatedUser());
-});
+// Add simplified cookie-based authentication
+builder.Services.AddCustomAuthentication(builder.Configuration, builder.Environment.IsDevelopment());
+builder.Services.AddCustomAuthorization();
 
 // Add SignalR
 builder.Services.AddSignalR();

@@ -19,6 +19,10 @@ export const router = createBrowserRouter([
     element: <Callback />,
   },
   {
+    path: '/auth/error',
+    element: <Callback />,
+  },
+  {
     path: '/',
     element: (
       <ProtectedRoute>

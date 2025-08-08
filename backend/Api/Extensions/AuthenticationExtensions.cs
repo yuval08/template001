@@ -1,96 +1,79 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.OAuth;
+using Microsoft.AspNetCore.WebUtilities;
+using System.Security.Claims;
+using IntranetStarter.Infrastructure.Data;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.EntityFrameworkCore;
 
 namespace IntranetStarter.Api.Extensions;
 
 public static class AuthenticationExtensions
 {
-    public static IServiceCollection AddCustomAuthentication(this IServiceCollection services, IConfiguration configuration)
+    private const string CookieName = "IntranetAuth";
+
+    public static IServiceCollection AddCustomAuthentication(this IServiceCollection services, IConfiguration configuration, bool isDevelopment)
     {
-        var jwtSection = configuration.GetSection("Jwt");
-        
+        // Configure simple cookie-based authentication similar to ezy example
         services.AddAuthentication(options =>
         {
-            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = "Google"; // Default to Google for now
         })
-        .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+        .AddCookie(options =>
         {
-            // Configure JWT Bearer token validation
-            options.Authority = jwtSection["Authority"] ?? configuration["JWT_AUTHORITY"];
-            options.Audience = jwtSection["Audience"] ?? configuration["JWT_AUDIENCE"];
-            options.RequireHttpsMetadata = bool.Parse(jwtSection["RequireHttpsMetadata"] ?? configuration["JWT_REQUIRE_HTTPS"] ?? "true");
+            options.Cookie.Name = CookieName;
+            options.Cookie.HttpOnly = true;
+            options.Cookie.SecurePolicy = isDevelopment ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always;
+            options.Cookie.SameSite = SameSiteMode.Lax;
+            options.ExpireTimeSpan = TimeSpan.FromHours(8);
+            options.SlidingExpiration = true;
             
-            // Configure token validation parameters
-            options.TokenValidationParameters = new TokenValidationParameters
+            options.Events.OnRedirectToLogin = context =>
             {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ClockSkew = TimeSpan.FromMinutes(5)
-            };
-
-            // Handle SignalR authentication
-            options.Events = new JwtBearerEvents
-            {
-                OnMessageReceived = context =>
+                // For API calls, return 401 instead of redirect
+                if (context.Request.Path.StartsWithSegments("/api"))
                 {
-                    var accessToken = context.Request.Query["access_token"];
-                    var path = context.HttpContext.Request.Path;
-                    
-                    if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
-                    {
-                        context.Token = accessToken;
-                    }
-                    
+                    context.Response.StatusCode = 401;
                     return Task.CompletedTask;
+                }
+                return Task.CompletedTask;
+            };
+            
+            options.Events.OnValidatePrincipal = async context =>
+            {
+                var email = context.Principal?.FindFirst(ClaimTypes.Email)?.Value;
+                var allowedDomain = configuration["ALLOWED_DOMAIN"];
+                
+                // Validate domain if configured
+                if (!string.IsNullOrEmpty(allowedDomain) && !string.IsNullOrEmpty(email))
+                {
+                    if (!email.EndsWith($"@{allowedDomain}", StringComparison.OrdinalIgnoreCase))
+                    {
+                        context.RejectPrincipal();
+                        await context.HttpContext.SignOutAsync(CookieName);
+                        return;
+                    }
+                }
+                
+                // Update user last login in database
+                var dbContext = context.HttpContext.RequestServices.GetRequiredService<ApplicationDbContext>();
+                if (!string.IsNullOrEmpty(email))
+                {
+                    var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
+                    if (user != null)
+                    {
+                        user.LastLoginAt = DateTime.UtcNow;
+                        await dbContext.SaveChangesAsync();
+                    }
                 }
             };
         });
 
-        // Add Azure AD OpenID Connect if configured
-        var azureAdSection = configuration.GetSection("AzureAd");
-        var azureTenantId = azureAdSection["TenantId"] ?? configuration["AZURE_AD_TENANT_ID"];
-        var azureClientId = azureAdSection["ClientId"] ?? configuration["AZURE_AD_CLIENT_ID"];
-        
-        if (!string.IsNullOrEmpty(azureTenantId) && !string.IsNullOrEmpty(azureClientId))
-        {
-            services.AddAuthentication()
-                .AddOpenIdConnect("AzureAD", "Azure Active Directory", options =>
-                {
-                    options.Authority = $"https://login.microsoftonline.com/{azureTenantId}/v2.0";
-                    options.ClientId = azureClientId;
-                    options.ClientSecret = azureAdSection["ClientSecret"] ?? configuration["AZURE_AD_CLIENT_SECRET"];
-                    options.ResponseType = "code";
-                    options.SaveTokens = true;
-                    options.CallbackPath = "/signin-azuread";
-                    
-                    options.Scope.Clear();
-                    options.Scope.Add("openid");
-                    options.Scope.Add("profile");
-                    options.Scope.Add("email");
-                    
-                    options.TokenValidationParameters.NameClaimType = "name";
-                    options.TokenValidationParameters.RoleClaimType = "role";
-                    
-                    options.Events = new OpenIdConnectEvents
-                    {
-                        OnTokenValidated = async context =>
-                        {
-                            // Domain validation
-                            var email = context.Principal?.FindFirst("email")?.Value;
-                            await ValidateUserDomain(context, email, configuration);
-                        }
-                    };
-                });
-        }
-
-        // Add Google OpenID Connect if configured
-        var googleClientId = configuration["Authentication:Google:ClientId"] ?? configuration["GOOGLE_CLIENT_ID"];
-        var googleClientSecret = configuration["Authentication:Google:ClientSecret"] ?? configuration["GOOGLE_CLIENT_SECRET"];
+        // Add Google OAuth if configured
+        var googleClientId = configuration["GOOGLE_CLIENT_ID"];
+        var googleClientSecret = configuration["GOOGLE_CLIENT_SECRET"];
         
         if (!string.IsNullOrEmpty(googleClientId) && !string.IsNullOrEmpty(googleClientSecret))
         {
@@ -99,16 +82,114 @@ public static class AuthenticationExtensions
                 {
                     options.ClientId = googleClientId;
                     options.ClientSecret = googleClientSecret;
+                    options.CallbackPath = "/api/auth/signin-google";
                     options.SaveTokens = true;
-                    options.CallbackPath = "/signin-google";
-                    
-                    options.Events = new()
+
+                    // Add required scopes
+                    options.Scope.Add("email");
+                    options.Scope.Add("profile");
+
+                    options.Events = new OAuthEvents
+                    {
+                        OnRedirectToAuthorizationEndpoint = context =>
+                        {
+                            var allowedDomain = configuration["ALLOWED_DOMAIN"];
+                            if (!string.IsNullOrEmpty(allowedDomain))
+                            {
+                                // Add hosted domain parameter for Google
+                                var uri = QueryHelpers.AddQueryString(context.RedirectUri, "hd", allowedDomain);
+                                context.Response.Redirect(uri);
+                            }
+                            else
+                            {
+                                context.Response.Redirect(context.RedirectUri);
+                            }
+                            return Task.CompletedTask;
+                        },
+                        OnCreatingTicket = async context =>
+                        {
+                            var email = context.Principal?.FindFirst(ClaimTypes.Email)?.Value;
+                            var allowedDomain = configuration["ALLOWED_DOMAIN"];
+
+                            // Validate domain
+                            if (!string.IsNullOrEmpty(allowedDomain) && !string.IsNullOrEmpty(email))
+                            {
+                                if (!email.EndsWith($"@{allowedDomain}", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    context.Fail($"User email {email} is not from allowed domain @{allowedDomain}");
+                                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                                    return;
+                                }
+                            }
+
+                            // Create or update user in database
+                            await CreateOrUpdateUser(context.HttpContext, email, context.Principal?.FindFirst(ClaimTypes.Name)?.Value);
+                        },
+                        OnRemoteFailure = context =>
+                        {
+                            var frontendUrl = configuration["FRONTEND_URL"] ?? (isDevelopment ? "http://localhost:5173" : "/");
+                            context.Response.Redirect($"{frontendUrl}/auth/error?message={context.Failure?.Message}");
+                            context.HandleResponse();
+                            return Task.CompletedTask;
+                        }
+                    };
+                });
+        }
+
+        // Add Microsoft OAuth for Azure AD if configured
+        var azureClientId = configuration["AZURE_AD_CLIENT_ID"];
+        var azureClientSecret = configuration["AZURE_AD_CLIENT_SECRET"];
+        var azureTenantId = configuration["AZURE_AD_TENANT_ID"];
+
+        if (!string.IsNullOrEmpty(azureClientId) && !string.IsNullOrEmpty(azureClientSecret))
+        {
+            services.AddAuthentication()
+                .AddMicrosoftAccount("Microsoft", options =>
+                {
+                    options.ClientId = azureClientId;
+                    options.ClientSecret = azureClientSecret;
+                    options.CallbackPath = "/api/auth/signin-microsoft";
+                    options.SaveTokens = true;
+
+                    // Configure for specific tenant if provided
+                    if (!string.IsNullOrEmpty(azureTenantId))
+                    {
+                        options.AuthorizationEndpoint = $"https://login.microsoftonline.com/{azureTenantId}/oauth2/v2.0/authorize";
+                        options.TokenEndpoint = $"https://login.microsoftonline.com/{azureTenantId}/oauth2/v2.0/token";
+                    }
+
+                    // Add required scopes
+                    options.Scope.Add("https://graph.microsoft.com/user.read");
+                    options.Scope.Add("email");
+                    options.Scope.Add("profile");
+
+                    options.Events = new OAuthEvents
                     {
                         OnCreatingTicket = async context =>
                         {
-                            // Domain validation
-                            var email = context.Principal?.FindFirst("email")?.Value;
-                            await ValidateUserDomain(context, email, configuration);
+                            var email = context.Principal?.FindFirst(ClaimTypes.Email)?.Value;
+                            var allowedDomain = configuration["ALLOWED_DOMAIN"];
+
+                            // Validate domain
+                            if (!string.IsNullOrEmpty(allowedDomain) && !string.IsNullOrEmpty(email))
+                            {
+                                if (!email.EndsWith($"@{allowedDomain}", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    context.Fail($"User email {email} is not from allowed domain @{allowedDomain}");
+                                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                                    return;
+                                }
+                            }
+
+                            // Create or update user in database
+                            await CreateOrUpdateUser(context.HttpContext, email, context.Principal?.FindFirst(ClaimTypes.Name)?.Value);
+                        },
+                        OnRemoteFailure = context =>
+                        {
+                            var frontendUrl = configuration["FRONTEND_URL"] ?? (isDevelopment ? "http://localhost:5173" : "/");
+                            context.Response.Redirect($"{frontendUrl}/auth/error?message={context.Failure?.Message}");
+                            context.HandleResponse();
+                            return Task.CompletedTask;
                         }
                     };
                 });
@@ -117,19 +198,38 @@ public static class AuthenticationExtensions
         return services;
     }
 
-    private static Task ValidateUserDomain<T>(T context, string? email, IConfiguration configuration) where T : class
+    private static async Task CreateOrUpdateUser(HttpContext httpContext, string? email, string? name)
     {
-        var allowedDomain = configuration["ALLOWED_DOMAIN"];
-        
-        if (!string.IsNullOrEmpty(allowedDomain) && !string.IsNullOrEmpty(email))
+        if (string.IsNullOrEmpty(email)) return;
+
+        var dbContext = httpContext.RequestServices.GetRequiredService<ApplicationDbContext>();
+        var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
+
+        if (user == null)
         {
-            if (!email.EndsWith($"@{allowedDomain}", StringComparison.OrdinalIgnoreCase))
+            // Parse full name into first and last name
+            var nameParts = (name ?? "").Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            var firstName = nameParts.Length > 0 ? nameParts[0] : "Unknown";
+            var lastName = nameParts.Length > 1 ? string.Join(" ", nameParts.Skip(1)) : "";
+
+            user = new Domain.Entities.User
             {
-                throw new UnauthorizedAccessException($"Email domain not allowed. Must be @{allowedDomain}");
-            }
+                Email = email,
+                FirstName = firstName,
+                LastName = lastName,
+                Role = "Employee", // Default role
+                IsActive = true,
+                LastLoginAt = DateTime.UtcNow
+            };
+
+            dbContext.Users.Add(user);
         }
-        
-        return Task.CompletedTask;
+        else
+        {
+            user.LastLoginAt = DateTime.UtcNow;
+        }
+
+        await dbContext.SaveChangesAsync();
     }
 
     public static IServiceCollection AddCustomAuthorization(this IServiceCollection services)
