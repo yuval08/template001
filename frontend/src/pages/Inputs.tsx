@@ -14,7 +14,6 @@ import {
   EyeOff, 
   Calendar,
   Clock,
-  User,
   Mail,
   Phone,
   Lock,
@@ -27,7 +26,6 @@ import {
   Wifi,
   Bell,
   Shield,
-  Settings,
   Zap
 } from 'lucide-react';
 

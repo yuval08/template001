@@ -9,6 +9,7 @@ import {
   ColumnDef,
   SortingState,
   ColumnFiltersState,
+  PaginationState,
 } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -37,7 +38,7 @@ interface UserTableProps {
   };
   sorting: SortingState;
   globalFilter: string;
-  onPaginationChange: (pagination: { pageIndex: number; pageSize: number }) => void;
+  onPaginationChange: (pagination: PaginationState) => void;
   onSortingChange: (sorting: SortingState) => void;
   onGlobalFilterChange: (filter: string) => void;
   onEditUser: (user: User) => void;
@@ -198,10 +199,20 @@ export const UserTable: React.FC<UserTableProps> = ({
       globalFilter,
       pagination,
     },
-    onSortingChange,
+    onSortingChange: (updaterOrValue) => {
+      const newSorting = typeof updaterOrValue === 'function' 
+        ? updaterOrValue(sorting) 
+        : updaterOrValue;
+      onSortingChange(newSorting);
+    },
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange,
-    onPaginationChange,
+    onPaginationChange: (updaterOrValue) => {
+      const newPagination = typeof updaterOrValue === 'function' 
+        ? updaterOrValue(pagination) 
+        : updaterOrValue;
+      onPaginationChange(newPagination);
+    },
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),

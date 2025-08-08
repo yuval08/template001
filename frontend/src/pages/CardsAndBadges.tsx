@@ -7,7 +7,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { toast } from '@/stores/toastStore';
 import { 
-  Star, 
   Heart, 
   User, 
   MapPin, 
@@ -15,12 +14,10 @@ import {
   TrendingUp,
   DollarSign,
   Users,
-  Activity,
   Clock,
   CheckCircle,
   AlertCircle,
   XCircle,
-  Zap,
   Loader2,
   Download,
   Eye,
@@ -28,9 +25,8 @@ import {
   MessageSquare,
   Share2,
   MoreHorizontal,
-  Globe,
-  Briefcase,
-  Mail
+  Mail,
+  Zap
 } from 'lucide-react';
 
 const CardsAndBadges: React.FC = () => {

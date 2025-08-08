@@ -43,7 +43,7 @@ const Alerts: React.FC = () => {
     });
   };
 
-  const showToastAtPosition = (position: string, type: 'success' | 'error' | 'warning' | 'info') => {
+  const showToastAtPosition = (_position: string, type: 'success' | 'error' | 'warning' | 'info') => {
     const messages = {
       success: 'Operation completed successfully!',
       error: 'An error occurred',

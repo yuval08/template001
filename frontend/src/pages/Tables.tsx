@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useProjects } from '@/hooks/useApi';
 import { Project } from '@/types';
-import { formatDate, capitalizeFirst } from '@/utils/formatters';
+import { formatDate } from '@/utils/formatters';
 import { 
   ChevronLeft, 
   ChevronRight, 

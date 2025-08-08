@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { CreateUser, UserRoles, getUserRoleLabel, getUserRoleDescription } from '@/types/user';
 import { nameSchema, emailSchema } from '@/utils/validation';
-import { X } from 'lucide-react';
 
 const createUserSchema = z.object({
   email: emailSchema,

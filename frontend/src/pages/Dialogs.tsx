@@ -55,13 +55,11 @@ import {
   MoreHorizontal,
   Calendar,
   Info,
-  AlertTriangle,
   Copy,
   Archive,
   Share,
   Download,
   ChevronDown,
-  Zap,
   Bell,
   Palette,
   Monitor

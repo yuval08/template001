@@ -6,7 +6,6 @@ import {
   UpdateUserRoleRequest,
   CreateInvitationRequest
 } from '@/types/api';
-import { User, DetailedUser, UsersResponse, PendingInvitationsResponse } from '@/types/user';
 import { toast } from '@/stores/toastStore';
 
 // Query Keys

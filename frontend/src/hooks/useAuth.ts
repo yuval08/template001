@@ -3,7 +3,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { authService } from '@/services/auth';
 
 export const useAuth = () => {
-  const { user, isAuthenticated, isLoading, setUser, setLoading, logout } = useAuthStore();
+  const { user, isAuthenticated, isLoading, setUser, logout } = useAuthStore();
   const [authConfig, setAuthConfig] = useState<{ googleEnabled: boolean; microsoftEnabled: boolean; allowedDomain?: string }>({ googleEnabled: true, microsoftEnabled: false });
 
   // Only fetch auth config, not user data (that's handled by AuthProvider)

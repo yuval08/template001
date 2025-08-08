@@ -1,9 +1,9 @@
-import { useAuthStore } from '@/stores/authStore';
 import { 
   ApiResponse, 
   PaginatedResponse, 
   ApiError,
   CreateUserRequest,
+  UpdateUserRequest,
   UpdateUserProfileRequest,
   UpdateUserRoleRequest,
   CreateInvitationRequest,
@@ -114,10 +114,23 @@ class ApiClient {
     });
   }
 
+  async updateUser(id: string, data: UpdateUserRequest): Promise<void> {
+    return this.request<void>(`/api/users/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
   async updateUserRole(id: string, data: UpdateUserRoleRequest): Promise<void> {
     return this.request<void>(`/api/users/${id}/role`, {
       method: 'PUT',
       body: JSON.stringify(data),
+    });
+  }
+
+  async deleteUser(id: string): Promise<void> {
+    return this.request<void>(`/api/users/${id}`, {
+      method: 'DELETE',
     });
   }
 
@@ -216,12 +229,8 @@ class ApiClient {
       formData.append('metadata', JSON.stringify(data.metadata));
     }
 
-    const { user } = useAuthStore.getState();
+    // Use cookie-based auth, no need for Authorization header
     const headers: Record<string, string> = {};
-    
-    if (user?.token) {
-      headers.Authorization = `Bearer ${user.token}`;
-    }
 
     const response = await fetch(`${API_BASE_URL}/api/files`, {
       method: 'POST',

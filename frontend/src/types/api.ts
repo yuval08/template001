@@ -36,6 +36,14 @@ export interface UpdateUserProfileRequest {
   isActive: boolean;
 }
 
+export interface UpdateUserRequest {
+  firstName: string;
+  lastName: string;
+  department?: string;
+  jobTitle?: string;
+  isActive: boolean;
+}
+
 export interface UpdateUserRoleRequest {
   userId: string;
   newRole: string;

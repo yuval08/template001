@@ -27,20 +27,10 @@ import {
   AlertCircle, 
   Terminal, 
   CheckCircle2, 
-  XCircle,
   Info,
   AlertTriangle,
-  Zap,
-  User,
-  Settings,
-  Mail,
-  Bell,
-  Heart,
-  Star,
-  Trash2,
-  Edit,
-  Plus,
-  Download
+  Download,
+  Settings
 } from 'lucide-react';
 import { toast } from '@/stores/toastStore';
 
@@ -206,7 +196,7 @@ const UIShowcase: React.FC = () => {
                   <Checkbox 
                     id="checkbox1"
                     checked={checkboxState}
-                    onCheckedChange={setCheckboxState}
+                    onCheckedChange={(checked) => setCheckboxState(checked === true)}
                   />
                   <Label htmlFor="checkbox1">Accept terms and conditions</Label>
                 </div>
