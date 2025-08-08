@@ -86,7 +86,7 @@ const Dashboard: React.FC = () => {
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
+        <Card className="animate-fadeIn" style={{ animationDelay: '0.1s' }}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Projects</CardTitle>
             <ClipboardList className="h-4 w-4 text-muted-foreground" />
@@ -104,7 +104,7 @@ const Dashboard: React.FC = () => {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="animate-fadeIn" style={{ animationDelay: '0.2s' }}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Active Projects</CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
@@ -121,7 +121,7 @@ const Dashboard: React.FC = () => {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="animate-fadeIn" style={{ animationDelay: '0.3s' }}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Completed</CardTitle>
             <CheckCircle className="h-4 w-4 text-muted-foreground" />
@@ -139,7 +139,7 @@ const Dashboard: React.FC = () => {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="animate-fadeIn" style={{ animationDelay: '0.4s' }}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">On Hold</CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
@@ -161,7 +161,7 @@ const Dashboard: React.FC = () => {
       {/* Charts Row 1 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Project Status Distribution */}
-        <Card>
+        <Card className="animate-fadeIn" style={{ animationDelay: '0.5s' }}>
           <CardHeader>
             <CardTitle>Project Status Distribution</CardTitle>
             <CardDescription>
@@ -180,6 +180,9 @@ const Dashboard: React.FC = () => {
                     outerRadius={120}
                     paddingAngle={5}
                     dataKey="value"
+                    animationBegin={0}
+                    animationDuration={800}
+                    animationEasing="ease-out"
                   >
                     {projectStatusData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
@@ -194,7 +197,7 @@ const Dashboard: React.FC = () => {
         </Card>
 
         {/* Monthly Activity */}
-        <Card>
+        <Card className="animate-fadeIn" style={{ animationDelay: '0.6s' }}>
           <CardHeader>
             <CardTitle>Monthly Activity</CardTitle>
             <CardDescription>
@@ -223,12 +226,20 @@ const Dashboard: React.FC = () => {
                       });
                     }}
                   />
+                  <defs>
+                    <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1}/>
+                    </linearGradient>
+                  </defs>
                   <Area 
                     type="monotone" 
                     dataKey="count" 
                     stroke="#3b82f6" 
-                    fill="#3b82f6" 
-                    fillOpacity={0.3}
+                    strokeWidth={2}
+                    fill="url(#areaGradient)" 
+                    animationDuration={1000}
+                    animationEasing="ease-in-out"
                   />
                 </AreaChart>
               </ResponsiveContainer>
@@ -240,7 +251,7 @@ const Dashboard: React.FC = () => {
       {/* Charts Row 2 */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Monthly Comparison */}
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-2 animate-fadeIn" style={{ animationDelay: '0.7s' }}>
           <CardHeader>
             <CardTitle>Monthly Comparison</CardTitle>
             <CardDescription>
@@ -256,8 +267,18 @@ const Dashboard: React.FC = () => {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="projects" fill="#3b82f6" name="Created" />
-                  <Bar dataKey="completed" fill="#10b981" name="Completed" />
+                  <defs>
+                    <linearGradient id="projectsGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#3b82f6" stopOpacity={1}/>
+                      <stop offset="100%" stopColor="#3b82f6" stopOpacity={0.6}/>
+                    </linearGradient>
+                    <linearGradient id="completedGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#10b981" stopOpacity={1}/>
+                      <stop offset="100%" stopColor="#10b981" stopOpacity={0.6}/>
+                    </linearGradient>
+                  </defs>
+                  <Bar dataKey="projects" fill="url(#projectsGradient)" name="Created" radius={[8, 8, 0, 0]} animationDuration={1000} />
+                  <Bar dataKey="completed" fill="url(#completedGradient)" name="Completed" radius={[8, 8, 0, 0]} animationDuration={1200} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -265,7 +286,7 @@ const Dashboard: React.FC = () => {
         </Card>
 
         {/* Recent Activity Feed */}
-        <Card>
+        <Card className="animate-fadeIn" style={{ animationDelay: '0.8s' }}>
           <CardHeader>
             <CardTitle>Recent Activity</CardTitle>
             <CardDescription>
