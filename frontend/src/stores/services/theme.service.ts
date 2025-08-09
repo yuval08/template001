@@ -1,9 +1,10 @@
-import { themeActions, themeSelectors } from '../core/theme.store';
+import { themeActions, getThemeState, useThemeStore } from '../core/theme.store';
 import { Theme } from '../types';
 
 class ThemeService {
   private mediaQuery: MediaQueryList | undefined;
   private initialized = false;
+  private unsubscribe: (() => void) | null = null;
 
   constructor() {
     if (typeof window !== 'undefined') {
@@ -27,6 +28,11 @@ class ThemeService {
     // Apply current theme to DOM
     this.applyTheme();
     
+    // Subscribe to store changes to automatically apply theme
+    this.unsubscribe = useThemeStore.subscribe(() => {
+      this.applyTheme();
+    });
+    
     this.initialized = true;
   }
 
@@ -36,6 +42,10 @@ class ThemeService {
   cleanup() {
     if (this.mediaQuery) {
       this.mediaQuery.removeEventListener('change', this.handleSystemThemeChange);
+    }
+    if (this.unsubscribe) {
+      this.unsubscribe();
+      this.unsubscribe = null;
     }
     this.initialized = false;
   }
@@ -52,7 +62,7 @@ class ThemeService {
    * Get current resolved theme (accounts for system preference)
    */
   getResolvedTheme(): 'light' | 'dark' {
-    return themeSelectors.resolvedTheme();
+    return getThemeState().resolvedTheme;
   }
 
   /**
@@ -78,7 +88,7 @@ class ThemeService {
     this.updateSystemTheme();
     
     // If using system theme, re-apply
-    if (themeSelectors.theme() === 'system') {
+    if (getThemeState().theme === 'system') {
       this.applyTheme();
     }
   }

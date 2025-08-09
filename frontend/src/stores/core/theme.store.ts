@@ -26,13 +26,23 @@ export const useThemeStore = create<ThemeStore>()(
   )
 );
 
-// Selectors
+// Selectors for use in React components (hooks)
 export const themeSelectors = {
   theme: () => useThemeStore((state) => state.theme),
   systemTheme: () => useThemeStore((state) => state.systemTheme),
   resolvedTheme: () => useThemeStore((state) => 
     state.theme === 'system' ? state.systemTheme : state.theme
   ),
+};
+
+// Direct state getters for use outside React components
+export const getThemeState = () => {
+  const state = useThemeStore.getState();
+  return {
+    theme: state.theme,
+    systemTheme: state.systemTheme,
+    resolvedTheme: state.theme === 'system' ? state.systemTheme : state.theme,
+  };
 };
 
 // Actions

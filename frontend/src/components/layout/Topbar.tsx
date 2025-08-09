@@ -1,6 +1,6 @@
 import React from 'react';
 import { Menu, Bell, Moon, Sun, Monitor } from 'lucide-react';
-import { useThemeStore } from '@/stores/themeStore';
+import { useTheme } from '@/hooks/useTheme';
 import { useToastStore } from '@/stores/toastStore';
 import { Button } from '@/components/ui/button';
 import {
@@ -15,7 +15,7 @@ interface TopbarProps {
 }
 
 export const Topbar: React.FC<TopbarProps> = ({ onMenuToggle }) => {
-  const { theme, setTheme } = useThemeStore();
+  const { theme, setTheme } = useTheme();
   const items = useToastStore((state) => state.items);
 
   const unreadNotifications = items.filter(item => item.type === 'info').length;

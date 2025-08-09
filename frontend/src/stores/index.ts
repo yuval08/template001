@@ -1,6 +1,6 @@
 // Core stores
 export { useAuthStore, authSelectors, authActions } from './core/auth.store';
-export { useThemeStore, themeSelectors, themeActions } from './core/theme.store';
+export { useThemeStore, themeSelectors, themeActions, getThemeState } from './core/theme.store';
 export { useNotificationStore, notificationSelectors, notificationActions } from './core/notification.store';
 
 // UI stores

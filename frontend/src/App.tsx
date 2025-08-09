@@ -7,7 +7,7 @@ import { useSignalR } from '@/hooks/useSignalR';
 import { AuthProvider } from '@/providers/AuthProvider';
 import { ErrorBoundary } from '@/components/error/ErrorBoundary';
 import { errorHandler, createErrorHandler } from '@/utils/errorHandler';
-import '@/stores/themeStore'; // Initialize theme store
+import { StoreProvider } from '@/stores/providers/StoreProvider';
 
 // Enhanced query client with error handling
 const queryClient = new QueryClient({
@@ -52,14 +52,16 @@ function App() {
         logError: true 
       })}
     >
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <SignalRProvider>
-            <RouterProvider router={router} />
-            <ReactQueryDevtools initialIsOpen={false} />
-          </SignalRProvider>
-        </AuthProvider>
-      </QueryClientProvider>
+      <StoreProvider>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <SignalRProvider>
+              <RouterProvider router={router} />
+              <ReactQueryDevtools initialIsOpen={false} />
+            </SignalRProvider>
+          </AuthProvider>
+        </QueryClientProvider>
+      </StoreProvider>
     </ErrorBoundary>
   );
 }
