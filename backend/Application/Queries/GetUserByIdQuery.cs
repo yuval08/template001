@@ -7,8 +7,6 @@ using Microsoft.Extensions.Logging;
 
 namespace IntranetStarter.Application.Queries;
 
-public record GetUserByIdQuery(Guid UserId) : IRequest<DetailedUserDto?>;
-
 public class GetUserByIdQueryHandler(IUnitOfWork unitOfWork, ILogger<GetUserByIdQueryHandler> logger) : IRequestHandler<GetUserByIdQuery, DetailedUserDto?> {
     public async Task<DetailedUserDto?> Handle(GetUserByIdQuery request, CancellationToken cancellationToken) {
         logger.LogInformation("Fetching user with ID: {UserId}", request.UserId);

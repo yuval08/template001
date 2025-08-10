@@ -1,18 +1,13 @@
-using IntranetStarter.Application.Interfaces;
+using IntranetStarter.Application.DTOs;
+using IntranetStarter.Domain.Entities;
+using IntranetStarter.Domain.Interfaces;
 using MediatR;
 
 namespace IntranetStarter.Application.Queries;
 
-public record GetUnreadNotificationCountQuery(Guid UserId) : IRequest<int>;
-
-public class GetUnreadNotificationCountQueryHandler : IRequestHandler<GetUnreadNotificationCountQuery, int> {
-    private readonly INotificationRepository _repository;
-
-    public GetUnreadNotificationCountQueryHandler(INotificationRepository repository) {
-        _repository = repository;
-    }
-
+public class GetUnreadNotificationCountQueryHandler(IUnitOfWork unitOfWork) : IRequestHandler<GetUnreadNotificationCountQuery, int> {
     public async Task<int> Handle(GetUnreadNotificationCountQuery request, CancellationToken cancellationToken) {
-        return await _repository.GetUnreadCountAsync(request.UserId, cancellationToken);
+        var repository = unitOfWork.Repository<Notification>();
+        return await repository.CountAsync(n => n.UserId == request.UserId && !n.IsRead, cancellationToken);
     }
 }

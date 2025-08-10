@@ -1,69 +1,55 @@
-using IntranetStarter.Application.Interfaces;
+using IntranetStarter.Application.DTOs;
 using IntranetStarter.Domain.Entities;
+using IntranetStarter.Domain.Interfaces;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace IntranetStarter.Application.Queries;
 
-public record GetUserNotificationsQuery(
-    Guid UserId,
-    int PageNumber = 1,
-    int PageSize = 20,
-    bool? IsRead = null,
-    NotificationType? Type = null
-) : IRequest<GetUserNotificationsResponse>;
-
-public record GetUserNotificationsResponse(
-    IEnumerable<NotificationDto> Notifications,
-    int TotalUnread,
-    int PageNumber,
-    int PageSize
-);
-
-public record NotificationDto(
-    Guid Id,
-    string Title,
-    string Message,
-    NotificationType Type,
-    bool IsRead,
-    DateTime? ReadAt,
-    string? ActionUrl,
-    string? Metadata,
-    DateTime CreatedAt
-);
-
-public class GetUserNotificationsQueryHandler : IRequestHandler<GetUserNotificationsQuery, GetUserNotificationsResponse> {
-    private readonly INotificationRepository _repository;
-
-    public GetUserNotificationsQueryHandler(INotificationRepository repository) {
-        _repository = repository;
-    }
-
+public class GetUserNotificationsQueryHandler(IUnitOfWork unitOfWork, ILogger<GetUserNotificationsQueryHandler> logger) : IRequestHandler<GetUserNotificationsQuery, GetUserNotificationsResponse> {
     public async Task<GetUserNotificationsResponse> Handle(GetUserNotificationsQuery request, CancellationToken cancellationToken) {
-        var notifications = await _repository.GetUserNotificationsAsync(
-            request.UserId,
-            request.PageNumber,
-            request.PageSize,
-            request.IsRead,
-            request.Type,
-            cancellationToken
-        );
+        logger.LogInformation("Fetching notifications for user {UserId} - Page: {Page}, PageSize: {PageSize}",
+            request.UserId, request.PageNumber, request.PageSize);
 
-        var unreadCount = await _repository.GetUnreadCountAsync(request.UserId, cancellationToken);
+        var repository = unitOfWork.Repository<Notification>();
 
-        var notificationDtos = notifications.Select(n => new NotificationDto(
-            n.Id,
-            n.Title,
-            n.Message,
-            n.Type,
-            n.IsRead,
-            n.ReadAt,
-            n.ActionUrl,
-            n.Metadata,
-            n.CreatedAt
-        ));
+        // Get all notifications for the user
+        var allNotifications = await repository.FindAsync(n => n.UserId == request.UserId, cancellationToken);
+
+        // Apply filters
+        if (request.IsRead.HasValue) {
+            allNotifications = allNotifications.Where(n => n.IsRead == request.IsRead.Value);
+        }
+
+        if (request.Type.HasValue) {
+            allNotifications = allNotifications.Where(n => n.Type == request.Type.Value);
+        }
+
+        // Get unread count
+        var unreadCount = allNotifications.Count(n => !n.IsRead);
+
+        // Apply pagination
+        var notifications = allNotifications
+            .OrderByDescending(n => n.CreatedAt)
+            .Skip((request.PageNumber - 1) * request.PageSize)
+            .Take(request.PageSize)
+            .Select(n => new NotificationDto(
+                n.Id,
+                n.Title,
+                n.Message,
+                n.Type,
+                n.IsRead,
+                n.ReadAt,
+                n.ActionUrl,
+                n.Metadata,
+                n.CreatedAt
+            ));
+
+        logger.LogInformation("Retrieved {Count} notifications for user {UserId}",
+            notifications.Count(), request.UserId);
 
         return new GetUserNotificationsResponse(
-            notificationDtos,
+            notifications,
             unreadCount,
             request.PageNumber,
             request.PageSize

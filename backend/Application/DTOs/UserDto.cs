@@ -108,3 +108,4 @@ public record PendingInvitationDto(
     bool      IsUsed,
     DateTime? UsedAt
 );
+public record GetUserByIdQuery(Guid UserId) : IRequest<DetailedUserDto?>;

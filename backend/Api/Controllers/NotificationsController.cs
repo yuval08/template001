@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using IntranetStarter.Application.DTOs;
 
 namespace IntranetStarter.Api.Controllers;
 

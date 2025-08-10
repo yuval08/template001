@@ -1,5 +1,6 @@
 using FluentValidation;
 using IntranetStarter.Application.Common.Validation;
+using IntranetStarter.Application.DTOs;
 
 namespace IntranetStarter.Application.Queries.Validators;
 

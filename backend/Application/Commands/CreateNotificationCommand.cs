@@ -1,6 +1,7 @@
-using IntranetStarter.Application.Interfaces;
 using IntranetStarter.Domain.Entities;
+using IntranetStarter.Domain.Interfaces;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace IntranetStarter.Application.Commands;
 
@@ -13,8 +14,13 @@ public record CreateNotificationCommand(
     string? Metadata = null
 ) : IRequest<Guid>;
 
-public class CreateNotificationCommandHandler(INotificationRepository repository) : IRequestHandler<CreateNotificationCommand, Guid> {
+public class CreateNotificationCommandHandler(
+    IUnitOfWork unitOfWork,
+    ILogger<CreateNotificationCommandHandler> logger) : IRequestHandler<CreateNotificationCommand, Guid> {
+    
     public async Task<Guid> Handle(CreateNotificationCommand request, CancellationToken cancellationToken) {
+        logger.LogInformation("Creating notification for user {UserId}: {Title}", request.UserId, request.Title);
+        
         var notification = new Notification {
             UserId = request.UserId,
             Title = request.Title,
@@ -25,7 +31,12 @@ public class CreateNotificationCommandHandler(INotificationRepository repository
             IsRead = false
         };
 
-        var created = await repository.CreateAsync(notification, cancellationToken);
+        var repository = unitOfWork.Repository<Notification>();
+        var created = await repository.AddAsync(notification, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        
+        logger.LogInformation("Notification created with ID: {NotificationId}", created.Id);
+        
         return created.Id;
     }
 }

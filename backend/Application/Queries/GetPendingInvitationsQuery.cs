@@ -7,12 +7,6 @@ using Microsoft.Extensions.Logging;
 
 namespace IntranetStarter.Application.Queries;
 
-public record GetPendingInvitationsQuery(
-    int  PageNumber     = 1,
-    int  PageSize       = 10,
-    bool IncludeExpired = false
-) : IRequest<PendingInvitationsResponse>;
-
 public class GetPendingInvitationsQueryHandler(IUnitOfWork unitOfWork, ILogger<GetPendingInvitationsQueryHandler> logger) : IRequestHandler<GetPendingInvitationsQuery, PendingInvitationsResponse> {
     public async Task<PendingInvitationsResponse> Handle(GetPendingInvitationsQuery request, CancellationToken cancellationToken) {
         logger.LogInformation("Fetching pending invitations - Page: {PageNumber}, PageSize: {PageSize}, IncludeExpired: {IncludeExpired}",
