@@ -31,15 +31,18 @@ export const useNotifications = (
     queryKey: [NOTIFICATION_QUERY_KEY, pagination, filters],
     queryFn: () => notificationService.getNotifications(pagination, filters),
     enabled: isAuthenticated, // Only run when authenticated
-    refetchInterval: 30000, // Refetch every 30 seconds
+    refetchInterval: 60000, // Refetch every 60 seconds instead of 30
+    staleTime: 30000, // Consider data stale after 30 seconds
+    gcTime: 5 * 60 * 1000, // Cache for 5 minutes (formerly cacheTime)
   });
 
-  // Fetch unread count
+  // Fetch unread count - only if we don't have notification data
   const { data: unreadData } = useQuery({
     queryKey: [UNREAD_COUNT_QUERY_KEY],
     queryFn: () => notificationService.getUnreadCount(),
-    enabled: isAuthenticated, // Only run when authenticated
-    refetchInterval: 30000,
+    enabled: isAuthenticated && !data, // Only fetch if we don't have notification data
+    refetchInterval: 60000, // Refetch every 60 seconds
+    staleTime: 30000, // Consider data stale after 30 seconds
   });
 
   // Update persistent items in store when data changes
@@ -118,7 +121,9 @@ export const useUnreadNotificationCount = () => {
     queryKey: [UNREAD_COUNT_QUERY_KEY],
     queryFn: () => notificationService.getUnreadCount(),
     enabled: isAuthenticated, // Only run when authenticated
-    refetchInterval: 30000,
+    refetchInterval: 60000, // Refetch every 60 seconds
+    staleTime: 30000, // Consider data stale after 30 seconds
+    gcTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
   return {

@@ -68,9 +68,8 @@ export const NotificationInbox: React.FC<NotificationInboxProps> = ({ className 
 
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
-    if (open && isAuthenticated) {
-      refetch();
-    }
+    // Don't refetch on every open - React Query will handle staleness
+    // Only refetch if data is older than staleTime (30 seconds)
   };
 
   // Don't render the notification bell if not authenticated

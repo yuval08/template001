@@ -20,15 +20,27 @@ class SignalRService {
   private reconnectAttempts = 0;
   private maxReconnectAttempts = 5;
   private reconnectDelay = 5000;
+  private isInitializing = false;
+  private connectionPromise: Promise<void> | null = null;
+  private hasShownConnectedToast = false;
 
   constructor() {
     this.hubUrl = import.meta.env.VITE_SIGNALR_HUB_URL || 'http://localhost:5000/hubs/notifications';
   }
 
   async startConnection(): Promise<void> {
-    // Prevent starting if already connected or connecting
-    if (this.connection?.state === HubConnectionState.Connected || 
-        this.connection?.state === HubConnectionState.Connecting) {
+    // If we're already connected, just return
+    if (this.connection?.state === HubConnectionState.Connected) {
+      return;
+    }
+
+    // If we're currently connecting, return the existing promise
+    if (this.isInitializing && this.connectionPromise) {
+      return this.connectionPromise;
+    }
+
+    // Prevent multiple simultaneous connection attempts
+    if (this.connection?.state === HubConnectionState.Connecting) {
       return;
     }
 
@@ -38,6 +50,21 @@ class SignalRService {
       return;
     }
 
+    // Mark that we're initializing
+    this.isInitializing = true;
+
+    // Create and store the connection promise
+    this.connectionPromise = this.initializeConnection(user);
+    
+    try {
+      await this.connectionPromise;
+    } finally {
+      this.isInitializing = false;
+      this.connectionPromise = null;
+    }
+  }
+
+  private async initializeConnection(user: any): Promise<void> {
     try {
       this.connection = new HubConnectionBuilder()
         .withUrl(this.hubUrl, {
@@ -60,6 +87,7 @@ class SignalRService {
       await this.connection.start();
       console.log('SignalR connection established');
       this.reconnectAttempts = 0;
+      this.hasShownConnectedToast = false; // Reset for next connection
 
       // Join user-specific group  
       await this.joinUserGroup(user.id as UserId);
@@ -67,6 +95,7 @@ class SignalRService {
     } catch (error) {
       console.error('Error starting SignalR connection:', error);
       this.handleReconnection();
+      throw error;
     }
   }
 
@@ -159,12 +188,21 @@ class SignalRService {
       useNotificationStore.getState().addFromSignalR(notification);
     });
 
-    // Add to toast notifications for backward compatibility
-    const toastType = notification.type === 'error' ? 'error' : 
-                     notification.type === 'warning' ? 'warning' : 
-                     notification.type === 'success' ? 'success' : 'info';
-                     
-    toast[toastType]({ title: notification.title, description: notification.message });
+    // Only show toast if this is the first time we're showing connected message
+    const isConnectedMessage = notification.message?.toLowerCase().includes('connected to notifications');
+    
+    if (!isConnectedMessage || !this.hasShownConnectedToast) {
+      if (isConnectedMessage) {
+        this.hasShownConnectedToast = true;
+      }
+      
+      // Add to toast notifications for backward compatibility
+      const toastType = notification.type === 'error' ? 'error' : 
+                       notification.type === 'warning' ? 'warning' : 
+                       notification.type === 'success' ? 'success' : 'info';
+                       
+      toast[toastType]({ title: notification.title, description: notification.message });
+    }
 
     // Emit custom event for notifications
     const event = new CustomEvent('signalr:notification', {
@@ -206,7 +244,8 @@ class SignalRService {
         await this.connection.invoke('JoinUserGroup', String(userId));
         console.log(`Joined user group: ${userId}`);
       } catch (error) {
-        console.error('Error joining user group:', error);
+        // Silently handle error - the backend already adds user to group on connection
+        console.debug('JoinUserGroup error (may be expected):', error);
       }
     }
   }

@@ -9,7 +9,7 @@ import { ErrorBoundary } from '@/components/error/ErrorBoundary';
 import { errorHandler, createErrorHandler } from '@/utils/errorHandler';
 import { StoreProvider } from '@/stores/providers/StoreProvider';
 
-// Enhanced query client with error handling
+// Enhanced query client with error handling and optimized settings
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -24,7 +24,10 @@ const queryClient = new QueryClient({
         return failureCount < 2;
       },
       refetchOnWindowFocus: false,
-      staleTime: 5 * 60 * 1000, // 5 minutes
+      refetchOnMount: 'always', // Always check if data needs refresh on mount
+      staleTime: 5 * 60 * 1000, // 5 minutes - data is fresh for this duration
+      gcTime: 10 * 60 * 1000, // 10 minutes - keep cache for this duration (formerly cacheTime)
+      networkMode: 'offlineFirst', // Use cache first, then network
     },
     mutations: {
       retry: (failureCount, error: any) => {

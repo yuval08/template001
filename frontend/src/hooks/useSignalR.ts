@@ -10,22 +10,29 @@ export const useSignalR = () => {
 
   useEffect(() => {
     let mounted = true;
+    let connectionTimeout: NodeJS.Timeout;
 
     const initializeConnection = async () => {
       if (isAuthenticated && user && mounted) {
-        try {
-          await signalRService.startConnection();
-        } catch (error) {
-          console.error('Failed to start SignalR connection:', error);
-        }
+        // Add a small delay to handle React StrictMode double-mounting
+        connectionTimeout = setTimeout(async () => {
+          if (mounted) {
+            try {
+              await signalRService.startConnection();
+            } catch (error) {
+              console.error('Failed to start SignalR connection:', error);
+            }
+          }
+        }, 100);
       }
     };
 
     const cleanupConnection = async () => {
-      try {
-        await signalRService.stopConnection();
-      } catch (error) {
-        console.error('Error stopping SignalR connection:', error);
+      clearTimeout(connectionTimeout);
+      // Only stop connection if component is truly unmounting (not StrictMode re-render)
+      if (!mounted) {
+        // Don't stop the connection immediately - it might be a StrictMode re-render
+        // The SignalR service will handle reconnection if needed
       }
     };
 

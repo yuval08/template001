@@ -15,13 +15,13 @@ public class NotificationHub(ILogger<NotificationHub> logger) : Hub {
         string userRole = Context.User?.FindFirst("role")?.Value ?? "Employee";
         await Groups.AddToGroupAsync(Context.ConnectionId, $"Role:{userRole}");
 
-        // Send welcome notification
-        await Clients.Caller.SendAsync("ReceiveNotification", new {
-            Message   = "Connected to notification system",
-            Type      = "success",
-            Timestamp = DateTime.UtcNow,
-            Id        = Guid.NewGuid()
-        });
+        // Add user to their personal group for targeted notifications
+        if (!string.IsNullOrEmpty(userId)) {
+            await Groups.AddToGroupAsync(Context.ConnectionId, $"User:{userId}");
+        }
+
+        // Don't send automatic notification on connection - it causes duplicate toasts
+        // The frontend will handle connection status if needed
 
         await base.OnConnectedAsync();
     }
@@ -40,30 +40,40 @@ public class NotificationHub(ILogger<NotificationHub> logger) : Hub {
     }
 
     /// <summary>
+    /// Join a specific user group to receive user-specific notifications
+    /// </summary>
+    /// <param name="userId">User ID to join</param>
+    public async Task JoinUserGroup(string userId) {
+        if (!string.IsNullOrEmpty(userId)) {
+            await Groups.AddToGroupAsync(Context.ConnectionId, $"User:{userId}");
+            logger.LogInformation("User {UserId} joined their personal notification group", userId);
+        }
+    }
+
+    /// <summary>
+    /// Leave a specific user group
+    /// </summary>
+    /// <param name="userId">User ID to leave</param>
+    public async Task LeaveUserGroup(string userId) {
+        if (!string.IsNullOrEmpty(userId)) {
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"User:{userId}");
+            logger.LogInformation("User {UserId} left their personal notification group", userId);
+        }
+    }
+
+    /// <summary>
     /// Join a specific project group to receive project-related notifications
     /// </summary>
     /// <param name="projectId">Project ID to join</param>
     public async Task JoinProjectGroup(string projectId) {
         if (Guid.TryParse(projectId, out var projectGuid)) {
             await Groups.AddToGroupAsync(Context.ConnectionId, $"Project:{projectId}");
-
-            await Clients.Caller.SendAsync("ReceiveNotification", new {
-                Message   = $"Joined project notifications for {projectId}",
-                Type      = "info",
-                Timestamp = DateTime.UtcNow,
-                Id        = Guid.NewGuid()
-            });
-
             logger.LogInformation("User {UserId} joined project group: {ProjectId}",
                 Context.UserIdentifier, projectId);
         }
         else {
-            await Clients.Caller.SendAsync("ReceiveNotification", new {
-                Message   = "Invalid project ID",
-                Type      = "error",
-                Timestamp = DateTime.UtcNow,
-                Id        = Guid.NewGuid()
-            });
+            logger.LogWarning("User {UserId} tried to join project with invalid ID: {ProjectId}",
+                Context.UserIdentifier, projectId);
         }
     }
 
@@ -74,14 +84,6 @@ public class NotificationHub(ILogger<NotificationHub> logger) : Hub {
     public async Task LeaveProjectGroup(string projectId) {
         if (Guid.TryParse(projectId, out var projectGuid)) {
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"Project:{projectId}");
-
-            await Clients.Caller.SendAsync("ReceiveNotification", new {
-                Message   = $"Left project notifications for {projectId}",
-                Type      = "info",
-                Timestamp = DateTime.UtcNow,
-                Id        = Guid.NewGuid()
-            });
-
             logger.LogInformation("User {UserId} left project group: {ProjectId}",
                 Context.UserIdentifier, projectId);
         }
