@@ -59,29 +59,38 @@ export const useNotifications = (
 
   // Mark as read mutation
   const markAsReadMutation = useMutation({
-    mutationFn: notificationService.markAsRead,
+    mutationFn: (notificationId: string) => notificationService.markAsRead(notificationId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [NOTIFICATION_QUERY_KEY] });
       queryClient.invalidateQueries({ queryKey: [UNREAD_COUNT_QUERY_KEY] });
     },
+    onError: (error) => {
+      console.error('Failed to mark notification as read:', error);
+    }
   });
 
   // Mark all as read mutation
   const markAllAsReadMutation = useMutation({
-    mutationFn: notificationService.markAllAsRead,
+    mutationFn: () => notificationService.markAllAsRead(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [NOTIFICATION_QUERY_KEY] });
       queryClient.invalidateQueries({ queryKey: [UNREAD_COUNT_QUERY_KEY] });
     },
+    onError: (error) => {
+      console.error('Failed to mark all notifications as read:', error);
+    }
   });
 
   // Delete notification mutation
   const deleteNotificationMutation = useMutation({
-    mutationFn: notificationService.deleteNotification,
+    mutationFn: (notificationId: string) => notificationService.deleteNotification(notificationId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [NOTIFICATION_QUERY_KEY] });
       queryClient.invalidateQueries({ queryKey: [UNREAD_COUNT_QUERY_KEY] });
     },
+    onError: (error) => {
+      console.error('Failed to delete notification:', error);
+    }
   });
 
   return {

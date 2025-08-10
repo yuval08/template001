@@ -14,6 +14,8 @@ import Dialogs from '@/pages/Dialogs';
 import CardsAndBadges from '@/pages/CardsAndBadges';
 import Inputs from '@/pages/Inputs';
 import UIShowcase from '@/pages/UIShowcase';
+import Notifications from '@/pages/Notifications';
+import TestNotifications from '@/pages/TestNotifications';
 
 export const router = createBrowserRouter([
   {
@@ -87,6 +89,14 @@ export const router = createBrowserRouter([
       {
         path: 'ui-showcase',
         element: <UIShowcase />,
+      },
+      {
+        path: 'notifications',
+        element: <Notifications />,
+      },
+      {
+        path: 'test-notifications',
+        element: <TestNotifications />,
       },
     ],
   },

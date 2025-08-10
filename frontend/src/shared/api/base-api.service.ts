@@ -149,11 +149,22 @@ export class BaseApiService {
       throw error;
     }
 
+    // Handle 204 No Content responses
+    if (processedResponse.status === 204) {
+      return undefined as unknown as T;
+    }
+
+    // Handle empty response body
+    const text = await processedResponse.text();
+    if (!text) {
+      return undefined as unknown as T;
+    }
+
     try {
-      return await processedResponse.json();
+      return JSON.parse(text);
     } catch (parseError) {
-      // Handle cases where response is not JSON
-      return processedResponse as unknown as T;
+      // If response is not JSON, return the text
+      return text as unknown as T;
     }
   }
 

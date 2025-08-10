@@ -13,7 +13,9 @@ import {
   MessageSquare,
   CreditCard,
   Type,
-  Palette
+  Palette,
+  BellRing,
+  TestTube
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/utils/cn';
@@ -23,7 +25,15 @@ interface SidebarProps {
   onToggle: () => void;
 }
 
-const navigation = [
+interface NavigationItem {
+  name: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  roles?: string[];
+  isDev?: boolean;
+}
+
+const navigation: NavigationItem[] = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Forms', href: '/forms', icon: ClipboardList },
   { name: 'Tables', href: '/tables', icon: Table },
@@ -35,15 +45,23 @@ const navigation = [
   { name: 'Inputs', href: '/inputs', icon: Type },
   { name: 'Users', href: '/users', icon: Users, roles: ['Admin'] },
   { name: 'Reports', href: '/reports', icon: FileText },
+  { name: 'Notifications', href: '/notifications', icon: BellRing },
+  { name: 'Test Notifications', href: '/test-notifications', icon: TestTube, isDev: true },
 ];
 
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
   const location = useLocation();
   const { user, signOut, hasAnyRole } = useAuth();
 
-  const filteredNavigation = navigation.filter(item => 
-    !item.roles || hasAnyRole(item.roles)
-  );
+  const isDevelopment = import.meta.env.DEV;
+  
+  const filteredNavigation = navigation.filter(item => {
+    // Check role permissions
+    if (item.roles && !hasAnyRole(item.roles)) return false;
+    // Check if it's a dev-only item
+    if (item.isDev && !isDevelopment) return false;
+    return true;
+  });
 
   return (
     <>

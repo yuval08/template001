@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Bell,
   Check,
@@ -21,6 +22,16 @@ import {
 } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { useNotifications } from '@/entities/notification';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -30,6 +41,9 @@ interface NotificationInboxProps {
 
 export const NotificationInbox: React.FC<NotificationInboxProps> = ({ className }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [notificationToDelete, setNotificationToDelete] = useState<string | null>(null);
+  const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const {
     notifications,
@@ -55,15 +69,38 @@ export const NotificationInbox: React.FC<NotificationInboxProps> = ({ className 
   };
 
   const handleMarkAsRead = async (id: string) => {
-    await markAsRead(id);
+    try {
+      await markAsRead(id);
+    } catch (error) {
+      console.error('Failed to mark notification as read:', error);
+    }
   };
 
   const handleMarkAllAsRead = async () => {
-    await markAllAsRead();
+    try {
+      await markAllAsRead();
+    } catch (error) {
+      console.error('Failed to mark all notifications as read:', error);
+    }
   };
 
-  const handleDelete = async (id: string) => {
-    await deleteNotification(id);
+  const handleDeleteClick = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setNotificationToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (notificationToDelete) {
+      try {
+        await deleteNotification(notificationToDelete);
+      } catch (error) {
+        console.error('Failed to delete notification:', error);
+      } finally {
+        setNotificationToDelete(null);
+        setDeleteDialogOpen(false);
+      }
+    }
   };
 
   const handleOpenChange = (open: boolean) => {
@@ -78,6 +115,7 @@ export const NotificationInbox: React.FC<NotificationInboxProps> = ({ className 
   }
 
   return (
+    <>
     <Popover open={isOpen} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
         <Button
@@ -152,8 +190,12 @@ export const NotificationInbox: React.FC<NotificationInboxProps> = ({ className 
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => handleMarkAsRead(notification.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleMarkAsRead(notification.id);
+                          }}
                           className="h-8 w-8 p-0"
+                          title="Mark as read"
                         >
                           <Check className="h-4 w-4" />
                         </Button>
@@ -161,8 +203,9 @@ export const NotificationInbox: React.FC<NotificationInboxProps> = ({ className 
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleDelete(notification.id)}
+                        onClick={(e) => handleDeleteClick(notification.id, e)}
                         className="h-8 w-8 p-0 text-gray-500 hover:text-red-500"
+                        title="Delete notification"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -173,11 +216,18 @@ export const NotificationInbox: React.FC<NotificationInboxProps> = ({ className 
                       variant="link"
                       size="sm"
                       className="mt-2 p-0 h-auto text-blue-600 dark:text-blue-400"
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         if (!notification.isRead) {
                           handleMarkAsRead(notification.id);
                         }
-                        window.location.href = notification.actionUrl!;
+                        // Handle both internal and external URLs
+                        if (notification.actionUrl!.startsWith('http')) {
+                          window.open(notification.actionUrl!, '_blank');
+                        } else {
+                          setIsOpen(false);
+                          navigate(notification.actionUrl!);
+                        }
                       }}
                     >
                       View details →
@@ -199,7 +249,7 @@ export const NotificationInbox: React.FC<NotificationInboxProps> = ({ className 
                 className="w-full text-sm"
                 onClick={() => {
                   setIsOpen(false);
-                  // Could navigate to a full notifications page if needed
+                  navigate('/notifications');
                 }}
               >
                 View all notifications
@@ -209,5 +259,25 @@ export const NotificationInbox: React.FC<NotificationInboxProps> = ({ className 
         )}
       </PopoverContent>
     </Popover>
+
+    <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete Notification</AlertDialogTitle>
+          <AlertDialogDescription>
+            Are you sure you want to delete this notification? This action cannot be undone.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel onClick={() => setNotificationToDelete(null)}>
+            Cancel
+          </AlertDialogCancel>
+          <AlertDialogAction onClick={handleConfirmDelete}>
+            Delete
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+    </>
   );
 };

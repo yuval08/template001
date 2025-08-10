@@ -40,7 +40,7 @@ export class NotificationService extends BaseApiService {
    * Mark notification as read
    */
   async markAsRead(notificationId: string): Promise<void> {
-    return this.put<void>(`${this.entityPath}/${notificationId}/read`);
+    await this.put<void>(`${this.entityPath}/${notificationId}/read`);
   }
 
   /**
@@ -55,7 +55,7 @@ export class NotificationService extends BaseApiService {
    * Delete a notification
    */
   async deleteNotification(notificationId: string): Promise<void> {
-    return this.delete<void>(`${this.entityPath}/${notificationId}`);
+    await this.delete<void>(`${this.entityPath}/${notificationId}`);
   }
 
   /**
