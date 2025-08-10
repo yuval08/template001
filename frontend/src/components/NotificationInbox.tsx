@@ -55,14 +55,20 @@ export const NotificationInbox: React.FC<NotificationInboxProps> = ({ className 
     refetch
   } = useNotifications();
 
-  const getNotificationIcon = (type: string) => {
-    switch (type) {
-      case 'success':
+  const getNotificationIcon = (type: number | string) => {
+    // Handle both numeric and string types for compatibility
+    const typeNum = typeof type === 'string' ? 
+      (type === 'success' ? 1 : type === 'warning' ? 2 : type === 'error' ? 3 : 0) : 
+      type;
+    
+    switch (typeNum) {
+      case 1: // Success
         return <CheckCircle className="h-4 w-4 text-green-500" />;
-      case 'error':
+      case 3: // Error
         return <XCircle className="h-4 w-4 text-red-500" />;
-      case 'warning':
+      case 2: // Warning
         return <AlertCircle className="h-4 w-4 text-yellow-500" />;
+      case 0: // Info
       default:
         return <Info className="h-4 w-4 text-blue-500" />;
     }

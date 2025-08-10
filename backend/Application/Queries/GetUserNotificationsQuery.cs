@@ -8,7 +8,8 @@ public record GetUserNotificationsQuery(
     Guid UserId,
     int PageNumber = 1,
     int PageSize = 20,
-    bool? IsRead = null
+    bool? IsRead = null,
+    NotificationType? Type = null
 ) : IRequest<GetUserNotificationsResponse>;
 
 public record GetUserNotificationsResponse(
@@ -43,6 +44,7 @@ public class GetUserNotificationsQueryHandler : IRequestHandler<GetUserNotificat
             request.PageNumber,
             request.PageSize,
             request.IsRead,
+            request.Type,
             cancellationToken
         );
 

@@ -188,6 +188,14 @@ class SignalRService {
       useNotificationStore.getState().addFromSignalR(notification);
     });
 
+    // Invalidate React Query cache to refresh notification list and count
+    import('../App').then(({ queryClient }) => {
+      if (queryClient) {
+        queryClient.invalidateQueries({ queryKey: ['notifications'] });
+        queryClient.invalidateQueries({ queryKey: ['notifications-unread-count'] });
+      }
+    });
+
     // Only show toast if this is the first time we're showing connected message
     const isConnectedMessage = notification.message?.toLowerCase().includes('connected to notifications');
     
@@ -197,9 +205,20 @@ class SignalRService {
       }
       
       // Add to toast notifications for backward compatibility
-      const toastType = notification.type === 'error' ? 'error' : 
-                       notification.type === 'warning' ? 'warning' : 
-                       notification.type === 'success' ? 'success' : 'info';
+      // Handle both string and numeric types
+      let toastType: 'error' | 'warning' | 'success' | 'info' = 'info';
+      if (typeof notification.type === 'number') {
+        switch(notification.type) {
+          case 3: toastType = 'error'; break;
+          case 2: toastType = 'warning'; break;
+          case 1: toastType = 'success'; break;
+          default: toastType = 'info'; break;
+        }
+      } else {
+        toastType = notification.type === 'error' ? 'error' : 
+                     notification.type === 'warning' ? 'warning' : 
+                     notification.type === 'success' ? 'success' : 'info';
+      }
                        
       toast[toastType]({ title: notification.title, description: notification.message });
     }

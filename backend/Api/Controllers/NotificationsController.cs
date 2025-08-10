@@ -21,12 +21,13 @@ public class NotificationsController(
     public async Task<ActionResult<GetUserNotificationsResponse>> GetNotifications(
         [FromQuery] int pageNumber = 1,
         [FromQuery] int pageSize = 20,
-        [FromQuery] bool? isRead = null) {
+        [FromQuery] bool? isRead = null,
+        [FromQuery] NotificationType? type = null) {
         
         var userId = await GetUserIdAsync();
         if (userId == null) return Unauthorized();
 
-        var query = new GetUserNotificationsQuery(userId.Value, pageNumber, pageSize, isRead);
+        var query = new GetUserNotificationsQuery(userId.Value, pageNumber, pageSize, isRead, type);
         var result = await mediator.Send(query);
         return Ok(result);
     }

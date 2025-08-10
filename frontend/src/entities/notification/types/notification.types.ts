@@ -12,10 +12,10 @@ export interface Notification {
 }
 
 export enum NotificationType {
-  Info = 1,
-  Success = 2,
-  Warning = 3,
-  Error = 4
+  Info = 0,
+  Success = 1,
+  Warning = 2,
+  Error = 3
 }
 
 export interface NotificationFilters {

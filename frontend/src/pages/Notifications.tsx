@@ -38,7 +38,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { useNotifications } from '@/entities/notification';
+import { useNotifications, NotificationType } from '@/entities/notification';
 
 type NotificationTypeFilter = 'all' | 'info' | 'success' | 'warning' | 'error';
 type NotificationReadFilter = 'all' | 'unread' | 'read';
@@ -52,8 +52,19 @@ export default function Notifications() {
   const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
   const [notificationToDelete, setNotificationToDelete] = useState<string | null>(null);
   
+  // Convert string filter to enum value
+  const getTypeEnumValue = (type: NotificationTypeFilter): NotificationType | undefined => {
+    switch (type) {
+      case 'info': return NotificationType.Info;
+      case 'success': return NotificationType.Success;
+      case 'warning': return NotificationType.Warning;
+      case 'error': return NotificationType.Error;
+      default: return undefined;
+    }
+  };
+  
   const filters = {
-    type: typeFilter === 'all' ? undefined : typeFilter,
+    type: getTypeEnumValue(typeFilter),
     isRead: readFilter === 'all' ? undefined : readFilter === 'read'
   };
   
@@ -70,27 +81,39 @@ export default function Notifications() {
     isDeleting
   } = useNotifications({ pageNumber: 1, pageSize: 50 }, filters);
 
-  const getNotificationIcon = (type: string) => {
-    switch (type) {
-      case 'success':
+  const getNotificationIcon = (type: number | string) => {
+    // Handle both numeric and string types for compatibility
+    const typeNum = typeof type === 'string' ? 
+      (type === 'success' ? 1 : type === 'warning' ? 2 : type === 'error' ? 3 : 0) : 
+      type;
+    
+    switch (typeNum) {
+      case 1: // Success
         return <CheckCircle className="h-5 w-5 text-green-500" />;
-      case 'error':
+      case 3: // Error
         return <XCircle className="h-5 w-5 text-red-500" />;
-      case 'warning':
+      case 2: // Warning
         return <AlertCircle className="h-5 w-5 text-yellow-500" />;
+      case 0: // Info
       default:
         return <Info className="h-5 w-5 text-blue-500" />;
     }
   };
 
-  const getNotificationBadge = (type: string) => {
-    switch (type) {
-      case 'success':
+  const getNotificationBadge = (type: number | string) => {
+    // Handle both numeric and string types for compatibility
+    const typeNum = typeof type === 'string' ? 
+      (type === 'success' ? 1 : type === 'warning' ? 2 : type === 'error' ? 3 : 0) : 
+      type;
+    
+    switch (typeNum) {
+      case 1: // Success
         return <Badge className="bg-green-100 text-green-800">Success</Badge>;
-      case 'error':
+      case 3: // Error
         return <Badge className="bg-red-100 text-red-800">Error</Badge>;
-      case 'warning':
+      case 2: // Warning
         return <Badge className="bg-yellow-100 text-yellow-800">Warning</Badge>;
+      case 0: // Info
       default:
         return <Badge className="bg-blue-100 text-blue-800">Info</Badge>;
     }
@@ -303,14 +326,14 @@ export default function Notifications() {
                   )}
                   onClick={() => handleViewDetails(notification)}
                 >
-                  <div className="flex items-start gap-4">
+                  <div className="flex items-center gap-4">
                     <Checkbox
                       checked={selectedIds.has(notification.id)}
                       onCheckedChange={() => handleSelectOne(notification.id)}
                       onClick={(e) => e.stopPropagation()}
                     />
                     
-                    <div className="mt-1">
+                    <div>
                       {getNotificationIcon(notification.type)}
                     </div>
                     

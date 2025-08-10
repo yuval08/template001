@@ -58,6 +58,11 @@ public class CreateNotificationCommandValidator : AbstractValidator<CreateNotifi
 
     private bool BeAValidUrl(string? url) {
         if (string.IsNullOrWhiteSpace(url)) return true;
+        
+        // Allow relative URLs for internal navigation (e.g., /dashboard, /users)
+        if (url.StartsWith("/")) return true;
+        
+        // Check for absolute URLs
         return Uri.TryCreate(url, UriKind.Absolute, out var result) &&
                (result.Scheme == Uri.UriSchemeHttp || result.Scheme == Uri.UriSchemeHttps);
     }

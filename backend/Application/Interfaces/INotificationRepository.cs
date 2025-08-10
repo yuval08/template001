@@ -10,6 +10,7 @@ public interface INotificationRepository {
         int pageNumber = 1, 
         int pageSize = 20, 
         bool? isRead = null,
+        NotificationType? type = null,
         CancellationToken cancellationToken = default);
     Task<int> GetUnreadCountAsync(Guid userId, CancellationToken cancellationToken = default);
     Task<bool> MarkAsReadAsync(Guid id, CancellationToken cancellationToken = default);

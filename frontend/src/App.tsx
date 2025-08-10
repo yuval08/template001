@@ -10,7 +10,7 @@ import { errorHandler, createErrorHandler } from '@/utils/errorHandler';
 import { StoreProvider } from '@/stores/providers/StoreProvider';
 
 // Enhanced query client with error handling and optimized settings
-const queryClient = new QueryClient({
+export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: (failureCount, error: any) => {

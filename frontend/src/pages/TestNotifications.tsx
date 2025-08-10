@@ -61,14 +61,27 @@ export default function TestNotifications() {
   const handleCreateNotification = async (type: 'info' | 'success' | 'warning' | 'error') => {
     setIsLoading(true);
     try {
-      const endpoint = {
-        'info': () => testApi.createTestNotification({ type: 0 }),
-        'success': () => testApi.createSuccessNotification(),
-        'warning': () => testApi.createWarningNotification(),
-        'error': () => testApi.createErrorNotification()
-      };
+      let result;
+      switch(type) {
+        case 'success':
+          result = await testApi.createSuccessNotification();
+          break;
+        case 'warning':
+          result = await testApi.createWarningNotification();
+          break;
+        case 'error':
+          result = await testApi.createErrorNotification();
+          break;
+        case 'info':
+        default:
+          result = await testApi.createTestNotification({ 
+            type: 0, // Info
+            title: 'Test Info Notification',
+            message: `This is a test info notification created at ${new Date().toLocaleTimeString()}`
+          });
+          break;
+      }
       
-      const result = await endpoint[type]();
       toast.success({ 
         title: 'Notification created', 
         description: result.message || `Test ${type} notification created` 
