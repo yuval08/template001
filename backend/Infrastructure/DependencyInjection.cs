@@ -1,9 +1,11 @@
 using Hangfire;
 using Hangfire.PostgreSql;
+using IntranetStarter.Application.Interfaces;
 using IntranetStarter.Application.Services;
 using IntranetStarter.Domain.Interfaces;
 using IntranetStarter.Infrastructure.BackgroundJobs;
 using IntranetStarter.Infrastructure.Data;
+using IntranetStarter.Infrastructure.Repositories;
 using IntranetStarter.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -22,6 +24,7 @@ public static class DependencyInjection {
         // Repository and Unit of Work
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+        services.AddScoped<INotificationRepository, NotificationRepository>();
 
         // Data Seeding
         services.AddScoped<IDataSeeder, DataSeeder>();

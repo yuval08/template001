@@ -9,6 +9,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public new DbSet<User>              Users              { get; set; }
     public     DbSet<Project>           Projects           { get; set; }
     public     DbSet<PendingInvitation> PendingInvitations { get; set; }
+    public     DbSet<Notification>      Notifications      { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         base.OnModelCreating(modelBuilder);
@@ -72,6 +73,27 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             entity.HasOne(e => e.InvitedBy)
                 .WithMany()
                 .HasForeignKey(e => e.InvitedById)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        // Configure Notification entity
+        modelBuilder.Entity<Notification>(entity => {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.UserId).IsRequired();
+            entity.Property(e => e.Title).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Message).IsRequired().HasMaxLength(1000);
+            entity.Property(e => e.Type).IsRequired();
+            entity.Property(e => e.IsRead).IsRequired();
+            entity.Property(e => e.ActionUrl).HasMaxLength(500);
+            entity.Property(e => e.Metadata).HasMaxLength(2000);
+
+            entity.HasIndex(e => new { e.UserId, e.IsRead });
+            entity.HasIndex(e => e.CreatedAt);
+
+            // Configure relationship with User
+            entity.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 

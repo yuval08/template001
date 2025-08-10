@@ -154,7 +154,12 @@ class SignalRService {
   }
 
   private handleNotification(notification: NotificationMessage): void {
-    // Add to toast notifications
+    // Import the notification store dynamically to avoid circular dependencies
+    import('../stores/core/notification.store').then(({ useNotificationStore }) => {
+      useNotificationStore.getState().addFromSignalR(notification);
+    });
+
+    // Add to toast notifications for backward compatibility
     const toastType = notification.type === 'error' ? 'error' : 
                      notification.type === 'warning' ? 'warning' : 
                      notification.type === 'success' ? 'success' : 'info';

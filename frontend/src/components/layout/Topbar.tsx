@@ -1,7 +1,6 @@
 import React from 'react';
-import { Menu, Bell, Moon, Sun, Monitor } from 'lucide-react';
+import { Menu, Moon, Sun, Monitor } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
-import { useToastStore } from '@/stores/toastStore';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -9,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { NotificationInbox } from '@/components/NotificationInbox';
 
 interface TopbarProps {
   onMenuToggle: () => void;
@@ -16,9 +16,6 @@ interface TopbarProps {
 
 export const Topbar: React.FC<TopbarProps> = ({ onMenuToggle }) => {
   const { theme, setTheme } = useTheme();
-  const items = useToastStore((state) => state.items);
-
-  const unreadNotifications = items.filter(item => item.type === 'info').length;
 
   return (
     <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 h-16">
@@ -61,14 +58,7 @@ export const Topbar: React.FC<TopbarProps> = ({ onMenuToggle }) => {
           </DropdownMenu>
 
           {/* Notifications */}
-          <Button variant="ghost" size="sm" className="p-2 relative">
-            <Bell className="h-5 w-5" />
-            {unreadNotifications > 0 && (
-              <span className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                {unreadNotifications}
-              </span>
-            )}
-          </Button>
+          <NotificationInbox />
         </div>
       </div>
     </header>

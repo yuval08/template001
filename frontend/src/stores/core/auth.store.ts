@@ -52,10 +52,10 @@ export const useAuthStore = create<AuthStore>()(
       }),
       {
         name: 'auth-storage',
-        version: 1,
+        version: 2, // Bump version to clear old persisted state
         partialize: (state) => ({
           user: state.user,
-          isAuthenticated: state.isAuthenticated,
+          // Don't persist isAuthenticated - derive it from user
           authConfig: state.authConfig,
         }),
       }
