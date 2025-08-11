@@ -2,12 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ResponsiveProjectView } from '@/components/projects/ResponsiveProjectView';
 import { useProjects, Project } from '@/entities/project';
+import type { SortingState, PaginationState, Updater } from '@tanstack/react-table';
 import { debounce } from 'lodash';
-
-type SortingState = Array<{
-  id: string;
-  desc: boolean;
-}>;
 
 const Tables: React.FC = () => {
   // Table state - default sort by name
@@ -17,7 +13,7 @@ const Tables: React.FC = () => {
   const [searchInput, setSearchInput] = useState(''); // For the input field
   const [globalFilter, setGlobalFilter] = useState(''); // For the actual API call
   const [statusFilter, setStatusFilter] = useState<string>();
-  const [pagination, setPagination] = useState({
+  const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
   });
@@ -75,9 +71,13 @@ const Tables: React.FC = () => {
     setSearchInput(filter);
   };
 
-  const handleSortingChange = (newSorting: SortingState) => {
-    setSorting(newSorting);
+  const handleSortingChange = (updaterOrValue: Updater<SortingState>) => {
+    setSorting(updaterOrValue);
     setPagination(prev => ({ ...prev, pageIndex: 0 }));
+  };
+
+  const handlePaginationChange = (updaterOrValue: Updater<PaginationState>) => {
+    setPagination(updaterOrValue);
   };
 
   const handleStatusFilterChange = (status: string | undefined) => {
@@ -137,7 +137,7 @@ const Tables: React.FC = () => {
             globalFilter={searchInput}
             statusFilter={statusFilter}
             hasActiveFilters={hasActiveFilters}
-            onPaginationChange={setPagination}
+            onPaginationChange={handlePaginationChange}
             onSortingChange={handleSortingChange}
             onGlobalFilterChange={handleGlobalFilterChange}
             onStatusFilterChange={handleStatusFilterChange}

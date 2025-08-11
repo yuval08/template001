@@ -97,7 +97,9 @@ public class AuthController(
                 user.JobTitle,
                 user.Avatar,
                 user.IsActive,
-                user.LastLoginAt
+                user.LastLoginAt,
+                user.CreatedAt,
+                user.UpdatedAt
             });
         }
         catch (Exception ex) {

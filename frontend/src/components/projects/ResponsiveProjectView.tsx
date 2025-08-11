@@ -1,7 +1,7 @@
 import React from 'react';
 import { ProjectTable } from './ProjectTable';
 import { ProjectList } from './ProjectList';
-import type { SortingState } from '@tanstack/react-table';
+import type { SortingState, PaginationState, OnChangeFn } from '@tanstack/react-table';
 import { Project } from '@/entities/project';
 
 export interface ResponsiveProjectViewProps {
@@ -9,16 +9,13 @@ export interface ResponsiveProjectViewProps {
   totalCount: number;
   loading: boolean;
   error?: Error | null;
-  pagination: {
-    pageIndex: number;
-    pageSize: number;
-  };
+  pagination: PaginationState;
   sorting: SortingState;
   globalFilter: string;
   statusFilter?: string;
   hasActiveFilters?: boolean;
-  onPaginationChange: (pagination: { pageIndex: number; pageSize: number }) => void;
-  onSortingChange: (sorting: SortingState) => void;
+  onPaginationChange: OnChangeFn<PaginationState>;
+  onSortingChange: OnChangeFn<SortingState>;
   onGlobalFilterChange: (filter: string) => void;
   onStatusFilterChange?: (status: string | undefined) => void;
   onClearFilters?: () => void;

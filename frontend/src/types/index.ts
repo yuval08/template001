@@ -69,4 +69,6 @@ export interface AuthUser {
   avatar?: string;
   isActive: boolean;
   lastLoginAt?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
