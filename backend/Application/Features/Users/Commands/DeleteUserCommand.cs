@@ -1,4 +1,3 @@
-using IntranetStarter.Application.Features.Users.Mappers;
 using IntranetStarter.Domain.Entities;
 using IntranetStarter.Domain.Interfaces;
 using MediatR;
