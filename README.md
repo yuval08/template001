@@ -4,7 +4,7 @@
 A comprehensive, enterprise-ready intranet solution designed for modern organizations, providing secure, scalable, and feature-rich internal collaboration and management platform.
 
 ## Technology Stack
-- **Backend**: .NET 8, ASP.NET Core
+- **Backend**: .NET 9, ASP.NET Core
 - **Frontend**: React 18, TypeScript
 - **Authentication**: OAuth2/OIDC (Azure AD, Google)
 - **Database**: PostgreSQL
