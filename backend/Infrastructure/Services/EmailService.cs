@@ -1,5 +1,6 @@
 using IntranetStarter.Application.Interfaces;
 using MailKit.Net.Smtp;
+using MailKit.Security;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MimeKit;
@@ -37,7 +38,14 @@ public class EmailService(IConfiguration configuration, ILogger<EmailService> lo
                 return;
             }
 
-            await client.ConnectAsync(host, port, useSsl, cancellationToken);
+            // Use STARTTLS for port 587, SSL for port 465
+            var secureSocketOptions = port switch {
+                587 => SecureSocketOptions.StartTls,
+                465 => SecureSocketOptions.SslOnConnect,
+                _ => useSsl ? SecureSocketOptions.Auto : SecureSocketOptions.None
+            };
+            
+            await client.ConnectAsync(host, port, secureSocketOptions, cancellationToken);
 
             if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password)) {
                 await client.AuthenticateAsync(username, password, cancellationToken);

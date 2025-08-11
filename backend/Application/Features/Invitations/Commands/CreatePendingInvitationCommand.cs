@@ -85,7 +85,7 @@ public class CreatePendingInvitationCommandHandler(
         var applicationUrl = configuration["ApplicationUrl"] ?? "http://localhost:3000";
         
         // Create the invitation link (this could include a token or invitation ID for validation)
-        var invitationLink = $"{applicationUrl}/accept-invitation?id={invitation.Id}";
+        var invitationLink = $"{applicationUrl}/login?accept-invitation=true&id={invitation.Id}";
         
         var subject = $"You've been invited to join {applicationName}";
         
