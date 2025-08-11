@@ -19,7 +19,8 @@ export const useNotifications = (
   const queryClient = useQueryClient();
   const { isAuthenticated } = useAuth();
   const setPersistentItems = useNotificationStore((state) => state.setPersistentItems);
-  const [unreadCount, setUnreadCount] = useState(0);
+  const storeUnreadCount = useNotificationStore((state) => state.unreadCount);
+  const setStoreUnreadCount = useNotificationStore((state) => state.setUnreadCount);
 
   // Fetch notifications
   const {
@@ -52,10 +53,15 @@ export const useNotifications = (
     }
   }, [data, setPersistentItems]);
 
-  // Update unread count
+  // Initialize store's unread count from API data on first load
   useEffect(() => {
-    setUnreadCount(unreadData ?? data?.totalUnread ?? 0);
-  }, [data, unreadData]);
+    if (data?.totalUnread !== undefined) {
+      // Only set initial value if store hasn't been set by SignalR yet
+      setStoreUnreadCount(data.totalUnread);
+    } else if (unreadData !== undefined) {
+      setStoreUnreadCount(unreadData);
+    }
+  }, [data?.totalUnread, unreadData, setStoreUnreadCount]);
 
   // Mark as read mutation
   const markAsReadMutation = useMutation({
@@ -95,7 +101,7 @@ export const useNotifications = (
 
   return {
     notifications: data?.notifications ?? [],
-    unreadCount,
+    unreadCount: storeUnreadCount, // Use the store's unread count directly
     totalUnread: data?.totalUnread ?? 0,
     pageNumber: data?.pageNumber ?? pagination.pageNumber,
     pageSize: data?.pageSize ?? pagination.pageSize,

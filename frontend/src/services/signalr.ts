@@ -199,11 +199,13 @@ class SignalRService {
 
     // Handle unread count update
     this.connection.on('UpdateUnreadCount', (unreadCount: number) => {
-      console.log('Received unread count update:', unreadCount);
+      console.log('🔔 Received unread count update:', unreadCount);
       
       // Update the notification store directly
       import('../stores/core/notification.store').then(({ useNotificationStore }) => {
+        console.log('🔔 Updating store with unread count:', unreadCount);
         useNotificationStore.getState().setUnreadCount(unreadCount);
+        console.log('🔔 Store updated, new count:', useNotificationStore.getState().unreadCount);
       });
       
       // Invalidate React Query cache for unread count
