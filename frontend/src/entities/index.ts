@@ -4,3 +4,4 @@ export * from './project';
 export * from './file';
 export * from './report';
 export * from './notification';
+export * from './search';

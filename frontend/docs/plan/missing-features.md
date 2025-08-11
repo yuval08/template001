@@ -3,8 +3,8 @@
 ## Critical Priority Features
 
 ### Navigation & UI
-- [ ] Universal search in top navigation bar
-- [ ] Global command palette (Ctrl+K)
+- [x] Universal search in top navigation bar
+- [x] Global command palette (Ctrl+K)
 - [x] Breadcrumb navigation system
 - [ ] User profile dropdown with settings/logout
 - [x] Collapsible sidebar state persistence

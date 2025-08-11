@@ -7,15 +7,17 @@ import { UserService } from '@/entities/user/services';
 import { ProjectService } from '@/entities/project/services';
 import { FileService } from '@/entities/file/services';
 import { ReportService } from '@/entities/report/services';
+import { SearchService } from '@/entities/search/services';
 
 // Service type definitions
-type ServiceKey = 'userService' | 'projectService' | 'fileService' | 'reportService';
+type ServiceKey = 'userService' | 'projectService' | 'fileService' | 'reportService' | 'searchService';
 
 type ServiceMap = {
   userService: UserService;
   projectService: ProjectService;
   fileService: FileService;
   reportService: ReportService;
+  searchService: SearchService;
 };
 
 /**
@@ -67,6 +69,8 @@ class ServiceContainer {
         return new FileService() as ServiceMap[K];
       case 'reportService':
         return new ReportService() as ServiceMap[K];
+      case 'searchService':
+        return new SearchService() as ServiceMap[K];
       default:
         throw new Error(`Unknown service: ${key}`);
     }
@@ -93,3 +97,4 @@ export const getUserService = () => getService('userService');
 export const getProjectService = () => getService('projectService');
 export const getFileService = () => getService('fileService');
 export const getReportService = () => getService('reportService');
+export const getSearchService = () => getService('searchService');
