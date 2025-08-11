@@ -75,7 +75,7 @@ print_info "New solution name: $SOLUTION_NAME"
 echo
 
 # Confirm before proceeding
-read -p "This will replace all occurrences of 'myapp' with '$SOLUTION_NAME'. Continue? (y/N): " -n 1 -r
+read -p "This will replace all occurrences of 'intranet_starter' with '$SOLUTION_NAME'. Continue? (y/N): " -n 1 -r
 echo
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     print_warning "Operation cancelled"
@@ -85,8 +85,8 @@ fi
 echo
 print_info "Starting replacement process..."
 
-# Find all files containing myapp
-FILES=$(grep -rl "myapp" . \
+# Find all files containing intranet_starter (but exclude this init script)
+FILES=$(grep -rl "intranet_starter" . \
     --include="*.cs" \
     --include="*.csproj" \
     --include="*.sln" \
@@ -109,13 +109,13 @@ FILES=$(grep -rl "myapp" . \
     --exclude-dir=build \
     --exclude-dir=.vs \
     --exclude-dir=.vscode \
-    2>/dev/null || true)
+    2>/dev/null | grep -v "scripts/init.sh" || true)
 
 if [ -z "$FILES" ]; then
-    print_warning "No files found containing 'myapp'"
+    print_warning "No files found containing 'intranet_starter'"
 else
     FILE_COUNT=$(echo "$FILES" | wc -l)
-    print_info "Found $FILE_COUNT files containing 'myapp'"
+    print_info "Found $FILE_COUNT files containing 'intranet_starter'"
     
     # Replace in all files
     echo "$FILES" | while IFS= read -r file; do
@@ -124,10 +124,10 @@ else
         # Use sed to replace all occurrences
         if [[ "$OSTYPE" == "darwin"* ]]; then
             # macOS
-            sed -i '' "s/myapp/$SOLUTION_NAME/g" "$file"
+            sed -i '' "s/intranet_starter/$SOLUTION_NAME/g" "$file"
         else
             # Linux/WSL
-            sed -i "s/myapp/$SOLUTION_NAME/g" "$file"
+            sed -i "s/intranet_starter/$SOLUTION_NAME/g" "$file"
         fi
         
         if [ $? -eq 0 ]; then
@@ -140,10 +140,8 @@ fi
 
 # Rename solution file if it exists
 if [ -f "backend/IntranetStarter.sln" ]; then
-    # Convert solution name to PascalCase for .sln file
-    # First letter uppercase, rest as-is but with underscores removed and following letters capitalized
-    PASCAL_NAME=$(echo "$SOLUTION_NAME" | sed 's/_\(.\)/\U\1/g' | sed 's/^./\U&/')
-    NEW_SLN_NAME="backend/${PASCAL_NAME}.sln"
+    # Keep the solution name exactly as entered (lowercase with underscores)
+    NEW_SLN_NAME="backend/${SOLUTION_NAME}.sln"
     
     mv "backend/IntranetStarter.sln" "$NEW_SLN_NAME"
     print_success "Renamed solution file to: $NEW_SLN_NAME"
