@@ -17,8 +17,8 @@ import {
 } from '@/components/ui/context-menu';
 import { 
   Copy, 
-  Cut, 
-  Paste, 
+  Scissors, 
+  Clipboard, 
   Undo, 
   Redo,
   Download,
@@ -62,12 +62,12 @@ export const ContextMenus: React.FC = () => {
                 <ContextMenuShortcut>⌘C</ContextMenuShortcut>
               </ContextMenuItem>
               <ContextMenuItem onClick={() => handleContextAction('Cut')}>
-                <Cut className="mr-2 h-4 w-4" />
+                <Scissors className="mr-2 h-4 w-4" />
                 Cut
                 <ContextMenuShortcut>⌘X</ContextMenuShortcut>
               </ContextMenuItem>
               <ContextMenuItem onClick={() => handleContextAction('Paste')}>
-                <Paste className="mr-2 h-4 w-4" />
+                <Clipboard className="mr-2 h-4 w-4" />
                 Paste
                 <ContextMenuShortcut>⌘V</ContextMenuShortcut>
               </ContextMenuItem>
@@ -97,7 +97,7 @@ export const ContextMenus: React.FC = () => {
       <ContextMenuShortcut>⌘C</ContextMenuShortcut>
     </ContextMenuItem>
     <ContextMenuItem>
-      <Paste className="mr-2 h-4 w-4" />
+      <Clipboard className="mr-2 h-4 w-4" />
       Paste
       <ContextMenuShortcut>⌘V</ContextMenuShortcut>
     </ContextMenuItem>
@@ -229,7 +229,7 @@ export const ContextMenus: React.FC = () => {
                 <ContextMenuShortcut>⌘C</ContextMenuShortcut>
               </ContextMenuItem>
               <ContextMenuItem onClick={() => handleContextAction('Cut')}>
-                <Cut className="mr-2 h-4 w-4" />
+                <Scissors className="mr-2 h-4 w-4" />
                 Cut
                 <ContextMenuShortcut>⌘X</ContextMenuShortcut>
               </ContextMenuItem>
@@ -310,12 +310,12 @@ export const ContextMenus: React.FC = () => {
                 <ContextMenuShortcut>⌘C</ContextMenuShortcut>
               </ContextMenuItem>
               <ContextMenuItem onClick={() => handleContextAction('Cut')}>
-                <Cut className="mr-2 h-4 w-4" />
+                <Scissors className="mr-2 h-4 w-4" />
                 Cut
                 <ContextMenuShortcut>⌘X</ContextMenuShortcut>
               </ContextMenuItem>
               <ContextMenuItem onClick={() => handleContextAction('Paste')}>
-                <Paste className="mr-2 h-4 w-4" />
+                <Clipboard className="mr-2 h-4 w-4" />
                 Paste
                 <ContextMenuShortcut>⌘V</ContextMenuShortcut>
               </ContextMenuItem>

@@ -50,7 +50,11 @@ export const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> =
           <AlertDialogCancel onClick={handleCancel} disabled={loading}>
             {cancelText}
           </AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm} disabled={loading}>
+          <AlertDialogAction 
+            onClick={onConfirm} 
+            disabled={loading}
+            className="bg-red-600 hover:bg-red-700 text-white"
+          >
             {confirmText}
           </AlertDialogAction>
         </AlertDialogFooter>

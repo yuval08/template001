@@ -10,42 +10,48 @@ import { toast } from '@/stores/toastStore';
 import { BaseApiService } from '@/shared/api';
 import { Loader2 } from 'lucide-react';
 
+// API Response type
+interface TestApiResponse {
+  message: string;
+  [key: string]: any;
+}
+
 // Test API Service
 class TestApiService extends BaseApiService {
   async createTestNotification(data: any) {
-    return this.post('/api/test/notification', data);
+    return this.post<TestApiResponse>('/api/test/notification', data);
   }
 
   async createBulkNotifications(count: number) {
-    return this.post('/api/test/notifications/bulk', { count });
+    return this.post<TestApiResponse>('/api/test/notifications/bulk', { count });
   }
 
   async createErrorNotification() {
-    return this.post('/api/test/notification/error');
+    return this.post<TestApiResponse>('/api/test/notification/error');
   }
 
   async createSuccessNotification() {
-    return this.post('/api/test/notification/success');
+    return this.post<TestApiResponse>('/api/test/notification/success');
   }
 
   async createWarningNotification() {
-    return this.post('/api/test/notification/warning');
+    return this.post<TestApiResponse>('/api/test/notification/warning');
   }
 
   async testRealtimeNotification() {
-    return this.post('/api/test/notification/realtime');
+    return this.post<TestApiResponse>('/api/test/notification/realtime');
   }
 
   async simulateJob() {
-    return this.post('/api/test/job/simulate');
+    return this.post<TestApiResponse>('/api/test/job/simulate');
   }
 
   async clearAllNotifications() {
-    return this.delete('/api/test/notifications/clear');
+    return this.delete<TestApiResponse>('/api/test/notifications/clear');
   }
 
   async getTestStats() {
-    return this.get('/api/test/stats');
+    return this.get<any>('/api/test/stats');
   }
 }
 
