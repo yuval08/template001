@@ -381,61 +381,61 @@ const Buttons: React.FC = () => {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex flex-wrap gap-4">
-{/*            <Button asChild>*/}
-{/*              <a */}
-{/*                href="https://github.com" */}
-{/*                target="_blank" */}
-{/*                rel="noopener noreferrer"*/}
-{/*                className="inline-flex items-center"*/}
-{/*              >*/}
-{/*                <Settings className="mr-2 h-4 w-4" />*/}
-{/*                External Link*/}
-{/*              </a>*/}
-{/*            </Button>*/}
-{/*            */}
-{/*            <Button variant="outline" asChild>*/}
-{/*              <a href="#section1">*/}
-{/*                Internal Anchor*/}
-{/*              </a>*/}
-{/*            </Button>*/}
-{/*            */}
-{/*            <Button variant="secondary" asChild>*/}
-{/*              <label */}
-{/*                htmlFor="file-input" */}
-{/*                className="cursor-pointer inline-flex items-center"*/}
-{/*              >*/}
-{/*                <Upload className="mr-2 h-4 w-4" />*/}
-{/*                Upload File*/}
-{/*              </label>*/}
-{/*            </Button>*/}
-{/*            <input */}
-{/*              id="file-input" */}
-{/*              type="file" */}
-{/*              className="hidden" */}
-{/*              onChange={(e) => {*/}
-{/*                if (e.target.files?.[0]) {*/}
-{/*                  toast.success({ title: `File selected: ${e.target.files[0].name}` });*/}
-{/*                }*/}
-{/*              }}*/}
-{/*            />*/}
-{/*            */}
-{/*            <Button variant="ghost" asChild>*/}
-{/*              <div */}
-{/*                className="cursor-pointer inline-flex items-center"*/}
-{/*                onClick={() => toast.info({ title: 'Custom div button clicked!' })}*/}
-{/*                role="button"*/}
-{/*                tabIndex={0}*/}
-{/*                onKeyDown={(e) => {*/}
-{/*                  if (e.key === 'Enter' || e.key === ' ') {*/}
-{/*                    e.preventDefault();*/}
-{/*                    toast.info({ title: 'Custom div button clicked!' });*/}
-{/*                  }*/}
-{/*                }}*/}
-{/*              >*/}
-{/*                <Heart className="mr-2 h-4 w-4" />*/}
-{/*                Custom Div*/}
-{/*              </div>*/}
-{/*            </Button>*/}
+            <Button asChild>
+              <a
+                href="https://github.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center"
+              >
+                <Settings className="mr-2 h-4 w-4" />
+                External Link
+              </a>
+            </Button>
+
+            <Button variant="outline" asChild>
+              <a href="#section1">
+                Internal Anchor
+              </a>
+            </Button>
+
+            <Button variant="secondary" asChild>
+              <label
+                htmlFor="file-input"
+                className="cursor-pointer inline-flex items-center"
+              >
+                <Upload className="mr-2 h-4 w-4" />
+                Upload File
+              </label>
+            </Button>
+            <input
+              id="file-input"
+              type="file"
+              className="hidden"
+              onChange={(e) => {
+                if (e.target.files?.[0]) {
+                  toast.success({ title: `File selected: ${e.target.files[0].name}` });
+                }
+              }}
+            />
+
+            <Button variant="ghost" asChild>
+              <div
+                className="cursor-pointer inline-flex items-center"
+                onClick={() => toast.info({ title: 'Custom div button clicked!' })}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toast.info({ title: 'Custom div button clicked!' });
+                  }
+                }}
+              >
+                <Heart className="mr-2 h-4 w-4" />
+                Custom Div
+              </div>
+            </Button>
           </div>
 
           <CodeBlock>
@@ -624,42 +624,42 @@ const Buttons: React.FC = () => {
             <div>
               <h4 className="text-sm font-medium mb-3 text-gray-900 dark:text-white">Navigation Patterns (Fixed asChild)</h4>
               <div className="flex flex-wrap gap-3">
-{/*                <Button variant="outline" asChild>*/}
-{/*                  <a */}
-{/*                    href="/dashboard" */}
-{/*                    className="inline-flex items-center"*/}
-{/*                    onClick={(e) => {*/}
-{/*                      e.preventDefault();*/}
-{/*                      toast.info({ title: 'Would navigate to /dashboard' });*/}
-{/*                    }}*/}
-{/*                  >*/}
-{/*                    <ArrowRight className="mr-2 h-4 w-4" />*/}
-{/*                    Dashboard*/}
-{/*                  </a>*/}
-{/*                </Button>*/}
+                <Button variant="outline" asChild>
+                  <a
+                    href="/dashboard"
+                    className="inline-flex items-center"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      toast.info({ title: 'Would navigate to /dashboard' });
+                    }}
+                  >
+                    <ArrowRight className="mr-2 h-4 w-4" />
+                    Dashboard
+                  </a>
+                </Button>
 
-{/*                <Button variant="secondary" asChild>*/}
-{/*                  <a */}
-{/*                    href="/reports" */}
-{/*                    className="inline-flex items-center"*/}
-{/*                    onClick={(e) => {*/}
-{/*                      e.preventDefault();*/}
-{/*                      toast.info({ title: 'Would navigate to /reports' });*/}
-{/*                    }}*/}
-{/*                  >*/}
-{/*                    View Reports*/}
-{/*                  </a>*/}
-{/*                </Button>*/}
+                <Button variant="secondary" asChild>
+                  <a
+                    href="/reports"
+                    className="inline-flex items-center"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      toast.info({ title: 'Would navigate to /reports' });
+                    }}
+                  >
+                    View Reports
+                  </a>
+                </Button>
 
-{/*                <Button size="sm" asChild>*/}
-{/*                  <a */}
-{/*                    href="mailto:support@example.com"*/}
-{/*                    className="inline-flex items-center"*/}
-{/*                  >*/}
-{/*                    <Mail className="mr-2 h-4 w-4" />*/}
-{/*                    Contact Support*/}
-{/*                  </a>*/}
-{/*                </Button>*/}
+                <Button size="sm" asChild>
+                  <a
+                    href="mailto:support@example.com"
+                    className="inline-flex items-center"
+                  >
+                    <Mail className="mr-2 h-4 w-4" />
+                    Contact Support
+                  </a>
+                </Button>
               </div>
             </div>
 

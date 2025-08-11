@@ -44,12 +44,25 @@ export interface ButtonProps
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, loading, loadingText, children, disabled, ...props }, ref) => {
-    const Comp = asChild ? Slot : "button"
-    
     const spinnerSize = size === "sm" ? "sm" : size === "lg" ? "default" : "sm";
     
+    // When asChild is true, we need to pass props differently and can't add loading state
+    if (asChild) {
+      // For asChild, we can only pass props to the single child element
+      // Loading state is not supported with asChild
+      return (
+        <Slot
+          className={cn(buttonVariants({ variant, size, className }))}
+          {...props}
+        >
+          {children}
+        </Slot>
+      )
+    }
+    
+    // Regular button implementation with loading support
     return (
-      <Comp
+      <button
         className={cn(buttonVariants({ variant, size, className }))}
         disabled={disabled || loading}
         ref={ref}
@@ -59,7 +72,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           <Spinner size={spinnerSize} className="mr-2" />
         )}
         {loading && loadingText ? loadingText : children}
-      </Comp>
+      </button>
     )
   }
 )
