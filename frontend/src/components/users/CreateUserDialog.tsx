@@ -336,9 +336,10 @@ export const CreateUserDialog: React.FC<CreateUserDialogProps> = ({
             </Button>
             <Button
               type="submit"
-              disabled={isSubmitting}
+              loading={isSubmitting}
+              loadingText="Creating..."
             >
-              {isSubmitting ? 'Creating...' : 'Create User'}
+              Create User
             </Button>
           </DialogFooter>
         </form>

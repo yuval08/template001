@@ -181,9 +181,10 @@ export const EditUserDialog: React.FC<EditUserDialogProps> = ({
             </Button>
             <Button
               type="submit"
-              disabled={isSubmitting}
+              loading={isSubmitting}
+              loadingText="Saving..."
             >
-              {isSubmitting ? 'Saving...' : 'Save Changes'}
+              Save Changes
             </Button>
           </DialogFooter>
         </form>

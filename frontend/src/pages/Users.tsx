@@ -295,12 +295,22 @@ const Users: React.FC = () => {
           </p>
         </div>
         <div className="flex flex-col sm:flex-row gap-2">
-          <Button onClick={() => setIsInviteModalOpen(true)} className="text-sm">
+          <Button 
+            onClick={() => setIsInviteModalOpen(true)} 
+            className="text-sm"
+            loading={createInvitationMutation.isPending}
+            loadingText="Sending..."
+          >
             <Mail className="mr-2 h-4 w-4" />
             <span className="hidden sm:inline">Send Invitation</span>
             <span className="sm:hidden">Invite</span>
           </Button>
-          <Button onClick={() => setIsCreateModalOpen(true)} className="text-sm">
+          <Button 
+            onClick={() => setIsCreateModalOpen(true)} 
+            className="text-sm"
+            loading={createUserMutation.isPending}
+            loadingText="Creating..."
+          >
             <UserPlus className="mr-2 h-4 w-4" />
             <span className="hidden sm:inline">Add User</span>
             <span className="sm:hidden">Add</span>

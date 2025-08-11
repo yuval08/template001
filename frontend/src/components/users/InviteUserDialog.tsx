@@ -308,9 +308,10 @@ export const InviteUserDialog: React.FC<InviteUserDialogProps> = ({
             </Button>
             <Button
               type="submit"
-              disabled={isSubmitting}
+              loading={isSubmitting}
+              loadingText="Sending..."
             >
-              {isSubmitting ? 'Sending...' : 'Send Invitation'}
+              Send Invitation
             </Button>
           </DialogFooter>
         </form>

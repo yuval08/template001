@@ -18,8 +18,8 @@
 
 ### Loading States & User Feedback
 - [ ] Global loading indicator for app-wide operations
-- [ ] Consistent skeleton loaders across components
-- [ ] Loading states in action buttons
+- [x] Consistent skeleton loaders across components
+- [x] Loading states in action buttons
 - [ ] Progress indicators for file operations
 - [ ] Toast notifications for all operations
 

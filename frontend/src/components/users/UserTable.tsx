@@ -18,6 +18,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { User, getUserRoleLabel, getUserRoleBadgeColor, UserRoles } from '@/entities/user';
 import { formatRelativeTime } from '@/utils/formatters';
+import { UserTableSkeleton } from '@/components/skeletons';
 import { 
   Edit,
   Trash2,
@@ -293,6 +294,10 @@ export const UserTable: React.FC<UserTableProps> = ({
     );
   }
 
+  if (loading) {
+    return <UserTableSkeleton rows={pagination.pageSize} />;
+  }
+
   return (
     <div className="space-y-4">
       {/* Filters */}
@@ -374,16 +379,7 @@ export const UserTable: React.FC<UserTableProps> = ({
             ))}
           </thead>
           <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan={columns.length} className="px-4 py-8 text-center">
-                  <div className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
-                    <span className="ml-2">Loading users...</span>
-                  </div>
-                </td>
-              </tr>
-            ) : table.getRowModel().rows.length === 0 ? (
+            {table.getRowModel().rows.length === 0 ? (
               <tr>
                 <td colSpan={columns.length} className="px-4 py-8 text-center text-gray-500">
                   No users found

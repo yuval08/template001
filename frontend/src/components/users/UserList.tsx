@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { User, getUserRoleLabel, getUserRoleBadgeColor, UserRoles } from '@/entities/user';
 import { formatRelativeTime } from '@/utils/formatters';
+import { UserListSkeleton } from '@/components/skeletons';
 import { 
   Edit,
   Trash2,
@@ -195,6 +196,10 @@ export const UserList: React.FC<UserListProps> = ({
     );
   }
 
+  if (loading) {
+    return <UserListSkeleton items={pagination.pageSize} />;
+  }
+
   return (
     <div className="space-y-4">
       {/* Search */}
@@ -256,13 +261,7 @@ export const UserList: React.FC<UserListProps> = ({
         )}
       </div>
 
-      {/* Loading state */}
-      {loading ? (
-        <div className="flex items-center justify-center h-32">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-          <span className="ml-2">Loading users...</span>
-        </div>
-      ) : users.length === 0 ? (
+      {users.length === 0 ? (
         <div className="text-center py-8 text-gray-500">
           {globalFilter ? 'No users found matching your search.' : 'No users found.'}
         </div>

@@ -27,6 +27,7 @@ import {
   Activity
 } from 'lucide-react';
 import { formatNumber, formatPercentage } from '@/utils/formatters';
+import { DashboardSkeleton } from '@/components/skeletons';
 
 const Dashboard: React.FC = () => {
   const { data: summaryResponse, isLoading, error } = useProjectSummary();
@@ -71,6 +72,10 @@ const Dashboard: React.FC = () => {
         <p className="text-red-500">Error loading dashboard data: {error.message}</p>
       </div>
     );
+  }
+
+  if (isLoading) {
+    return <DashboardSkeleton />;
   }
 
   return (

@@ -154,9 +154,11 @@ export const UserRoleSelect: React.FC<UserRoleSelectProps> = ({
             </Button>
             <Button
               type="submit"
-              disabled={isSubmitting || selectedRole === user.role}
+              disabled={selectedRole === user.role}
+              loading={isSubmitting}
+              loadingText="Updating..."
             >
-              {isSubmitting ? 'Updating...' : 'Update Role'}
+              Update Role
             </Button>
           </DialogFooter>
         </form>
