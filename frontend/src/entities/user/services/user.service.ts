@@ -34,14 +34,22 @@ export class UserService extends CrudService<User, CreateUserDto, UpdateUserDto>
    */
   async getUsers(params: UserQueryParams = {}): Promise<UsersResponse> {
     const queryParams = this.buildUserQueryParams(params);
-    return this.get<UsersResponse>(this.entityPath, queryParams);
+    return this.get<UsersResponse>(this.entityPath, queryParams, {
+      loadingKey: 'users:fetch',
+      priority: 'normal',
+      trackLoading: true
+    });
   }
 
   /**
    * Get detailed user information by ID
    */
   async getDetailedUser(id: string): Promise<DetailedUser> {
-    return this.get<DetailedUser>(`${this.entityPath}/${id}`);
+    return this.get<DetailedUser>(`${this.entityPath}/${id}`, {}, {
+      loadingKey: `users:fetch:${id}`,
+      priority: 'high',
+      trackLoading: true
+    });
   }
 
   /**
@@ -55,7 +63,11 @@ export class UserService extends CrudService<User, CreateUserDto, UpdateUserDto>
    * Update user role
    */
   async updateUserRole(id: string, data: UpdateUserRoleDto): Promise<void> {
-    return this.put<void>(`${this.entityPath}/${id}/role`, data);
+    return this.put<void>(`${this.entityPath}/${id}/role`, data, {
+      loadingKey: `users:update-role:${id}`,
+      priority: 'high',
+      trackLoading: true
+    });
   }
 
   /**
@@ -73,7 +85,11 @@ export class UserService extends CrudService<User, CreateUserDto, UpdateUserDto>
    * Create new invitation
    */
   async createInvitation(data: CreateInvitationDto): Promise<void> {
-    return this.post<void>(`${this.entityPath}/invite`, data);
+    return this.post<void>(`${this.entityPath}/invite`, data, {
+      loadingKey: 'users:invite',
+      priority: 'high',
+      trackLoading: true
+    });
   }
 
   /**

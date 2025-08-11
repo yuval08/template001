@@ -8,12 +8,22 @@ import { AuthProvider } from '@/providers/AuthProvider';
 import { ErrorBoundary } from '@/components/error/ErrorBoundary';
 import { errorHandler, createErrorHandler } from '@/utils/errorHandler';
 import { StoreProvider } from '@/stores/providers/StoreProvider';
+import { GlobalLoadingIndicator } from '@/components/ui/global-loading-indicator';
+import { createLoadingMiddleware } from '@/utils/loading-middleware';
 
-// Enhanced query client with error handling and optimized settings
-export const queryClient = new QueryClient({
+// Create loading middleware with optimized settings
+const loadingMiddleware = createLoadingMiddleware({
+  defaultPriority: 'normal',
+  defaultTimeout: 30000,
+  trackQueries: true,
+  trackMutations: true,
+});
+
+// Enhanced query client with loading middleware and error handling
+export const queryClient = loadingMiddleware.createQueryClient({
   defaultOptions: {
     queries: {
-      retry: (failureCount, error: any) => {
+      retry: (failureCount: number, error: any) => {
         // Don't retry on authentication errors
         if (error?.type === 'AuthenticationError') return false;
         // Don't retry on validation errors
@@ -30,7 +40,7 @@ export const queryClient = new QueryClient({
       networkMode: 'offlineFirst', // Use cache first, then network
     },
     mutations: {
-      retry: (failureCount, error: any) => {
+      retry: (failureCount: number, error: any) => {
         // Similar retry logic for mutations
         if (error?.type === 'AuthenticationError') return false;
         if (error?.type === 'ValidationError') return false;
@@ -60,6 +70,7 @@ function App() {
           <AuthProvider>
             <SignalRProvider>
               <RouterProvider router={router} />
+              <GlobalLoadingIndicator />
               <ReactQueryDevtools initialIsOpen={false} />
             </SignalRProvider>
           </AuthProvider>

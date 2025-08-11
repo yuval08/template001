@@ -2,6 +2,7 @@
 export { useAuthStore, authSelectors, authActions } from './core/auth.store';
 export { useThemeStore, themeSelectors, themeActions, getThemeState } from './core/theme.store';
 export { useNotificationStore, notificationSelectors, notificationActions } from './core/notification.store';
+export { useLoadingStore, loadingSelectors, loadingActions } from './core/loading.store';
 
 // UI stores
 export { useUIStore, uiSelectors, uiActions } from './ui/ui.store';

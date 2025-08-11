@@ -1,6 +1,29 @@
 import { ApiError } from '@/shared/types/api';
 import { AppError, NetworkError, ValidationError, BusinessError, AuthenticationError, NotFoundError, ServerError, DEFAULT_RETRY_CONFIG, RetryConfig, ErrorContext } from '@/shared/types/errors';
 import { toast } from '@/stores/toastStore';
+import { loadingActions, LoadingPriority } from '@/stores';
+
+export interface LoadingTrackingOptions {
+  /**
+   * Loading key for tracking this request
+   */
+  loadingKey?: string;
+  
+  /**
+   * Priority of this loading operation
+   */
+  priority?: LoadingPriority;
+  
+  /**
+   * Whether to track loading for this request
+   */
+  trackLoading?: boolean;
+  
+  /**
+   * Timeout for loading tracking (in milliseconds)
+   */
+  loadingTimeout?: number;
+}
 
 /**
  * Base API service class providing common HTTP functionality with enhanced error handling
@@ -11,6 +34,11 @@ export class BaseApiService {
   private retryConfig: RetryConfig;
   private requestInterceptors: Array<(request: RequestInit) => RequestInit | Promise<RequestInit>> = [];
   private responseInterceptors: Array<(response: Response) => Response | Promise<Response>> = [];
+  protected loadingOptions: LoadingTrackingOptions = {
+    trackLoading: true,
+    priority: 'normal',
+    loadingTimeout: 30000
+  };
 
   constructor(baseURL?: string, retryConfig?: Partial<RetryConfig>) {
     this.baseURL = baseURL || import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
@@ -200,11 +228,30 @@ export class BaseApiService {
    */
   protected async request<T>(
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
+    loadingOverrides?: LoadingTrackingOptions
   ): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
     const method = options.method || 'GET';
     const context = this.createErrorContext(url, method);
+    
+    // Merge loading options
+    const loadingConfig = { ...this.loadingOptions, ...loadingOverrides };
+    const loadingKey = loadingConfig.loadingKey || `${method.toLowerCase()}:${endpoint}`;
+    
+    // Start loading tracking
+    let loadingId: string | null = null;
+    if (loadingConfig.trackLoading) {
+      loadingId = loadingActions.startLoading(loadingKey, {
+        priority: loadingConfig.priority,
+        timeout: loadingConfig.loadingTimeout,
+        metadata: {
+          method,
+          endpoint,
+          url
+        }
+      });
+    }
 
     // Apply request interceptors
     let config: RequestInit = {
@@ -220,7 +267,14 @@ export class BaseApiService {
       config = await interceptor(config);
     }
 
-    return this.executeWithRetry(url, config, context);
+    try {
+      return await this.executeWithRetry(url, config, context);
+    } finally {
+      // Stop loading tracking
+      if (loadingId && loadingConfig.trackLoading) {
+        loadingActions.stopLoading(loadingId);
+      }
+    }
   }
 
   /**
@@ -282,7 +336,11 @@ export class BaseApiService {
   /**
    * GET request
    */
-  protected async get<T>(endpoint: string, params?: Record<string, any>): Promise<T> {
+  protected async get<T>(
+    endpoint: string, 
+    params?: Record<string, any>,
+    loadingOptions?: LoadingTrackingOptions
+  ): Promise<T> {
     let url = endpoint;
     
     if (params) {
@@ -299,34 +357,45 @@ export class BaseApiService {
       }
     }
 
-    return this.request<T>(url, { method: 'GET' });
+    return this.request<T>(url, { method: 'GET' }, loadingOptions);
   }
 
   /**
    * POST request
    */
-  protected async post<T>(endpoint: string, data?: any): Promise<T> {
+  protected async post<T>(
+    endpoint: string, 
+    data?: any,
+    loadingOptions?: LoadingTrackingOptions
+  ): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'POST',
       body: data ? JSON.stringify(data) : undefined,
-    });
+    }, loadingOptions);
   }
 
   /**
    * PUT request
    */
-  protected async put<T>(endpoint: string, data?: any): Promise<T> {
+  protected async put<T>(
+    endpoint: string, 
+    data?: any,
+    loadingOptions?: LoadingTrackingOptions
+  ): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'PUT',
       body: data ? JSON.stringify(data) : undefined,
-    });
+    }, loadingOptions);
   }
 
   /**
    * DELETE request
    */
-  protected async delete<T>(endpoint: string): Promise<T> {
-    return this.request<T>(endpoint, { method: 'DELETE' });
+  protected async delete<T>(
+    endpoint: string,
+    loadingOptions?: LoadingTrackingOptions
+  ): Promise<T> {
+    return this.request<T>(endpoint, { method: 'DELETE' }, loadingOptions);
   }
 
   /**

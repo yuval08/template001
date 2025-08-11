@@ -17,7 +17,8 @@
 - [ ] Enhanced error recovery with retry mechanisms
 
 ### Loading States & User Feedback
-- [ ] Global loading indicator for app-wide operations
+- [x] Global loading indicator for app-wide operations
+- [x] Global loading state management with centralized tracking
 - [x] Consistent skeleton loaders across components
 - [x] Loading states in action buttons
 - [ ] Progress indicators for file operations

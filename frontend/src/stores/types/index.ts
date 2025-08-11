@@ -77,8 +77,41 @@ export interface UIActions {
   toggleModal: (modalId: string) => void;
 }
 
+// Loading state types
+export type LoadingPriority = 'critical' | 'high' | 'normal' | 'low';
+
+export interface LoadingItem {
+  id: string;
+  key: string;
+  priority: LoadingPriority;
+  startTime: Date;
+  timeout?: number;
+  metadata?: Record<string, any>;
+}
+
+export interface LoadingState {
+  items: Record<string, LoadingItem>;
+  globalLoading: boolean;
+  criticalLoading: boolean;
+}
+
+export interface LoadingActions {
+  startLoading: (key: string, options?: {
+    id?: string;
+    priority?: LoadingPriority;
+    timeout?: number;
+    metadata?: Record<string, any>;
+  }) => string;
+  stopLoading: (keyOrId: string) => void;
+  stopAllLoading: () => void;
+  isLoading: (key?: string) => boolean;
+  getLoadingItems: (key?: string) => LoadingItem[];
+  clearExpiredItems: () => void;
+}
+
 // Combined store types
 export type AuthStore = AuthState & AuthActions;
 export type ThemeStore = ThemeState & ThemeActions;
 export type NotificationStore = NotificationState & NotificationActions;
 export type UIStore = UIState & UIActions;
+export type LoadingStore = LoadingState & LoadingActions;
