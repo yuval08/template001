@@ -18,11 +18,12 @@ const ToastIcon = ({ type }: { type: string }) => {
 };
 
 export const ToastContainer: React.FC = () => {
-  const { toasts, removeToast } = useToastStore();
+  const items = useToastStore((state) => state.items);
+  const remove = useToastStore((state) => state.remove);
 
   return (
-    <div className="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm">
-      {toasts.map((toast) => (
+    <div className="fixed top-4 right-4 z-[9999] flex flex-col gap-2 max-w-sm">
+      {items.map((toast) => (
         <div
           key={toast.id}
           className={cn(
@@ -45,7 +46,7 @@ export const ToastContainer: React.FC = () => {
             )}
           </div>
           <button
-            onClick={() => removeToast(toast.id)}
+            onClick={() => remove(toast.id)}
             className="text-muted-foreground hover:text-foreground"
           >
             <X className="h-4 w-4" />

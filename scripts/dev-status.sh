@@ -88,8 +88,8 @@ show_service_urls() {
     
     echo -e "${BLUE}🌐 Service URLs:${NC}"
     echo -e "  ${GREEN}┌─ Frontend (Dev):${NC}     http://localhost:5173"
-    echo -e "  ${GREEN}├─ API:${NC}               http://localhost:5001"
-    echo -e "  ${GREEN}├─ API Documentation:${NC} http://localhost:5001/swagger"
+    echo -e "  ${GREEN}├─ API:${NC}               http://localhost:5000"
+    echo -e "  ${GREEN}├─ API Documentation:${NC} http://localhost:5000/swagger"
     echo -e "  ${GREEN}├─ Hangfire Dashboard:${NC} http://localhost:5002/hangfire"
     echo -e "  ${GREEN}├─ Database:${NC}          localhost:$postgres_port"
     echo -e "  ${GREEN}└─ Redis:${NC}             localhost:$redis_port"
@@ -155,7 +155,7 @@ run_health_checks() {
     
     # API check
     echo -n -e "${BLUE}  API Health: ${NC}"
-    if timeout 5 curl -f "http://localhost:5001/health" &> /dev/null; then
+    if timeout 5 curl -f "http://localhost:5000/health" &> /dev/null; then
         echo -e "${GREEN}✅ Responding${NC}"
     else
         echo -e "${RED}❌ Not responding${NC}"

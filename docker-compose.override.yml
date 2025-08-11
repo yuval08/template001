@@ -31,8 +31,8 @@ services:
     build:
       target: development
       args:
-        VITE_API_URL: http://localhost:5001
-        VITE_SIGNALR_URL: http://localhost:5001
+        VITE_API_URL: http://localhost:5000
+        VITE_SIGNALR_URL: http://localhost:5000
     volumes:
       # Mount source code for development
       - ./frontend:/app/src:ro

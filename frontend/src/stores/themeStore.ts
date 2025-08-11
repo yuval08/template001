@@ -1,63 +1,16 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import { Theme } from '@/types';
+
+// DEPRECATED: This file is deprecated. Please use the new store structure from @/stores
+// This file is kept for backward compatibility only.
 
 interface ThemeState {
   theme: Theme;
   setTheme: (theme: Theme) => void;
 }
 
-export const useThemeStore = create<ThemeState>()(
-  persist(
-    (set) => ({
-      theme: 'system',
-      setTheme: (theme) => {
-        set({ theme });
-        
-        // Apply theme to document
-        const root = window.document.documentElement;
-        root.classList.remove('light', 'dark');
-        
-        if (theme === 'system') {
-          const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
-            ? 'dark'
-            : 'light';
-          root.classList.add(systemTheme);
-        } else {
-          root.classList.add(theme);
-        }
-      },
-    }),
-    {
-      name: 'theme-storage',
-    }
-  )
-);
+// Re-export the new theme store with backward compatibility
+export { useThemeStore } from './core/theme.store';
 
-// Initialize theme on app load
-const initializeTheme = () => {
-  const { theme } = useThemeStore.getState();
-  const root = window.document.documentElement;
-  
-  root.classList.remove('light', 'dark');
-  
-  if (theme === 'system') {
-    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
-      ? 'dark'
-      : 'light';
-    root.classList.add(systemTheme);
-  } else {
-    root.classList.add(theme);
-  }
-};
-
-// Listen for system theme changes
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-  const { theme } = useThemeStore.getState();
-  if (theme === 'system') {
-    initializeTheme();
-  }
-});
-
-// Initialize on import
-initializeTheme();
+// The theme initialization and DOM manipulation is now handled by the themeService
+// Import and use themeService.initialize() in your app root instead of relying on 
+// module-level side effects

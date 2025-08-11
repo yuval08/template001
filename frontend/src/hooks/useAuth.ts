@@ -1,3 +1,6 @@
+// DEPRECATED: This implementation is deprecated. Please use useAuth.refactored.ts
+// This file is kept for backward compatibility only.
+
 import { useEffect, useState } from 'react';
 import { useAuthStore } from '@/stores/authStore';
 import { authService } from '@/services/auth';

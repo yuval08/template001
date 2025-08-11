@@ -1,5 +1,7 @@
+import type { UserId } from '@/shared/types/branded';
+
 export interface User {
-  id: string;
+  id: UserId;
   email: string;
   firstName: string;
   lastName: string;
@@ -13,7 +15,7 @@ export interface User {
 }
 
 export interface DetailedUser {
-  id: string;
+  id: UserId;
   email: string;
   firstName: string;
   lastName: string;

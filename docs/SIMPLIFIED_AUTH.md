@@ -23,7 +23,7 @@ This project now uses a simplified cookie-based OAuth authentication system insp
 2. Navigate to APIs & Services → Credentials
 3. Create OAuth 2.0 Client ID
 4. Set authorized redirect URIs:
-   - `http://localhost:5001/signin-google` (development)
+   - `http://localhost:5000/signin-google` (development)
    - `https://your-domain.com/signin-google` (production)
 5. Add credentials to `.env`:
 ```
@@ -35,7 +35,7 @@ GOOGLE_CLIENT_SECRET=your-client-secret
 1. Go to [Azure Portal](https://portal.azure.com/)
 2. Navigate to App registrations → New registration
 3. Set redirect URI: 
-   - `http://localhost:5001/signin-microsoft` (development)
+   - `http://localhost:5000/signin-microsoft` (development)
    - `https://your-domain.com/signin-microsoft` (production)
 4. Create client secret in Certificates & secrets
 5. Add credentials to `.env`:

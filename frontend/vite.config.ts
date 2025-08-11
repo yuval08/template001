@@ -19,5 +19,25 @@ export default defineConfig({
         changeOrigin: true,
       }
     }
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          // Group modules into logical chunks
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
+          if (id.includes('src/pages')) {
+            return 'pages';
+          }
+          if (id.includes('src/components')) {
+            return 'components';
+          }
+        }
+      }
+    },
+    // Reduce chunk size for better performance
+    chunkSizeWarningLimit: 1000,
   }
 })

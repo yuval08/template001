@@ -43,12 +43,13 @@ export interface Toast {
 }
 
 export interface NotificationMessage {
-  id: string;
+  id?: string;
   title: string;
   message: string;
-  type: 'info' | 'success' | 'warning' | 'error';
-  timestamp: string;
-  read: boolean;
+  type: 'info' | 'success' | 'warning' | 'error' | number; // Support both string and numeric types
+  timestamp?: string | Date;
+  read?: boolean;
+  isRead?: boolean; // Support both read and isRead
 }
 
 export type Theme = 'light' | 'dark' | 'system';
@@ -68,4 +69,6 @@ export interface AuthUser {
   avatar?: string;
   isActive: boolean;
   lastLoginAt?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }

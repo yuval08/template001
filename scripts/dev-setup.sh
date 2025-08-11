@@ -808,7 +808,7 @@ comprehensive_health_checks() {
     if [ "$SETUP_MODE" != "dependencies" ]; then
         # API health endpoint
         echo -e "${BLUE}  Checking API health...${NC}"
-        local api_url="http://localhost:5001"
+        local api_url="http://localhost:5000"
         if timeout 10 curl -f "$api_url/health" &> /dev/null; then
             echo -e "${GREEN}  ✅ API health endpoint responding${NC}"
         else
@@ -873,12 +873,12 @@ show_status_dashboard() {
         echo -e "  ${GREEN}└─ Redis:${NC}             localhost:$redis_port"
         echo
         echo -e "${YELLOW}📝 To start local development:${NC}"
-        echo -e "  ${CYAN}Backend API:${NC}          cd backend/Api && dotnet run --urls \"http://localhost:5001\""
+        echo -e "  ${CYAN}Backend API:${NC}          cd backend/Api && dotnet run --urls \"http://localhost:5000\""
         echo -e "  ${CYAN}Frontend:${NC}             cd frontend && npm run dev"
     else
         echo -e "  ${GREEN}┌─ Frontend (Dev):${NC}     http://localhost:5173"
-        echo -e "  ${GREEN}├─ API:${NC}               http://localhost:5001"
-        echo -e "  ${GREEN}├─ API Documentation:${NC} http://localhost:5001/swagger"
+        echo -e "  ${GREEN}├─ API:${NC}               http://localhost:5000"
+        echo -e "  ${GREEN}├─ API Documentation:${NC} http://localhost:5000/swagger"
         echo -e "  ${GREEN}├─ Hangfire Dashboard:${NC} http://localhost:5002/hangfire"
         echo -e "  ${GREEN}├─ Database:${NC}          localhost:$postgres_port (user: postgres, password: postgres)"
         echo -e "  ${GREEN}└─ Redis:${NC}             localhost:$redis_port"

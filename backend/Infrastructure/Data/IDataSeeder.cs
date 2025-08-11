@@ -3,8 +3,7 @@ namespace IntranetStarter.Infrastructure.Data;
 /// <summary>
 /// Interface for data seeding operations
 /// </summary>
-public interface IDataSeeder
-{
+public interface IDataSeeder {
     /// <summary>
     /// Seeds the database with initial data appropriate for the current environment
     /// </summary>

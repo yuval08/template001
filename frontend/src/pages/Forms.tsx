@@ -7,10 +7,11 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { contactFormSchema, ContactFormData } from '@/utils/validation';
-import { useFileUpload } from '@/hooks/useApi';
+import { useFileUpload } from '@/entities/file';
 import { toast } from '@/stores/toastStore';
 import { Upload, X } from 'lucide-react';
 import ReactSelect from 'react-select';
+import { PageLayout } from '@/components/common';
 
 const categoryOptions = [
   { value: 'web-development', label: 'Web Development' },
@@ -66,11 +67,11 @@ const Forms: React.FC = () => {
       console.log('Form submitted:', data);
       console.log('Uploaded files:', uploadedFiles);
       
-      toast.success('Form submitted successfully!', 'Thank you for your submission.');
+      toast.success({ title: 'Form submitted successfully!', description: 'Thank you for your submission.' });
       reset();
       setUploadedFiles([]);
     } catch (error) {
-      toast.error('Submission failed', 'Please try again.');
+      toast.error({ title: 'Submission failed', description: 'Please try again.' });
     }
   };
 
@@ -78,11 +79,11 @@ const Forms: React.FC = () => {
     const files = event.target.files;
     if (!files || files.length === 0) return;
 
-    const file = files[0];
+    const file = files[0]!;
     
     // Validate file size (5MB max)
     if (file.size > 5 * 1024 * 1024) {
-      toast.error('File too large', 'Please select a file smaller than 5MB.');
+      toast.error({ title: 'File too large', description: 'Please select a file smaller than 5MB.' });
       return;
     }
 
@@ -97,9 +98,9 @@ const Forms: React.FC = () => {
       });
 
       setUploadedFiles([...uploadedFiles, file]);
-      toast.success('File uploaded successfully');
+      toast.success({ title: 'File uploaded successfully' });
     } catch (error) {
-      toast.error('File upload failed', 'Please try again.');
+      toast.error({ title: 'File upload failed', description: 'Please try again.' });
     }
   };
 
@@ -109,15 +110,11 @@ const Forms: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Forms Showcase
-        </h1>
-        <p className="mt-2 text-gray-600 dark:text-gray-400">
-          Comprehensive form examples using React Hook Form, Zod validation, and various input types.
-        </p>
-      </div>
+    <PageLayout
+      title="Forms Showcase"
+      description="Comprehensive form examples using React Hook Form, Zod validation, and various input types."
+      maxWidth="4xl"
+    >
 
       <Card>
         <CardHeader>
@@ -424,7 +421,7 @@ const Forms: React.FC = () => {
           </form>
         </CardContent>
       </Card>
-    </div>
+    </PageLayout>
   );
 };
 

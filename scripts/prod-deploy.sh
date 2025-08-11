@@ -260,7 +260,7 @@ show_info() {
     else
         echo -e "${BLUE}Development URLs:${NC}"
         echo -e "  • ${GREEN}Frontend:${NC} http://localhost:5173"
-        echo -e "  • ${GREEN}API:${NC} http://localhost:5001"
+        echo -e "  • ${GREEN}API:${NC} http://localhost:5000"
         echo -e "  • ${GREEN}Hangfire:${NC} http://localhost:5002/hangfire"
     fi
     

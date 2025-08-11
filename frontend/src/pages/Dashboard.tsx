@@ -17,7 +17,7 @@ import {
   Area,
 } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useProjectSummary } from '@/hooks/useApi';
+import { useProjectSummary } from '@/entities/project';
 import { 
   TrendingUp, 
   TrendingDown,
@@ -27,6 +27,8 @@ import {
   Activity
 } from 'lucide-react';
 import { formatNumber, formatPercentage } from '@/utils/formatters';
+import { DashboardSkeleton } from '@/components/skeletons';
+import { PageLayout, MetricCard } from '@/components/common';
 
 const Dashboard: React.FC = () => {
   const { data: summaryResponse, isLoading, error } = useProjectSummary();
@@ -73,89 +75,65 @@ const Dashboard: React.FC = () => {
     );
   }
 
-  return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Dashboard
-        </h1>
-        <p className="mt-2 text-gray-600 dark:text-gray-400">
-          Overview of your projects and activity with interactive charts and statistics.
-        </p>
-      </div>
+  if (isLoading) {
+    return <DashboardSkeleton />;
+  }
 
+  return (
+    <PageLayout
+      title="Dashboard"
+      description="Overview of your projects and activity with interactive charts and statistics."
+      maxWidth="6xl"
+    >
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="animate-fadeIn" style={{ animationDelay: '0.1s' }}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Projects</CardTitle>
-            <ClipboardList className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {isLoading ? '-' : formatNumber(summary?.totalProjects || 23)}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              <span className="text-green-600 flex items-center">
-                <TrendingUp className="h-3 w-3 mr-1" />
-                +12% from last month
-              </span>
-            </p>
-          </CardContent>
-        </Card>
+        <MetricCard
+          title="Total Projects"
+          value={formatNumber(summary?.totalProjects || 23)}
+          icon={ClipboardList}
+          trend={{
+            value: "+12% from last month",
+            type: "positive",
+            icon: TrendingUp,
+          }}
+          animationDelay="0.1s"
+          loading={isLoading}
+        />
 
-        <Card className="animate-fadeIn" style={{ animationDelay: '0.2s' }}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Projects</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {isLoading ? '-' : formatNumber(summary?.activeProjects || 12)}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              <span className="text-blue-600 flex items-center">
-                {formatPercentage((summary?.activeProjects || 12) / (summary?.totalProjects || 23))} of total
-              </span>
-            </p>
-          </CardContent>
-        </Card>
+        <MetricCard
+          title="Active Projects"
+          value={formatNumber(summary?.activeProjects || 12)}
+          icon={Activity}
+          description={`${formatPercentage((summary?.activeProjects || 12) / (summary?.totalProjects || 23))} of total`}
+          animationDelay="0.2s"
+          loading={isLoading}
+        />
 
-        <Card className="animate-fadeIn" style={{ animationDelay: '0.3s' }}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Completed</CardTitle>
-            <CheckCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {isLoading ? '-' : formatNumber(summary?.completedProjects || 8)}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              <span className="text-green-600 flex items-center">
-                <TrendingUp className="h-3 w-3 mr-1" />
-                +5% completion rate
-              </span>
-            </p>
-          </CardContent>
-        </Card>
+        <MetricCard
+          title="Completed"
+          value={formatNumber(summary?.completedProjects || 8)}
+          icon={CheckCircle}
+          trend={{
+            value: "+5% completion rate",
+            type: "positive",
+            icon: TrendingUp,
+          }}
+          animationDelay="0.3s"
+          loading={isLoading}
+        />
 
-        <Card className="animate-fadeIn" style={{ animationDelay: '0.4s' }}>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">On Hold</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {isLoading ? '-' : formatNumber(summary?.pausedProjects || 3)}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              <span className="text-red-600 flex items-center">
-                <TrendingDown className="h-3 w-3 mr-1" />
-                -2% from last month
-              </span>
-            </p>
-          </CardContent>
-        </Card>
+        <MetricCard
+          title="On Hold"
+          value={formatNumber(summary?.pausedProjects || 3)}
+          icon={Clock}
+          trend={{
+            value: "-2% from last month",
+            type: "negative",
+            icon: TrendingDown,
+          }}
+          animationDelay="0.4s"
+          loading={isLoading}
+        />
       </div>
 
       {/* Charts Row 1 */}
@@ -354,7 +332,7 @@ const Dashboard: React.FC = () => {
           </div>
         </CardContent>
       </Card>
-    </div>
+    </PageLayout>
   );
 };
 

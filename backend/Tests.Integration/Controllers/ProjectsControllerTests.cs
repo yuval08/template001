@@ -1,12 +1,11 @@
 using FluentAssertions;
-using IntranetStarter.Application.DTOs;
+using IntranetStarter.Application.Features.Projects.DTOs;
 using IntranetStarter.Infrastructure.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net;
-using System.Net.Http.Json;
 using Xunit;
 
 namespace IntranetStarter.Tests.Integration.Controllers;

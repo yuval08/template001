@@ -51,12 +51,12 @@ const Alerts: React.FC = () => {
       info: 'Here is some information'
     };
     
-    toast[type](`${type.charAt(0).toUpperCase() + type.slice(1)} Toast`, messages[type]);
+    toast[type]({ title: `${type.charAt(0).toUpperCase() + type.slice(1)} Toast`, description: messages[type] });
   };
 
   const showToastWithAction = () => {
     // Since the toast store doesn't support actions, we'll simulate it
-    toast.info('Download Ready', 'Click the button below to download your file.');
+    toast.info({ title: 'Download Ready', description: 'Click the button below to download your file.' });
     
     // Add download button after a short delay
     setTimeout(() => {
@@ -64,7 +64,7 @@ const Alerts: React.FC = () => {
       downloadBtn.textContent = 'Download';
       downloadBtn.className = 'mt-2 px-3 py-1 bg-primary text-white rounded text-sm';
       downloadBtn.onclick = () => {
-        toast.success('Download started!');
+        toast.success({ title: 'Download started!' });
       };
     }, 100);
   };
@@ -270,10 +270,10 @@ const Alerts: React.FC = () => {
               A new version of the application is available. Update now to get the latest features and security improvements.
             </AlertDescription>
             <div className="flex gap-2 mt-4">
-              <Button size="sm" onClick={() => toast.success('Update started!')}>
+              <Button size="sm" onClick={() => toast.success({ title: 'Update started!' })}>
                 Update Now
               </Button>
-              <Button variant="outline" size="sm" onClick={() => toast.info('Update scheduled for later')}>
+              <Button variant="outline" size="sm" onClick={() => toast.info({ title: 'Update scheduled for later' })}>
                 Later
               </Button>
             </div>
@@ -286,10 +286,10 @@ const Alerts: React.FC = () => {
               You have unsaved changes that will be lost if you leave this page.
             </AlertDescription>
             <div className="flex gap-2 mt-4">
-              <Button size="sm" onClick={() => toast.success('Changes saved!')}>
+              <Button size="sm" onClick={() => toast.success({ title: 'Changes saved!' })}>
                 Save Changes
               </Button>
-              <Button variant="outline" size="sm" onClick={() => toast.warning('Changes discarded')}>
+              <Button variant="outline" size="sm" onClick={() => toast.warning({ title: 'Changes discarded' })}>
                 Discard
               </Button>
             </div>
@@ -302,10 +302,10 @@ const Alerts: React.FC = () => {
               This action cannot be undone. The selected items will be permanently deleted.
             </AlertDescription>
             <div className="flex gap-2 mt-4">
-              <Button variant="destructive" size="sm" onClick={() => toast.error('Items deleted')}>
+              <Button variant="destructive" size="sm" onClick={() => toast.error({ title: 'Items deleted' })}>
                 Delete Permanently
               </Button>
-              <Button variant="outline" size="sm" onClick={() => toast.info('Deletion cancelled')}>
+              <Button variant="outline" size="sm" onClick={() => toast.info({ title: 'Deletion cancelled' })}>
                 Cancel
               </Button>
             </div>
@@ -371,13 +371,13 @@ const Alerts: React.FC = () => {
             <h4 className="text-sm font-medium">Toast with Rich Content</h4>
             <div className="flex gap-3">
               <Button onClick={() => {
-                toast.success('File Upload Complete', 'Your presentation.pdf has been uploaded successfully and is now available in your documents.');
+                toast.success({ title: 'File Upload Complete', description: 'Your presentation.pdf has been uploaded successfully and is now available in your documents.' });
               }}>
                 <Download className="mr-2 h-4 w-4" />
                 Upload Success
               </Button>
               <Button onClick={() => {
-                toast.error('Network Error', 'Unable to connect to the server. Please check your internet connection and try again in a few moments.');
+                toast.error({ title: 'Network Error', description: 'Unable to connect to the server. Please check your internet connection and try again in a few moments.' });
               }}>
                 <XCircle className="mr-2 h-4 w-4" />
                 Network Error
@@ -393,7 +393,7 @@ const Alerts: React.FC = () => {
                 Toast with Action
               </Button>
               <Button onClick={() => {
-                toast.info('Settings Updated', 'Your notification preferences have been updated successfully.');
+                toast.info({ title: 'Settings Updated', description: 'Your notification preferences have been updated successfully.' });
               }}>
                 <Settings className="mr-2 h-4 w-4" />
                 Settings Toast
@@ -404,12 +404,12 @@ const Alerts: React.FC = () => {
           <div className="space-y-3">
             <h4 className="text-sm font-medium">Active Toasts</h4>
             <div className="text-sm text-gray-600 dark:text-gray-400">
-              Currently showing {toastStore.toasts.length} toast(s)
+              Currently showing {toastStore.items.length} toast(s)
             </div>
             <Button 
               variant="outline" 
-              onClick={toastStore.clearAll}
-              disabled={toastStore.toasts.length === 0}
+              onClick={toastStore.clear}
+              disabled={toastStore.items.length === 0}
             >
               Clear All Toasts
             </Button>
@@ -417,10 +417,10 @@ const Alerts: React.FC = () => {
 
           <CodeBlock>
 {`// Basic toast
-toast.success('Operation completed!');
+toast.success({ title: 'Operation completed!' });
 
 // Toast with description
-toast.error('Network Error', 'Unable to connect to the server.');
+toast.error({ title: 'Network Error', description: 'Unable to connect to the server.' });
 
 // Toast with custom duration
 useToastStore.getState().addToast({

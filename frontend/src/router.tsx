@@ -1,19 +1,28 @@
+import React, { Suspense } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
-import Login from '@/pages/Login';
-import Callback from '@/pages/Callback';
-import Dashboard from '@/pages/Dashboard';
-import Forms from '@/pages/Forms';
-import Tables from '@/pages/Tables';
-import Users from '@/pages/Users';
-import Reports from '@/pages/Reports';
-import Buttons from '@/pages/Buttons';
-import Alerts from '@/pages/Alerts';
-import Dialogs from '@/pages/Dialogs';
-import CardsAndBadges from '@/pages/CardsAndBadges';
-import Inputs from '@/pages/Inputs';
-import UIShowcase from '@/pages/UIShowcase';
+import LoadingFallback from '@/components/common/LoadingFallback';
+import { ErrorBoundary } from '@/components/error/ErrorBoundary';
+
+// Lazy-loaded page imports
+const Login = React.lazy(() => import('@/pages/Login'));
+const Callback = React.lazy(() => import('@/pages/Callback'));
+const Dashboard = React.lazy(() => import('@/pages/Dashboard'));
+const Forms = React.lazy(() => import('@/pages/Forms'));
+const Tables = React.lazy(() => import('@/pages/Tables'));
+const Users = React.lazy(() => import('@/pages/Users'));
+const Reports = React.lazy(() => import('@/pages/Reports'));
+const Buttons = React.lazy(() => import('@/pages/Buttons'));
+const Alerts = React.lazy(() => import('@/pages/Alerts'));
+const Dialogs = React.lazy(() => import('@/pages/Dialogs'));
+const CardsAndBadges = React.lazy(() => import('@/pages/CardsAndBadges'));
+const Inputs = React.lazy(() => import('@/pages/Inputs'));
+const UIShowcase = React.lazy(() => import('@/pages/UIShowcase'));
+const Notifications = React.lazy(() => import('@/pages/Notifications'));
+const TestNotifications = React.lazy(() => import('@/pages/TestNotifications'));
+const Profile = React.lazy(() => import('@/pages/Profile'));
+const Settings = React.lazy(() => import('@/pages/Settings'));
 
 export const router = createBrowserRouter([
   {
@@ -42,51 +51,155 @@ export const router = createBrowserRouter([
       },
       {
         path: 'dashboard',
-        element: <Dashboard />,
+        element: (
+          <ErrorBoundary fallback={<div>Error loading Dashboard</div>}>
+            <Suspense fallback={<LoadingFallback />}>
+              <Dashboard />
+            </Suspense>
+          </ErrorBoundary>
+        ),
       },
       {
         path: 'forms',
-        element: <Forms />,
+        element: (
+          <ErrorBoundary fallback={<div>Error loading Forms</div>}>
+            <Suspense fallback={<LoadingFallback />}>
+              <Forms />
+            </Suspense>
+          </ErrorBoundary>
+        ),
       },
       {
         path: 'tables',
-        element: <Tables />,
+        element: (
+          <ErrorBoundary fallback={<div>Error loading Tables</div>}>
+            <Suspense fallback={<LoadingFallback />}>
+              <Tables />
+            </Suspense>
+          </ErrorBoundary>
+        ),
       },
       {
         path: 'users',
         element: (
           <ProtectedRoute requiredRoles={['Admin']}>
-            <Users />
+            <ErrorBoundary fallback={<div>Error loading Users</div>}>
+              <Suspense fallback={<LoadingFallback />}>
+                <Users />
+              </Suspense>
+            </ErrorBoundary>
           </ProtectedRoute>
         ),
       },
       {
         path: 'reports',
-        element: <Reports />,
+        element: (
+          <ErrorBoundary fallback={<div>Error loading Reports</div>}>
+            <Suspense fallback={<LoadingFallback />}>
+              <Reports />
+            </Suspense>
+          </ErrorBoundary>
+        ),
       },
       {
         path: 'buttons',
-        element: <Buttons />,
+        element: (
+          <ErrorBoundary fallback={<div>Error loading Buttons</div>}>
+            <Suspense fallback={<LoadingFallback />}>
+              <Buttons />
+            </Suspense>
+          </ErrorBoundary>
+        ),
       },
       {
         path: 'alerts',
-        element: <Alerts />,
+        element: (
+          <ErrorBoundary fallback={<div>Error loading Alerts</div>}>
+            <Suspense fallback={<LoadingFallback />}>
+              <Alerts />
+            </Suspense>
+          </ErrorBoundary>
+        ),
       },
       {
         path: 'dialogs',
-        element: <Dialogs />,
+        element: (
+          <ErrorBoundary fallback={<div>Error loading Dialogs</div>}>
+            <Suspense fallback={<LoadingFallback />}>
+              <Dialogs />
+            </Suspense>
+          </ErrorBoundary>
+        ),
       },
       {
         path: 'cards-and-badges',
-        element: <CardsAndBadges />,
+        element: (
+          <ErrorBoundary fallback={<div>Error loading Cards & Badges</div>}>
+            <Suspense fallback={<LoadingFallback />}>
+              <CardsAndBadges />
+            </Suspense>
+          </ErrorBoundary>
+        ),
       },
       {
         path: 'inputs',
-        element: <Inputs />,
+        element: (
+          <ErrorBoundary fallback={<div>Error loading Inputs</div>}>
+            <Suspense fallback={<LoadingFallback />}>
+              <Inputs />
+            </Suspense>
+          </ErrorBoundary>
+        ),
       },
       {
         path: 'ui-showcase',
-        element: <UIShowcase />,
+        element: (
+          <ErrorBoundary fallback={<div>Error loading UI Showcase</div>}>
+            <Suspense fallback={<LoadingFallback />}>
+              <UIShowcase />
+            </Suspense>
+          </ErrorBoundary>
+        ),
+      },
+      {
+        path: 'notifications',
+        element: (
+          <ErrorBoundary fallback={<div>Error loading Notifications</div>}>
+            <Suspense fallback={<LoadingFallback />}>
+              <Notifications />
+            </Suspense>
+          </ErrorBoundary>
+        ),
+      },
+      {
+        path: 'test-notifications',
+        element: (
+          <ErrorBoundary fallback={<div>Error loading Test Notifications</div>}>
+            <Suspense fallback={<LoadingFallback />}>
+              <TestNotifications />
+            </Suspense>
+          </ErrorBoundary>
+        ),
+      },
+      {
+        path: 'profile',
+        element: (
+          <ErrorBoundary fallback={<div>Error loading Profile</div>}>
+            <Suspense fallback={<LoadingFallback />}>
+              <Profile />
+            </Suspense>
+          </ErrorBoundary>
+        ),
+      },
+      {
+        path: 'settings',
+        element: (
+          <ErrorBoundary fallback={<div>Error loading Settings</div>}>
+            <Suspense fallback={<LoadingFallback />}>
+              <Settings />
+            </Suspense>
+          </ErrorBoundary>
+        ),
       },
     ],
   },

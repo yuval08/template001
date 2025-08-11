@@ -268,26 +268,26 @@ open_urls() {
     case "$(uname -s)" in
         Darwin)  # macOS
             open "http://localhost:5173" &  # Frontend
-            open "http://localhost:5001/swagger" &  # API Docs
+            open "http://localhost:5000/swagger" &  # API Docs
             ;;
         Linux)
             if command -v xdg-open &> /dev/null; then
                 xdg-open "http://localhost:5173" &
-                xdg-open "http://localhost:5001/swagger" &
+                xdg-open "http://localhost:5000/swagger" &
             else
                 echo -e "${YELLOW}⚠️  xdg-open not available. Please manually open:${NC}"
                 echo "  Frontend: http://localhost:5173"
-                echo "  API Docs: http://localhost:5001/swagger"
+                echo "  API Docs: http://localhost:5000/swagger"
             fi
             ;;
         CYGWIN*|MINGW*|MSYS*)  # Windows
             start "http://localhost:5173" &
-            start "http://localhost:5001/swagger" &
+            start "http://localhost:5000/swagger" &
             ;;
         *)
             echo -e "${YELLOW}⚠️  Platform not detected. Please manually open:${NC}"
             echo "  Frontend: http://localhost:5173"
-            echo "  API Docs: http://localhost:5001/swagger"
+            echo "  API Docs: http://localhost:5000/swagger"
             ;;
     esac
     

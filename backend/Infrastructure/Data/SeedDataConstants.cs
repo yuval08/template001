@@ -8,24 +8,23 @@ namespace IntranetStarter.Infrastructure.Data;
 public static class SeedDataConstants
 {
     // Fixed timestamp for all seed data to ensure deterministic migrations
-    public static readonly DateTime SeedTimestamp = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+    public static readonly DateTime SeedTimestamp = new(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
     
     // User IDs - Fixed GUIDs for consistent relationships
-    public static readonly Guid AdminUserId = new Guid("11111111-1111-1111-1111-111111111111");
-    public static readonly Guid ManagerUserId = new Guid("22222222-2222-2222-2222-222222222222");
-    public static readonly Guid EmployeeUserId = new Guid("33333333-3333-3333-3333-333333333333");
+    public static readonly Guid AdminUserId    = new("11111111-1111-1111-1111-111111111111");
+    public static readonly Guid ManagerUserId  = new("22222222-2222-2222-2222-222222222222");
+    public static readonly Guid EmployeeUserId = new("33333333-3333-3333-3333-333333333333");
     
     // Project IDs - Fixed GUIDs for consistent relationships
-    public static readonly Guid IntranetProjectId = new Guid("44444444-4444-4444-4444-444444444444");
-    public static readonly Guid CustomerPortalProjectId = new Guid("55555555-5555-5555-5555-555555555555");
+    public static readonly Guid IntranetProjectId       = new("44444444-4444-4444-4444-444444444444");
+    public static readonly Guid CustomerPortalProjectId = new("55555555-5555-5555-5555-555555555555");
     
     /// <summary>
     /// Gets the deterministic seed users for migration purposes
     /// </summary>
     public static IEnumerable<User> GetSeedUsers()
     {
-        return new[]
-        {
+        return [
             new User
             {
                 Id = AdminUserId,
@@ -62,7 +61,7 @@ public static class SeedDataConstants
                 IsActive = true,
                 CreatedAt = SeedTimestamp
             }
-        };
+        ];
     }
     
     /// <summary>
@@ -70,8 +69,7 @@ public static class SeedDataConstants
     /// </summary>
     public static IEnumerable<Project> GetSeedProjects()
     {
-        return new[]
-        {
+        return [
             new Project
             {
                 Id = IntranetProjectId,
@@ -102,6 +100,6 @@ public static class SeedDataConstants
                 Tags = "external,customer,portal",
                 CreatedAt = SeedTimestamp
             }
-        };
+        ];
     }
 }

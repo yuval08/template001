@@ -5,18 +5,48 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { router } from './router';
 import { useSignalR } from '@/hooks/useSignalR';
 import { AuthProvider } from '@/providers/AuthProvider';
-import '@/stores/themeStore'; // Initialize theme store
+import { ErrorBoundary } from '@/components/error/ErrorBoundary';
+import { errorHandler, createErrorHandler } from '@/utils/errorHandler';
+import { StoreProvider } from '@/stores/providers/StoreProvider';
+import { GlobalLoadingIndicator } from '@/components/ui/global-loading-indicator';
+import { createLoadingMiddleware } from '@/utils/loading-middleware';
 
-// Create a client instance
-const queryClient = new QueryClient({
+// Create loading middleware with optimized settings
+const loadingMiddleware = createLoadingMiddleware({
+  defaultPriority: 'normal',
+  defaultTimeout: 30000,
+  trackQueries: true,
+  trackMutations: true,
+});
+
+// Enhanced query client with loading middleware and error handling
+export const queryClient = loadingMiddleware.createQueryClient({
   defaultOptions: {
     queries: {
-      retry: 1,
+      retry: (failureCount: number, error: any) => {
+        // Don't retry on authentication errors
+        if (error?.type === 'AuthenticationError') return false;
+        // Don't retry on validation errors
+        if (error?.type === 'ValidationError') return false;
+        // Don't retry on business errors
+        if (error?.type === 'BusinessError') return false;
+        // Retry up to 2 times for other errors
+        return failureCount < 2;
+      },
       refetchOnWindowFocus: false,
-      staleTime: 5 * 60 * 1000, // 5 minutes
+      refetchOnMount: 'always', // Always check if data needs refresh on mount
+      staleTime: 5 * 60 * 1000, // 5 minutes - data is fresh for this duration
+      gcTime: 10 * 60 * 1000, // 10 minutes - keep cache for this duration (formerly cacheTime)
+      networkMode: 'offlineFirst', // Use cache first, then network
     },
     mutations: {
-      retry: 1,
+      retry: (failureCount: number, error: any) => {
+        // Similar retry logic for mutations
+        if (error?.type === 'AuthenticationError') return false;
+        if (error?.type === 'ValidationError') return false;
+        if (error?.type === 'BusinessError') return false;
+        return failureCount < 1; // Only retry once for mutations
+      },
     },
   },
 });
@@ -29,14 +59,24 @@ const SignalRProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <SignalRProvider>
-          <RouterProvider router={router} />
-          <ReactQueryDevtools initialIsOpen={false} />
-        </SignalRProvider>
-      </AuthProvider>
-    </QueryClientProvider>
+    <ErrorBoundary 
+      onError={createErrorHandler({ 
+        showToast: true, 
+        logError: true 
+      })}
+    >
+      <StoreProvider>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <SignalRProvider>
+              <RouterProvider router={router} />
+              <GlobalLoadingIndicator />
+              <ReactQueryDevtools initialIsOpen={false} />
+            </SignalRProvider>
+          </AuthProvider>
+        </QueryClientProvider>
+      </StoreProvider>
+    </ErrorBoundary>
   );
 }
 

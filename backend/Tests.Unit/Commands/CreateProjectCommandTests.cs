@@ -1,6 +1,6 @@
 using FluentAssertions;
-using IntranetStarter.Application.Commands;
-using IntranetStarter.Application.DTOs;
+using IntranetStarter.Application.Features.Projects.Commands;
+using IntranetStarter.Application.Features.Projects.DTOs;
 using IntranetStarter.Domain.Entities;
 using IntranetStarter.Domain.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -55,7 +55,7 @@ public class CreateProjectCommandTests
             ClientName: "Test Client",
             Tags: "test,project",
             Priority: 1,
-            TeamMemberIds: new List<Guid> { userId }
+            TeamMemberIds: [userId]
         );
 
         var command = new CreateProjectCommand(createProjectDto);
@@ -105,7 +105,7 @@ public class CreateProjectCommandTests
             ClientName: "Test Client",
             Tags: "test,project",
             Priority: 1,
-            TeamMemberIds: new List<Guid>()
+            TeamMemberIds: []
         );
 
         var command = new CreateProjectCommand(createProjectDto);
@@ -158,7 +158,7 @@ public class CreateProjectCommandTests
             ClientName: "Test Client",
             Tags: "test,project",
             Priority: 1,
-            TeamMemberIds: new List<Guid> { existingUserId, nonExistentUserId }
+            TeamMemberIds: [existingUserId, nonExistentUserId]
         );
 
         var command = new CreateProjectCommand(createProjectDto);

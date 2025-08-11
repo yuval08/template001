@@ -13,8 +13,12 @@ import {
 } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { User, getUserRoleLabel, getUserRoleBadgeColor } from '@/types/user';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import { User, getUserRoleLabel, getUserRoleBadgeColor, UserRoles } from '@/entities/user';
 import { formatRelativeTime } from '@/utils/formatters';
+import { UserTableSkeleton } from '@/components/skeletons';
 import { 
   Edit,
   Trash2,
@@ -25,6 +29,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Shield,
+  X,
 } from 'lucide-react';
 
 interface UserTableProps {
@@ -38,9 +43,16 @@ interface UserTableProps {
   };
   sorting: SortingState;
   globalFilter: string;
+  roleFilter?: string;
+  showInactive?: boolean;
+  currentUserEmail?: string;
+  hasActiveFilters?: boolean;
   onPaginationChange: (pagination: PaginationState) => void;
   onSortingChange: (sorting: SortingState) => void;
   onGlobalFilterChange: (filter: string) => void;
+  onRoleFilterChange?: (role: string | undefined) => void;
+  onShowInactiveChange?: (showInactive: boolean) => void;
+  onClearFilters?: () => void;
   onEditUser: (user: User) => void;
   onEditRole: (user: User) => void;
   onDeleteUser: (user: User) => void;
@@ -55,9 +67,16 @@ export const UserTable: React.FC<UserTableProps> = ({
   pagination,
   sorting,
   globalFilter,
+  roleFilter,
+  showInactive,
+  currentUserEmail,
+  hasActiveFilters,
   onPaginationChange,
   onSortingChange,
   onGlobalFilterChange,
+  onRoleFilterChange,
+  onShowInactiveChange,
+  onClearFilters,
   onEditUser,
   onEditRole,
   onDeleteUser,
@@ -102,27 +121,70 @@ export const UserTable: React.FC<UserTableProps> = ({
     },
     {
       accessorKey: 'role',
-      header: 'Role',
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="h-auto p-0 font-semibold"
+        >
+          Role
+          {column.getIsSorted() === "asc" ? (
+            <ArrowUp className="ml-2 h-4 w-4" />
+          ) : column.getIsSorted() === "desc" ? (
+            <ArrowDown className="ml-2 h-4 w-4" />
+          ) : (
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          )}
+        </Button>
+      ),
       cell: ({ row }) => (
         <span className={`px-2 py-1 text-xs rounded-full font-medium ${getUserRoleBadgeColor(row.original.role)}`}>
           {getUserRoleLabel(row.original.role)}
         </span>
       ),
-      enableSorting: false,
     },
     {
       accessorKey: 'jobTitle',
-      header: 'Job Title',
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="h-auto p-0 font-semibold"
+        >
+          Job Title
+          {column.getIsSorted() === "asc" ? (
+            <ArrowUp className="ml-2 h-4 w-4" />
+          ) : column.getIsSorted() === "desc" ? (
+            <ArrowDown className="ml-2 h-4 w-4" />
+          ) : (
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          )}
+        </Button>
+      ),
       cell: ({ row }) => (
         <div className="text-sm">
           {row.original.jobTitle || '-'}
         </div>
       ),
-      enableSorting: false,
     },
     {
       accessorKey: 'isActive',
-      header: 'Status',
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="h-auto p-0 font-semibold"
+        >
+          Status
+          {column.getIsSorted() === "asc" ? (
+            <ArrowUp className="ml-2 h-4 w-4" />
+          ) : column.getIsSorted() === "desc" ? (
+            <ArrowDown className="ml-2 h-4 w-4" />
+          ) : (
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          )}
+        </Button>
+      ),
       cell: ({ row }) => (
         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
           row.original.isActive 
@@ -178,8 +240,9 @@ export const UserTable: React.FC<UserTableProps> = ({
             variant="ghost"
             size="sm"
             onClick={() => onDeleteUser(row.original)}
-            className="text-red-600 hover:text-red-700"
-            title="Delete User"
+            disabled={row.original.email === currentUserEmail}
+            className={`${row.original.email === currentUserEmail ? 'text-gray-400' : 'text-red-600 hover:text-red-700'}`}
+            title={row.original.email === currentUserEmail ? "Cannot delete yourself" : "Delete User"}
           >
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -218,6 +281,8 @@ export const UserTable: React.FC<UserTableProps> = ({
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     manualPagination: true,
+    manualSorting: true,
+    manualFiltering: true,
     pageCount: Math.ceil(totalCount / pagination.pageSize),
   });
 
@@ -229,22 +294,75 @@ export const UserTable: React.FC<UserTableProps> = ({
     );
   }
 
+  if (loading) {
+    return <UserTableSkeleton rows={pagination.pageSize} />;
+  }
+
   return (
     <div className="space-y-4">
-      {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-        <Input
-          placeholder="Search users..."
-          value={globalFilter}
-          onChange={(e) => onGlobalFilterChange(e.target.value)}
-          className="pl-10 max-w-sm"
-        />
+      {/* Filters */}
+      <div className="flex flex-wrap gap-4 items-center">
+        {/* Search */}
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <Input
+            placeholder="Search users..."
+            value={globalFilter}
+            onChange={(e) => onGlobalFilterChange(e.target.value)}
+            className="pl-10 w-64"
+          />
+        </div>
+
+        {/* Role Filter */}
+        {onRoleFilterChange && (
+          <Select
+            value={roleFilter || 'all'}
+            onValueChange={(value) => onRoleFilterChange(value === 'all' ? undefined : value)}
+          >
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder="All Roles" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Roles</SelectItem>
+              <SelectItem value={UserRoles.ADMIN}>{getUserRoleLabel(UserRoles.ADMIN)}</SelectItem>
+              <SelectItem value={UserRoles.MANAGER}>{getUserRoleLabel(UserRoles.MANAGER)}</SelectItem>
+              <SelectItem value={UserRoles.EMPLOYEE}>{getUserRoleLabel(UserRoles.EMPLOYEE)}</SelectItem>
+            </SelectContent>
+          </Select>
+        )}
+
+        {/* Show Inactive Filter */}
+        {onShowInactiveChange && (
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="showInactive"
+              checked={showInactive || false}
+              onCheckedChange={(checked) => onShowInactiveChange(checked === true)}
+            />
+            <Label htmlFor="showInactive" className="text-sm font-medium">
+              Show Inactive
+            </Label>
+          </div>
+        )}
+
+        {/* Clear Filters Button */}
+        {hasActiveFilters && onClearFilters && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onClearFilters}
+            className="ml-auto text-sm"
+          >
+            <X className="mr-2 h-4 w-4" />
+            Clear Filters
+          </Button>
+        )}
       </div>
 
       {/* Table */}
       <div className="rounded-md border">
-        <table className="w-full">
+        <div className="overflow-x-auto">
+          <table className="w-full">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id} className="border-b bg-gray-50 dark:bg-gray-800">
@@ -262,16 +380,7 @@ export const UserTable: React.FC<UserTableProps> = ({
             ))}
           </thead>
           <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan={columns.length} className="px-4 py-8 text-center">
-                  <div className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
-                    <span className="ml-2">Loading users...</span>
-                  </div>
-                </td>
-              </tr>
-            ) : table.getRowModel().rows.length === 0 ? (
+            {table.getRowModel().rows.length === 0 ? (
               <tr>
                 <td colSpan={columns.length} className="px-4 py-8 text-center text-gray-500">
                   No users found
@@ -293,6 +402,7 @@ export const UserTable: React.FC<UserTableProps> = ({
             )}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* Pagination */}

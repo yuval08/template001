@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invitation to {{ApplicationName}}</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f5f5f5;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 20px 0;">
+        <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <!-- Header with Logo -->
+                    <tr>
+                        <td style="padding: 30px; text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
+                            <img src="cid:logo" alt="{{ApplicationName}}" style="max-width: 200px; height: auto;" />
+                            <h1 style="color: #ffffff; margin: 20px 0 0 0; font-size: 28px; font-weight: 600;">Welcome to {{ApplicationName}}!</h1>
+                        </td>
+                    </tr>
+                    
+                    <!-- Main Content -->
+                    <tr>
+                        <td style="padding: 40px 30px;">
+                            <p style="font-size: 16px; color: #333333; line-height: 1.6; margin: 0 0 20px 0;">
+                                Hi there,
+                            </p>
+                            
+                            <p style="font-size: 16px; color: #333333; line-height: 1.6; margin: 0 0 30px 0;">
+                                <strong>{{InviterName}}</strong> has invited you to join <strong>{{ApplicationName}}</strong> as a <span style="background-color: #f0f4ff; color: #4c6ef5; padding: 3px 8px; border-radius: 4px; font-weight: 600;">{{Role}}</span>.
+                            </p>
+                            
+                            <p style="font-size: 16px; color: #333333; line-height: 1.6; margin: 0 0 30px 0;">
+                                To accept this invitation and create your account, please click the button below:
+                            </p>
+                            
+                            <!-- CTA Button -->
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td align="center" style="padding: 20px 0;">
+                                        <a href="{{InvitationLink}}" style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; border-radius: 6px; font-size: 16px; font-weight: 600; box-shadow: 0 4px 6px rgba(102, 126, 234, 0.25);">
+                                            Accept Invitation
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- Alternative Link -->
+                            <p style="font-size: 14px; color: #666666; line-height: 1.6; margin: 20px 0; text-align: center;">
+                                Or copy and paste this link into your browser:
+                            </p>
+                            <p style="font-size: 14px; word-break: break-all; background-color: #f8f9fa; padding: 12px; border-radius: 4px; color: #4c6ef5; text-align: center; margin: 0 0 30px 0;">
+                                <a href="{{InvitationLink}}" style="color: #4c6ef5; text-decoration: none;">{{InvitationLink}}</a>
+                            </p>
+                            
+                            <!-- Expiration Warning -->
+                            <div style="background-color: #fff5f5; border-left: 4px solid #dc3545; padding: 15px; margin: 30px 0; border-radius: 4px;">
+                                <p style="font-size: 14px; color: #dc3545; margin: 0; font-weight: 600;">
+                                    ⏰ This invitation expires on {{ExpirationDate}}
+                                </p>
+                            </div>
+                            
+                            <!-- Additional Info -->
+                            <div style="background-color: #f8f9fa; padding: 20px; border-radius: 6px; margin: 30px 0;">
+                                <h3 style="color: #333333; font-size: 18px; margin: 0 0 15px 0;">What happens next?</h3>
+                                <ul style="color: #666666; font-size: 14px; line-height: 1.8; margin: 0; padding-left: 20px;">
+                                    <li>Click the button above to accept the invitation</li>
+                                    <li>You'll be redirected to complete your account setup</li>
+                                    <li>Once registered, you'll have access to all {{Role}} features</li>
+                                    <li>You can start collaborating with your team immediately</li>
+                                </ul>
+                            </div>
+                            
+                            <p style="font-size: 14px; color: #999999; line-height: 1.6; margin: 30px 0 0 0; font-style: italic;">
+                                If you believe this invitation was sent in error, you can safely ignore this email. No account will be created without your confirmation.
+                            </p>
+                        </td>
+                    </tr>
+                    
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: #f8f9fa; padding: 30px; text-align: center; border-radius: 0 0 8px 8px;">
+                            <p style="font-size: 12px; color: #999999; margin: 0 0 10px 0;">
+                                This is an automated message from {{ApplicationName}}. Please do not reply to this email.
+                            </p>
+                            <p style="font-size: 12px; color: #999999; margin: 0;">
+                                © {{Year}} {{ApplicationName}}. All rights reserved.
+                            </p>
+                            <div style="margin-top: 20px;">
+                                <a href="{{ApplicationUrl}}" style="color: #667eea; text-decoration: none; font-size: 12px;">Visit our website</a>
+                                <span style="color: #cccccc; margin: 0 10px;">|</span>
+                                <a href="{{ApplicationUrl}}/support" style="color: #667eea; text-decoration: none; font-size: 12px;">Get Support</a>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

@@ -1,15 +1,14 @@
 using Hangfire;
 using Hangfire.Dashboard;
+using IntranetStarter.Api;
 using IntranetStarter.Api.Extensions;
-using IntranetStarter.Api.Hubs;
+using IntranetStarter.Api.Middleware;
 using IntranetStarter.Application;
 using IntranetStarter.Infrastructure;
 using IntranetStarter.Infrastructure.BackgroundJobs;
 using IntranetStarter.Infrastructure.Data;
-using IntranetStarter.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using System.Security.Claims;
 
 #if DEBUG
 DotNetEnv.Env.Load();
@@ -37,12 +36,12 @@ builder.Services.AddSwaggerGen(c =>
     // Add JWT authentication to Swagger
     c.AddSecurityDefinition("Bearer", new()
     {
-        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-        Description = "Please enter a valid token",
-        Name = "Authorization",
-        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+        In           = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Description  = "Please enter a valid token",
+        Name         = "Authorization",
+        Type         = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
         BearerFormat = "JWT",
-        Scheme = "Bearer"
+        Scheme       = "Bearer"
     });
     
     c.AddSecurityRequirement(new()
@@ -53,7 +52,7 @@ builder.Services.AddSwaggerGen(c =>
                 Reference = new ()
                 {
                     Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                    Id = "Bearer"
+                    Id   = "Bearer"
                 }
             },
             Array.Empty<string>()
@@ -67,8 +66,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy.WithOrigins(
-                builder.Configuration["CorsSettings:AllowedOrigins"]?.Split(',') ?? 
-                new[] { "http://localhost:3000", "http://localhost:5173", "https://localhost:3000", "https://localhost:5173" }
+                builder.Configuration["CorsSettings:AllowedOrigins"]?.Split(',') ??
+                ["http://localhost:3000", "http://localhost:5173", "https://localhost:3000", "https://localhost:5173"]
             )
             .AllowAnyMethod()
             .AllowAnyHeader()
@@ -84,7 +83,8 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddCustomAuthentication(builder.Configuration, builder.Environment.IsDevelopment());
 builder.Services.AddCustomAuthorization();
 
-// Add SignalR
+// Add SignalR with custom user ID provider
+builder.Services.AddSingleton<Microsoft.AspNetCore.SignalR.IUserIdProvider, IntranetStarter.Infrastructure.Hubs.CustomUserIdProvider>();
 builder.Services.AddSignalR();
 
 // Add Health Checks
@@ -109,6 +109,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Add global exception middleware
+app.UseMiddleware<GlobalExceptionMiddleware>();
+
 app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
@@ -116,19 +120,19 @@ app.UseAuthorization();
 // Use Hangfire Dashboard (only in development or for admins)
 if (app.Environment.IsDevelopment())
 {
-    app.UseHangfireDashboard("/hangfire");
+    app.UseHangfireDashboard();
 }
 else
 {
     app.UseHangfireDashboard("/hangfire", new DashboardOptions
     {
-        Authorization = new[] { new HangfireAuthorizationFilter() }
+        Authorization = [new HangfireAuthorizationFilter()]
     });
 }
 
 // Map controllers and hubs
 app.MapControllers();
-app.MapHub<IntranetStarter.Api.Hubs.NotificationHub>("/hubs/notifications");
+app.MapHub<IntranetStarter.Infrastructure.Hubs.RealtimeHub>("/hubs/notifications");
 
 // Health checks endpoint
 app.MapHealthChecks("/health");
@@ -144,7 +148,7 @@ using (var scope = app.Services.CreateScope())
         await context.Database.MigrateAsync();
         
         // Seed data using the data seeding service
-        var dataSeeder = scope.ServiceProvider.GetRequiredService<IntranetStarter.Infrastructure.Data.IDataSeeder>();
+        var dataSeeder = scope.ServiceProvider.GetRequiredService<IDataSeeder>();
         await dataSeeder.SeedAsync();
         
         // Schedule recurring jobs
@@ -162,19 +166,23 @@ using (var scope = app.Services.CreateScope())
 
 app.Run();
 
-
-// Make Program class public for integration tests
-public partial class Program { }
+namespace IntranetStarter.Api {
+    // Make Program class public for integration tests
+    public partial class Program { }
 
 // Custom Hangfire authorization filter for production
-public class HangfireAuthorizationFilter : IDashboardAuthorizationFilter
-{
-    public bool Authorize(DashboardContext context)
+    public class HangfireAuthorizationFilter : IDashboardAuthorizationFilter
     {
-        var httpContext = context.GetHttpContext();
+        public bool Authorize(DashboardContext context)
+        {
+            var httpContext = context.GetHttpContext();
         
-        // Only allow authenticated admin users
-        return httpContext.User.Identity?.IsAuthenticated == true &&
-               httpContext.User.IsInRole("Admin");
+            // Only allow authenticated admin users
+            return httpContext.User.Identity?.IsAuthenticated == true &&
+                   httpContext.User.IsInRole("Admin");
+        }
     }
 }
+
+// Make Program class accessible to integration tests
+public partial class Program { }
