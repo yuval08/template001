@@ -131,7 +131,7 @@ else
 
 // Map controllers and hubs
 app.MapControllers();
-app.MapHub<IntranetStarter.Api.Hubs.NotificationHub>("/hubs/notifications");
+app.MapHub<IntranetStarter.Infrastructure.Hubs.RealtimeHub>("/hubs/notifications");
 
 // Health checks endpoint
 app.MapHealthChecks("/health");
@@ -182,3 +182,6 @@ namespace IntranetStarter.Api {
         }
     }
 }
+
+// Make Program class accessible to integration tests
+public partial class Program { }

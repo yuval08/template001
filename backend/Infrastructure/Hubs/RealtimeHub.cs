@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 
-namespace IntranetStarter.Api.Hubs;
+namespace IntranetStarter.Infrastructure.Hubs;
 
 [Authorize]
-public class NotificationHub(ILogger<NotificationHub> logger) : Hub {
+public class RealtimeHub(ILogger<RealtimeHub> logger) : Hub {
     public override async Task OnConnectedAsync() {
         string? userId   = Context.UserIdentifier;
         string? userName = Context.User?.Identity?.Name;

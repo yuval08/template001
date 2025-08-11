@@ -1,11 +1,11 @@
 #if DEBUG
 using IntranetStarter.Domain.Entities;
 using IntranetStarter.Infrastructure.Data;
+using IntranetStarter.Infrastructure.Hubs;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using IntranetStarter.Api.Hubs;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using IntranetStarter.Application.Features.Notifications.Commands;
@@ -22,7 +22,7 @@ namespace IntranetStarter.Api.Controllers;
 public class TestController(
     IMediator mediator,
     ApplicationDbContext context,
-    IHubContext<NotificationHub> hubContext,
+    IHubContext<RealtimeHub> hubContext,
     ILogger<TestController> logger) : ControllerBase {
 
     /// <summary>

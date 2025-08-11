@@ -1,5 +1,6 @@
 using IntranetStarter.Application.Features.Notifications.Commands;
 using IntranetStarter.Application.Services;
+using IntranetStarter.Infrastructure.Hubs;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
@@ -7,7 +8,7 @@ using Microsoft.Extensions.Logging;
 namespace IntranetStarter.Infrastructure.Services;
 
 public class NotificationService(
-    IHubContext<NotificationHub> hubContext, 
+    IHubContext<RealtimeHub> hubContext, 
     IMediator mediator,
     ILogger<NotificationService> logger
 ) : INotificationService {
@@ -84,33 +85,5 @@ public class NotificationService(
             logger.LogError(ex, "Error sending notification to all users: {Message}", message);
             throw;
         }
-    }
-}
-
-public class NotificationHub : Hub {
-    private readonly ILogger<NotificationHub> _logger;
-
-    public NotificationHub(ILogger<NotificationHub> logger) {
-        _logger = logger;
-    }
-
-    public override async Task OnConnectedAsync() {
-        _logger.LogInformation("User connected to notification hub: {ConnectionId}", Context.ConnectionId);
-        await base.OnConnectedAsync();
-    }
-
-    public override async Task OnDisconnectedAsync(Exception? exception) {
-        _logger.LogInformation("User disconnected from notification hub: {ConnectionId}", Context.ConnectionId);
-        await base.OnDisconnectedAsync(exception);
-    }
-
-    public async Task JoinGroup(string groupName) {
-        await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
-        _logger.LogInformation("User {ConnectionId} joined group {GroupName}", Context.ConnectionId, groupName);
-    }
-
-    public async Task LeaveGroup(string groupName) {
-        await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
-        _logger.LogInformation("User {ConnectionId} left group {GroupName}", Context.ConnectionId, groupName);
     }
 }
