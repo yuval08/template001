@@ -172,6 +172,9 @@ export class BaseApiService {
    * Check if error is retryable
    */
   private isRetryableError(error: AppError): boolean {
+    // Don't retry if we're offline
+    if (!navigator.onLine) return false;
+    
     if ('isRetryable' in error && error.isRetryable) return true;
     if (error.type === 'NetworkError' && error.isRetryable) return true;
     return false;

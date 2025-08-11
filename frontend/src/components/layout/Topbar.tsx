@@ -16,6 +16,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { NotificationInbox } from '@/components/NotificationInbox';
 import { GlobalSearch, CommandPalette } from '@/components/search';
+import { NetworkStatusIndicator } from '@/components/NetworkStatusIndicator';
 import { getUserRoleLabel, getUserRoleBadgeColor } from '@/entities/user/types/user.types';
 
 interface TopbarProps {
@@ -88,6 +89,9 @@ export const Topbar: React.FC<TopbarProps> = ({ onMenuToggle }) => {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
+          {/* Network Status Indicator */}
+          <NetworkStatusIndicator />
 
           {/* Notifications */}
           <NotificationInbox />
