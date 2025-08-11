@@ -177,25 +177,39 @@ For each query, create:
 - [ ] Export all types, services, hooks, and components
 - [ ] Ensure clean barrel exports for easy importing
 
-### 2. UI Components (if needed)
+### 2. UI Components
 
-#### 2.1 Create Entity-Specific Components
+#### 2.1 Use Existing Components First
+Before creating custom components, leverage the established component library:
+- [ ] Review **[Component Library Documentation](../frontend/docs/components.md)** for reusable components
+- [ ] Use `PageLayout` for consistent page structure
+- [ ] Use `DataTable` for entity lists with sorting/pagination/filtering
+- [ ] Use `ResponsiveEntityView` for desktop table/mobile card switching
+- [ ] Use `FormDialog` for create/edit modals
+- [ ] Use `MetricCard` for dashboard statistics
+- [ ] Use `SearchAndFilters` for search and filter controls
+
+#### 2.2 Create Entity-Specific Components (if needed)
 **Directory**: `frontend/src/entities/your-entity/components/`
-- [ ] **YourEntityCard.tsx** - Card view for mobile/grid layouts
-- [ ] **YourEntityForm.tsx** - Create/edit form component
+- [ ] **YourEntityCard.tsx** - Card view for mobile/grid layouts (if standard card isn't sufficient)
+- [ ] **YourEntityForm.tsx** - Entity-specific form fields (use with FormDialog)
 - [ ] **YourEntityDetails.tsx** - Detail view component
 
 ### 3. Page Components (`frontend/src/pages/`)
 
 #### 3.1 Create List Page
 **File**: `frontend/src/pages/YourEntityList.tsx`
+- [ ] Use `PageLayout` component for consistent structure and layout
 - [ ] Implement comprehensive data table following [Data Tables Guide](../frontend/docs/data-tables.md)
-- [ ] Add responsive desktop/mobile views
-- [ ] Include search, filtering, sorting, pagination
-- [ ] Implement proper loading and error states
-- [ ] Add create/edit/delete actions
+- [ ] Use `DataTable` component for desktop view with sorting/pagination/filtering
+- [ ] Use `ResponsiveEntityView` for automatic desktop/mobile view switching
+- [ ] Use `SearchAndFilters` component for search and filter controls
+- [ ] Implement proper loading and error states with skeletons
+- [ ] Add create/edit/delete actions using dialogs
+
 
 **Key Features:**
+- Leverages established component patterns
 - Debounced search (500ms delay)
 - Smart pagination with auto-adjustment
 - Clear filters functionality
@@ -204,18 +218,21 @@ For each query, create:
 
 #### 3.2 Create Detail Page (if needed)
 **File**: `frontend/src/pages/YourEntityDetail.tsx`
-- [ ] Show detailed entity information
-- [ ] Include edit/delete actions
+- [ ] Use `PageLayout` component for consistent structure
+- [ ] Show detailed entity information in cards or sections
+- [ ] Include edit/delete actions in the page actions area
 - [ ] Add related entities if applicable
+- [ ] Use `Card` components to organize information sections
 
 ### 4. Forms Implementation
 
 #### 4.1 Create Forms Following Guide
-Follow [Forms Guide](../frontend/docs/forms.md) for:
-- [ ] Create form with React Hook Form + Zod validation
-- [ ] Implement create/edit forms with proper validation
-- [ ] Add loading states and error handling
-- [ ] Use dialog forms for better UX
+Follow [Forms Guide](../frontend/docs/forms.md) and use existing components:
+- [ ] Use `FormDialog` component for create/edit forms
+- [ ] Create form with React Hook Form + Zod validation inside FormDialog
+- [ ] Implement proper validation with real-time error display
+- [ ] Add loading states during form submission
+- [ ] Use consistent form field patterns from component library
 
 ### 5. State Management (if needed)
 
@@ -359,6 +376,7 @@ export const useCustomers = (params: CustomerQueryParams = {}) => {
 For detailed implementation guides, refer to:
 
 **Frontend Documentation:**
+- **[Component Library Documentation](../frontend/docs/components.md)** - Complete component reference and usage guide
 - **[Entity Development Guide](../frontend/docs/entity-development.md)** - Detailed frontend entity patterns
 - **[Data Tables Guide](../frontend/docs/data-tables.md)** - Comprehensive table implementation
 - **[Forms Guide](../frontend/docs/forms.md)** - Form handling with validation
@@ -378,11 +396,13 @@ For detailed implementation guides, refer to:
 
 1. **Start Small**: Begin with basic CRUD operations, then add advanced features
 2. **Follow Patterns**: Use existing entities (User, Project) as templates
-3. **Test Early**: Implement tests as you build, not after
-4. **Use Documentation**: Reference the detailed guides for each layer
-5. **Consistent Naming**: Follow established naming conventions across all layers
-6. **Security First**: Always implement proper authentication and authorization
-7. **Performance**: Consider pagination, caching, and loading states from the start
-8. **User Experience**: Implement proper loading states, error handling, and responsive design
+3. **Leverage Components**: Always check the [Component Library](../frontend/docs/components.md) first before creating custom components
+4. **Test Early**: Implement tests as you build, not after
+5. **Use Documentation**: Reference the detailed guides for each layer
+6. **Consistent Naming**: Follow established naming conventions across all layers
+7. **Security First**: Always implement proper authentication and authorization
+8. **Performance**: Consider pagination, caching, and loading states from the start
+9. **User Experience**: Implement proper loading states, error handling, and responsive design
+10. **Component Reuse**: The consolidated component library provides 40% code reduction - use it!
 
 This comprehensive guide ensures that every new entity is implemented consistently and follows the established architectural patterns of the application.
