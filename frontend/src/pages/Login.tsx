@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { LogIn, Shield } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { LogIn, Shield, CheckCircle } from 'lucide-react';
 
 const Login: React.FC = () => {
   const { login, isLoading, authConfig, user, isAuthenticated } = useAuth();
   const [loginProvider, setLoginProvider] = useState<'google' | 'microsoft'>('google');
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const hasInvitation = searchParams.get('accept-invitation') === 'true';
 
   // Redirect to dashboard if user is already authenticated
   useEffect(() => {
@@ -58,6 +61,16 @@ const Login: React.FC = () => {
             Secure access to your workspace
           </p>
         </div>
+
+        {/* Invitation Alert */}
+        {hasInvitation && (
+          <Alert className="bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
+            <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+            <AlertDescription className="text-green-800 dark:text-green-200">
+              <strong>Welcome!</strong> Your invitation has been accepted. Simply log in with your organizational account to start using the system.
+            </AlertDescription>
+          </Alert>
+        )}
 
         {/* Login Card */}
         <Card>
