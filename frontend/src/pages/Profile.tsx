@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { getUserRoleLabel, getUserRoleBadgeColor, getUserRoleDescription } from '@/entities/user/types/user.types';
 
-export const Profile: React.FC = () => {
+const Profile: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
 
   if (!isAuthenticated || !user) {
@@ -173,3 +173,5 @@ export const Profile: React.FC = () => {
     </div>
   );
 };
+
+export default Profile;

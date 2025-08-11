@@ -20,7 +20,7 @@ import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { useTheme } from '@/hooks/useTheme';
 
-export const Settings: React.FC = () => {
+const Settings: React.FC = () => {
   const { theme, setTheme } = useTheme();
   const [notifications, setNotifications] = useState({
     email: true,
@@ -322,3 +322,5 @@ export const Settings: React.FC = () => {
     </div>
   );
 };
+
+export default Settings;
