@@ -15,7 +15,10 @@ import {
   Type,
   Palette,
   BellRing,
-  TestTube
+  TestTube,
+  ChevronDown,
+  ChevronRight,
+  Sparkles
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/utils/cn';
@@ -27,41 +30,77 @@ interface SidebarProps {
 
 interface NavigationItem {
   name: string;
-  href: string;
+  href?: string;
   icon: React.ComponentType<{ className?: string }>;
   roles?: string[];
   isDev?: boolean;
+  children?: NavigationItem[];
 }
 
 const navigation: NavigationItem[] = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Forms', href: '/forms', icon: ClipboardList },
-  { name: 'Tables', href: '/tables', icon: Table },
-  { name: 'UI Showcase', href: '/ui-showcase', icon: Palette },
-  { name: 'Buttons', href: '/buttons', icon: MousePointer },
-  { name: 'Alerts', href: '/alerts', icon: Bell },
-  { name: 'Dialogs', href: '/dialogs', icon: MessageSquare },
-  { name: 'Cards & Badges', href: '/cards-and-badges', icon: CreditCard },
-  { name: 'Inputs', href: '/inputs', icon: Type },
   { name: 'Users', href: '/users', icon: Users, roles: ['Admin'] },
   { name: 'Reports', href: '/reports', icon: FileText },
-  { name: 'Notifications', href: '/notifications', icon: BellRing },
-  { name: 'Test Notifications', href: '/test-notifications', icon: TestTube, isDev: true },
+  { 
+    name: 'Showcase', 
+    icon: Sparkles,
+    children: [
+      { name: 'Forms', href: '/forms', icon: ClipboardList },
+      { name: 'Tables', href: '/tables', icon: Table },
+      { name: 'UI Showcase', href: '/ui-showcase', icon: Palette },
+      { name: 'Buttons', href: '/buttons', icon: MousePointer },
+      { name: 'Alerts', href: '/alerts', icon: Bell },
+      { name: 'Dialogs', href: '/dialogs', icon: MessageSquare },
+      { name: 'Cards & Badges', href: '/cards-and-badges', icon: CreditCard },
+      { name: 'Inputs', href: '/inputs', icon: Type },
+      { name: 'Notifications', href: '/notifications', icon: BellRing },
+      { name: 'Test Notifications', href: '/test-notifications', icon: TestTube, isDev: true },
+    ]
+  },
 ];
 
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
   const location = useLocation();
   const { user, signOut, hasAnyRole } = useAuth();
+  const [expandedItems, setExpandedItems] = React.useState<string[]>([]);
 
   const isDevelopment = import.meta.env.DEV;
   
-  const filteredNavigation = navigation.filter(item => {
-    // Check role permissions
-    if (item.roles && !hasAnyRole(item.roles)) return false;
-    // Check if it's a dev-only item
-    if (item.isDev && !isDevelopment) return false;
-    return true;
-  });
+  const filterNavigation = (items: NavigationItem[]): NavigationItem[] => {
+    return items
+      .filter(item => {
+        // Check role permissions
+        if (item.roles && !hasAnyRole(item.roles)) return false;
+        // Check if it's a dev-only item
+        if (item.isDev && !isDevelopment) return false;
+        return true;
+      })
+      .map(item => {
+        if (item.children) {
+          const filteredChildren = filterNavigation(item.children);
+          return filteredChildren.length > 0 ? { ...item, children: filteredChildren } : null;
+        }
+        return item;
+      })
+      .filter(Boolean) as NavigationItem[];
+  };
+  
+  const filteredNavigation = filterNavigation(navigation);
+  
+  const toggleExpanded = (itemName: string) => {
+    setExpandedItems(prev => 
+      prev.includes(itemName)
+        ? prev.filter(name => name !== itemName)
+        : [...prev, itemName]
+    );
+  };
+  
+  const isExpanded = (itemName: string) => expandedItems.includes(itemName);
+  
+  const isActiveInChildren = (children?: NavigationItem[]) => {
+    if (!children) return false;
+    return children.some(child => location.pathname === child.href);
+  };
 
   return (
     <>
@@ -95,11 +134,70 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
           {/* Navigation */}
           <nav className="flex-1 px-4 py-6 space-y-2">
             {filteredNavigation.map((item) => {
+              if (item.children) {
+                const hasActiveChild = isActiveInChildren(item.children);
+                const expanded = isExpanded(item.name);
+                
+                return (
+                  <div key={item.name} className="space-y-1">
+                    <button
+                      onClick={() => toggleExpanded(item.name)}
+                      className={cn(
+                        'flex items-center justify-between w-full px-4 py-2 text-sm font-medium rounded-lg transition-colors',
+                        hasActiveChild
+                          ? 'bg-primary/10 text-primary'
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                      )}
+                    >
+                      <div className="flex items-center">
+                        <item.icon className="mr-3 h-5 w-5" />
+                        {item.name}
+                      </div>
+                      {expanded ? (
+                        <ChevronDown className="h-4 w-4" />
+                      ) : (
+                        <ChevronRight className="h-4 w-4" />
+                      )}
+                    </button>
+                    
+                    {expanded && (
+                      <div className="ml-6 space-y-1">
+                        {item.children.map((child) => {
+                          const isActive = location.pathname === child.href;
+                          return (
+                            <Link
+                              key={child.name}
+                              to={child.href!}
+                              className={cn(
+                                'flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors',
+                                isActive
+                                  ? 'bg-primary text-primary-foreground'
+                                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+                              )}
+                              onClick={() => {
+                                // Close mobile sidebar on navigation
+                                if (window.innerWidth < 1024) {
+                                  onToggle();
+                                }
+                              }}
+                            >
+                              <child.icon className="mr-3 h-4 w-4" />
+                              {child.name}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+              
+              // Regular navigation item
               const isActive = location.pathname === item.href;
               return (
                 <Link
                   key={item.name}
-                  to={item.href}
+                  to={item.href!}
                   className={cn(
                     'flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors',
                     isActive
