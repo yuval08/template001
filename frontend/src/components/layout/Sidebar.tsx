@@ -6,7 +6,6 @@ import {
   FileText, 
   Table, 
   ClipboardList,
-  LogOut,
   X,
   MousePointer,
   Bell,
@@ -61,7 +60,7 @@ const navigation: NavigationItem[] = [
 
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
   const location = useLocation();
-  const { user, signOut, hasAnyRole } = useAuth();
+  const { hasAnyRole } = useAuth();
   const [expandedItems, setExpandedItems] = React.useState<string[]>([]);
 
   const isDevelopment = import.meta.env.DEV;
@@ -218,33 +217,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
             })}
           </nav>
 
-          {/* User info and logout */}
-          <div className="px-4 py-6 border-t border-gray-200 dark:border-gray-800">
-            <div className="flex items-center mb-4">
-              <div className="flex-shrink-0">
-                <div className="h-8 w-8 bg-primary rounded-full flex items-center justify-center">
-                  <span className="text-sm font-medium text-primary-foreground">
-                    {user?.firstName?.[0]}{user?.lastName?.[0]}
-                  </span>
-                </div>
-              </div>
-              <div className="ml-3">
-                <p className="text-sm font-medium text-gray-900 dark:text-white">
-                  {user?.firstName} {user?.lastName}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {user?.email}
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={signOut}
-              className="flex items-center w-full px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            >
-              <LogOut className="mr-3 h-5 w-5" />
-              Sign Out
-            </button>
-          </div>
         </div>
       </div>
     </>

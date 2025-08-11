@@ -15,7 +15,9 @@ import {
   Palette, 
   BellRing, 
   TestTube,
-  Sparkles
+  Sparkles,
+  User,
+  Settings
 } from 'lucide-react';
 import { BreadcrumbItem } from '@/components/ui/breadcrumb';
 
@@ -31,6 +33,8 @@ const routeConfigs: RouteConfig[] = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { path: '/users', label: 'Users', icon: Users },
   { path: '/reports', label: 'Reports', icon: FileText },
+  { path: '/profile', label: 'Profile', icon: User },
+  { path: '/settings', label: 'Settings', icon: Settings },
   
   // Showcase parent
   { path: '/showcase', label: 'Showcase', icon: Sparkles },

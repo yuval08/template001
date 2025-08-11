@@ -16,6 +16,8 @@ import Inputs from '@/pages/Inputs';
 import UIShowcase from '@/pages/UIShowcase';
 import Notifications from '@/pages/Notifications';
 import TestNotifications from '@/pages/TestNotifications';
+import { Profile } from '@/pages/Profile';
+import { Settings } from '@/pages/Settings';
 
 export const router = createBrowserRouter([
   {
@@ -97,6 +99,14 @@ export const router = createBrowserRouter([
       {
         path: 'test-notifications',
         element: <TestNotifications />,
+      },
+      {
+        path: 'profile',
+        element: <Profile />,
+      },
+      {
+        path: 'settings',
+        element: <Settings />,
       },
     ],
   },

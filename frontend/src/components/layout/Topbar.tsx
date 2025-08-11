@@ -1,16 +1,22 @@
 import React from 'react';
-import { Menu, Moon, Sun, Monitor, Search } from 'lucide-react';
+import { Menu, Moon, Sun, Monitor, Search, User, LogOut, Settings, ChevronDown } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@/hooks/useTheme';
 import { useCommandPalette } from '@/hooks/useCommandPalette';
+import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
 } from '@/components/ui/dropdown-menu';
+import { Badge } from '@/components/ui/badge';
 import { NotificationInbox } from '@/components/NotificationInbox';
 import { GlobalSearch, CommandPalette } from '@/components/search';
+import { getUserRoleLabel, getUserRoleBadgeColor } from '@/entities/user/types/user.types';
 
 interface TopbarProps {
   onMenuToggle: () => void;
@@ -19,6 +25,8 @@ interface TopbarProps {
 export const Topbar: React.FC<TopbarProps> = ({ onMenuToggle }) => {
   const { theme, setTheme } = useTheme();
   const { isOpen, open, close } = useCommandPalette();
+  const { user, isAuthenticated, signOut } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <>
@@ -83,6 +91,73 @@ export const Topbar: React.FC<TopbarProps> = ({ onMenuToggle }) => {
 
           {/* Notifications */}
           <NotificationInbox />
+
+          {/* User Profile Dropdown */}
+          {isAuthenticated && user && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="flex items-center gap-2 px-3 py-2">
+                  <div className="flex items-center gap-2">
+                    {/* Avatar */}
+                    <div className="h-8 w-8 bg-primary rounded-full flex items-center justify-center">
+                      <span className="text-sm font-medium text-primary-foreground">
+                        {user.firstName?.[0]}{user.lastName?.[0]}
+                      </span>
+                    </div>
+                    
+                    {/* User Info (hidden on mobile) */}
+                    <div className="hidden md:flex flex-col items-start">
+                      <span className="text-sm font-medium text-gray-900 dark:text-white">
+                        {user.firstName} {user.lastName}
+                      </span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        {getUserRoleLabel(user.role)}
+                      </span>
+                    </div>
+                    
+                    <ChevronDown className="h-4 w-4 text-gray-500 hidden md:block" />
+                  </div>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">
+                      {user.firstName} {user.lastName}
+                    </p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {user.email}
+                    </p>
+                    <div className="pt-1">
+                      <Badge 
+                        variant="secondary" 
+                        className={`text-xs ${getUserRoleBadgeColor(user.role)}`}
+                      >
+                        {getUserRoleLabel(user.role)}
+                      </Badge>
+                    </div>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => navigate('/profile')}>
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Profile</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/settings')}>
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Settings</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem 
+                  onClick={() => signOut()}
+                  className="text-red-600 dark:text-red-400"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Sign Out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
       </div>
     </header>
