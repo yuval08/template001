@@ -17,6 +17,7 @@ import {
   ChevronRight,
   Building,
   Briefcase,
+  X,
 } from 'lucide-react';
 
 interface UserListProps {
@@ -29,8 +30,11 @@ interface UserListProps {
     pageSize: number;
   };
   globalFilter: string;
+  currentUserEmail?: string;
+  hasActiveFilters?: boolean;
   onPaginationChange: (pagination: { pageIndex: number; pageSize: number }) => void;
   onGlobalFilterChange: (filter: string) => void;
+  onClearFilters?: () => void;
   onEditUser: (user: User) => void;
   onEditRole: (user: User) => void;
   onDeleteUser: (user: User) => void;
@@ -43,8 +47,10 @@ const UserCard: React.FC<{
   onEditRole: (user: User) => void;
   onDeleteUser: (user: User) => void;
   canEditUsers: boolean;
-}> = ({ user, onEditUser, onEditRole, onDeleteUser, canEditUsers }) => {
+  currentUserEmail?: string;
+}> = ({ user, onEditUser, onEditRole, onDeleteUser, canEditUsers, currentUserEmail }) => {
   const roleColor = getUserRoleBadgeColor(user.role);
+  const isSelf = user.email === currentUserEmail;
   
   return (
     <Card className="hover:shadow-md transition-shadow">
@@ -115,8 +121,9 @@ const UserCard: React.FC<{
                     variant="ghost"
                     size="sm"
                     onClick={() => onDeleteUser(user)}
-                    className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
-                    title="Delete user"
+                    disabled={isSelf}
+                    className={`h-8 w-8 p-0 ${isSelf ? 'text-gray-400' : 'text-red-500 hover:text-red-700'}`}
+                    title={isSelf ? "Cannot delete yourself" : "Delete user"}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -137,8 +144,11 @@ export const UserList: React.FC<UserListProps> = ({
   error,
   pagination,
   globalFilter,
+  currentUserEmail,
+  hasActiveFilters,
   onPaginationChange,
   onGlobalFilterChange,
+  onClearFilters,
   onEditUser,
   onEditRole,
   onDeleteUser,
@@ -177,14 +187,27 @@ export const UserList: React.FC<UserListProps> = ({
   return (
     <div className="space-y-4">
       {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-        <Input
-          placeholder="Search users..."
-          value={globalFilter}
-          onChange={(e) => onGlobalFilterChange(e.target.value)}
-          className="pl-10"
-        />
+      <div className="flex gap-2">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <Input
+            placeholder="Search users..."
+            value={globalFilter}
+            onChange={(e) => onGlobalFilterChange(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        {hasActiveFilters && onClearFilters && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onClearFilters}
+            className="px-3"
+          >
+            <X className="h-4 w-4 mr-1" />
+            Clear
+          </Button>
+        )}
       </div>
 
       {/* Loading state */}
@@ -209,6 +232,7 @@ export const UserList: React.FC<UserListProps> = ({
                 onEditRole={onEditRole}
                 onDeleteUser={onDeleteUser}
                 canEditUsers={canEditUsers}
+                currentUserEmail={currentUserEmail}
               />
             ))}
           </div>

@@ -9,6 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { User, UpdateUserProfile } from '@/types/user';
 import { nameSchema } from '@/utils/validation';
+import { useAuth } from '@/hooks/useAuth';
 
 const updateUserProfileSchema = z.object({
   firstName: nameSchema,
@@ -35,6 +36,7 @@ export const EditUserDialog: React.FC<EditUserDialogProps> = ({
   onSubmit,
   isSubmitting,
 }) => {
+  const { user: currentUser } = useAuth();
   const form = useForm<UpdateUserProfileFormData>({
     resolver: zodResolver(updateUserProfileSchema),
     defaultValues: {
@@ -74,6 +76,9 @@ export const EditUserDialog: React.FC<EditUserDialogProps> = ({
 
   if (!user) return null;
 
+  const isSelfEdit = user.email === currentUser?.email;
+  const isCurrentlyActive = user.isActive;
+
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md">
@@ -81,6 +86,11 @@ export const EditUserDialog: React.FC<EditUserDialogProps> = ({
           <DialogTitle>Edit User Profile</DialogTitle>
           <DialogDescription>
             Update the user&apos;s profile information. Email and role cannot be changed here.
+            {isSelfEdit && isCurrentlyActive && (
+              <span className="block text-yellow-600 dark:text-yellow-400 mt-1">
+                Warning: You cannot deactivate your own account.
+              </span>
+            )}
           </DialogDescription>
         </DialogHeader>
 
@@ -143,9 +153,21 @@ export const EditUserDialog: React.FC<EditUserDialogProps> = ({
             <Switch
               id="isActive"
               checked={form.watch('isActive')}
-              onCheckedChange={(checked) => form.setValue('isActive', checked)}
+              onCheckedChange={(checked) => {
+                // Prevent self-deactivation
+                if (isSelfEdit && isCurrentlyActive && !checked) {
+                  return; // Don't allow unchecking if it's self-edit and currently active
+                }
+                form.setValue('isActive', checked);
+              }}
+              disabled={isSelfEdit && isCurrentlyActive && form.watch('isActive')}
             />
             <Label htmlFor="isActive">User is active</Label>
+            {isSelfEdit && isCurrentlyActive && (
+              <span className="text-xs text-yellow-600 dark:text-yellow-400">
+                Cannot deactivate yourself
+              </span>
+            )}
           </div>
 
           <DialogFooter>

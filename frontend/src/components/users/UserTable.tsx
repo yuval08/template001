@@ -28,6 +28,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Shield,
+  X,
 } from 'lucide-react';
 
 interface UserTableProps {
@@ -43,11 +44,14 @@ interface UserTableProps {
   globalFilter: string;
   roleFilter?: string;
   showInactive?: boolean;
+  currentUserEmail?: string;
+  hasActiveFilters?: boolean;
   onPaginationChange: (pagination: PaginationState) => void;
   onSortingChange: (sorting: SortingState) => void;
   onGlobalFilterChange: (filter: string) => void;
   onRoleFilterChange?: (role: string | undefined) => void;
   onShowInactiveChange?: (showInactive: boolean) => void;
+  onClearFilters?: () => void;
   onEditUser: (user: User) => void;
   onEditRole: (user: User) => void;
   onDeleteUser: (user: User) => void;
@@ -64,11 +68,14 @@ export const UserTable: React.FC<UserTableProps> = ({
   globalFilter,
   roleFilter,
   showInactive,
+  currentUserEmail,
+  hasActiveFilters,
   onPaginationChange,
   onSortingChange,
   onGlobalFilterChange,
   onRoleFilterChange,
   onShowInactiveChange,
+  onClearFilters,
   onEditUser,
   onEditRole,
   onDeleteUser,
@@ -232,8 +239,9 @@ export const UserTable: React.FC<UserTableProps> = ({
             variant="ghost"
             size="sm"
             onClick={() => onDeleteUser(row.original)}
-            className="text-red-600 hover:text-red-700"
-            title="Delete User"
+            disabled={row.original.email === currentUserEmail}
+            className={`${row.original.email === currentUserEmail ? 'text-gray-400' : 'text-red-600 hover:text-red-700'}`}
+            title={row.original.email === currentUserEmail ? "Cannot delete yourself" : "Delete User"}
           >
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -330,6 +338,19 @@ export const UserTable: React.FC<UserTableProps> = ({
               Show Inactive
             </Label>
           </div>
+        )}
+
+        {/* Clear Filters Button */}
+        {hasActiveFilters && onClearFilters && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onClearFilters}
+            className="ml-auto text-sm"
+          >
+            <X className="mr-2 h-4 w-4" />
+            Clear Filters
+          </Button>
         )}
       </div>
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -14,6 +14,7 @@ import {
   useCreateUser, 
   useUpdateUserProfile,
   useUpdateUserRole,
+  useDeleteUser,
   useInvitations,
   useCreateInvitation,
   User
@@ -24,7 +25,9 @@ import {
   UserPlus,
   Mail,
   Trash2,
+  X,
 } from 'lucide-react';
+import { debounce } from 'lodash';
 
 type SortingState = Array<{
   id: string;
@@ -39,7 +42,8 @@ const Users: React.FC = () => {
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'fullname', desc: false }
   ]);
-  const [globalFilter, setGlobalFilter] = useState('');
+  const [searchInput, setSearchInput] = useState(''); // For the input field
+  const [globalFilter, setGlobalFilter] = useState(''); // For the actual API call
   const [roleFilter, setRoleFilter] = useState<string>();
   const [showInactive, setShowInactive] = useState(false);
   const [pagination, setPagination] = useState({
@@ -56,6 +60,43 @@ const Users: React.FC = () => {
   
   // Current tab
   const [currentTab, setCurrentTab] = useState('users');
+
+  // Debounced search functionality
+  const debouncedSetGlobalFilter = useCallback(
+    debounce((value: string) => {
+      setGlobalFilter(value);
+      // Reset to first page when search changes
+      setPagination(prev => ({ ...prev, pageIndex: 0 }));
+    }, 500),
+    []
+  );
+
+  // Effect to handle search input changes
+  useEffect(() => {
+    debouncedSetGlobalFilter(searchInput);
+  }, [searchInput, debouncedSetGlobalFilter]);
+
+  // Cleanup debounced function on unmount
+  useEffect(() => {
+    return () => {
+      debouncedSetGlobalFilter.cancel();
+    };
+  }, [debouncedSetGlobalFilter]);
+
+  // Check if any filters are active
+  const hasActiveFilters = searchInput.trim() !== '' || roleFilter !== undefined || showInactive;
+
+  // Clear all filters function
+  const handleClearFilters = () => {
+    setSearchInput('');
+    setGlobalFilter('');
+    setRoleFilter(undefined);
+    setShowInactive(false);
+    setPagination(prev => ({ ...prev, pageIndex: 0 }));
+    
+    // Cancel any pending debounced search
+    debouncedSetGlobalFilter.cancel();
+  };
 
   // Data fetching
   const { 
@@ -85,6 +126,7 @@ const Users: React.FC = () => {
   const createUserMutation = useCreateUser();
   const updateUserProfileMutation = useUpdateUserProfile();
   const updateUserRoleMutation = useUpdateUserRole();
+  const deleteUserMutation = useDeleteUser();
   const createInvitationMutation = useCreateInvitation();
 
   const users = usersResponse?.data || [];
@@ -162,18 +204,66 @@ const Users: React.FC = () => {
     }
   };
 
+  // Custom search handler that updates the input state (debounced search will handle the API call)
+  const handleGlobalFilterChange = (filter: string) => {
+    setSearchInput(filter);
+  };
+
+  // Custom sorting handler that resets pagination to page 1
+  const handleSortingChange = (newSorting: SortingState) => {
+    setSorting(newSorting);
+    setPagination(prev => ({ ...prev, pageIndex: 0 }));
+  };
+
+  // Custom role filter handler that resets pagination to page 1
+  const handleRoleFilterChange = (role: string | undefined) => {
+    setRoleFilter(role);
+    setPagination(prev => ({ ...prev, pageIndex: 0 }));
+  };
+
+  // Custom show inactive handler that resets pagination to page 1
+  const handleShowInactiveChange = (showInactive: boolean) => {
+    setShowInactive(showInactive);
+    setPagination(prev => ({ ...prev, pageIndex: 0 }));
+  };
+
   const handleDeleteUser = (user: User) => {
+    // Prevent self-deletion
+    if (user.email === currentUser?.email) {
+      return; // Don't allow deleting yourself
+    }
     setUserToDelete(user);
   };
 
   const confirmDeleteUser = async () => {
     if (!userToDelete) return;
     
+    // Extra safety check to prevent self-deletion
+    if (userToDelete.email === currentUser?.email) {
+      console.error('Attempted self-deletion prevented');
+      setUserToDelete(null);
+      return;
+    }
+    
     try {
-      // Note: Delete functionality would need to be implemented in the API
-      console.log('Delete user:', userToDelete.id);
+      await deleteUserMutation.mutateAsync(userToDelete.id);
+      
+      // Check if we need to adjust pagination after deletion
+      const currentPageUsers = users.length;
+      const isLastItemOnPage = currentPageUsers === 1;
+      const isNotOnFirstPage = pagination.pageIndex > 0;
+      
+      if (isLastItemOnPage && isNotOnFirstPage) {
+        // Move to previous page if we're deleting the last item and not on the first page
+        setPagination(prev => ({
+          ...prev,
+          pageIndex: prev.pageIndex - 1
+        }));
+      }
+      
       setUserToDelete(null);
     } catch (error) {
+      // Error is handled by the mutation
       console.error('Error deleting user:', error);
     }
   };
@@ -246,14 +336,17 @@ const Users: React.FC = () => {
                 error={usersError}
                 pagination={pagination}
                 sorting={sorting}
-                globalFilter={globalFilter}
+                globalFilter={searchInput}
                 roleFilter={roleFilter}
                 showInactive={showInactive}
+                currentUserEmail={currentUser?.email}
+                hasActiveFilters={hasActiveFilters}
                 onPaginationChange={setPagination}
-                onSortingChange={setSorting}
-                onGlobalFilterChange={setGlobalFilter}
-                onRoleFilterChange={setRoleFilter}
-                onShowInactiveChange={setShowInactive}
+                onSortingChange={handleSortingChange}
+                onGlobalFilterChange={handleGlobalFilterChange}
+                onRoleFilterChange={handleRoleFilterChange}
+                onShowInactiveChange={handleShowInactiveChange}
+                onClearFilters={handleClearFilters}
                 onEditUser={handleEditUser}
                 onEditRole={handleEditRole}
                 onDeleteUser={handleDeleteUser}
@@ -329,9 +422,10 @@ const Users: React.FC = () => {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmDeleteUser}
+              disabled={deleteUserMutation.isPending}
               className="bg-red-600 hover:bg-red-700"
             >
-              Delete User
+              {deleteUserMutation.isPending ? 'Deleting...' : 'Delete User'}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
