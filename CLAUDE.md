@@ -129,6 +129,20 @@ npm run build --prefix frontend
 
 📌 Pro Tip: Prefer our scripts (`dev-setup.sh`, `dev-tools.sh`) over manual commands when possible!
 
+## Feature Development
+
+### Adding New Entities
+
+When implementing new business entities (Customer, Order, Product, etc.), follow the comprehensive guide:
+
+**📋 [NEW FEATURE REQUIREMENTS](./docs/NEW_FEATURE_REQUIREMENTS.md)** - Complete step-by-step checklist for adding entities to the full-stack system
+
+This guide covers:
+- Backend implementation (Domain → Application → Infrastructure → API layers)
+- Frontend implementation (Entity architecture → UI components → Pages → Forms)
+- Integration with global loading states, SignalR, authentication, and testing
+- Deployment checklist and best practices
+
 ## Architecture Overview
 
 ### Clean Architecture Layers
