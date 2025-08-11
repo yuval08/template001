@@ -2,6 +2,7 @@ import React from 'react';
 import { User } from '@/entities/user';
 import { UserTable } from './UserTable';
 import { UserList } from './UserList';
+import type { SortingState } from '@tanstack/react-table';
 
 interface ResponsiveUserViewProps {
   users: User[];
@@ -12,15 +13,12 @@ interface ResponsiveUserViewProps {
     pageIndex: number;
     pageSize: number;
   };
-  sorting?: Array<{
-    id: string;
-    desc: boolean;
-  }>;
+  sorting: SortingState;
   globalFilter: string;
   roleFilter?: string;
   showInactive?: boolean;
   onPaginationChange: (pagination: { pageIndex: number; pageSize: number }) => void;
-  onSortingChange?: (sorting: Array<{ id: string; desc: boolean }>) => void;
+  onSortingChange: (sorting: SortingState) => void;
   onGlobalFilterChange: (filter: string) => void;
   onRoleFilterChange?: (role: string | undefined) => void;
   onShowInactiveChange?: (showInactive: boolean) => void;
@@ -35,7 +33,7 @@ export const ResponsiveUserView: React.FC<ResponsiveUserViewProps> = (props) => 
     <>
       {/* Desktop Table View */}
       <div className="hidden lg:block">
-        <UserTable {...props} sorting={props.sorting || []} />
+        <UserTable {...props} />
       </div>
 
       {/* Mobile Card View */}

@@ -68,8 +68,8 @@ const Users: React.FC = () => {
     search: globalFilter,
     roleFilter: roleFilter,
     showInactive: showInactive,
-    sortBy: sorting.length > 0 ? sorting[0].id : undefined,
-    sortDescending: sorting.length > 0 ? sorting[0].desc : false,
+    sortBy: sorting.length > 0 ? sorting[0]?.id : undefined,
+    sortDescending: sorting.length > 0 ? sorting[0]?.desc : false,
   });
 
   const { 
