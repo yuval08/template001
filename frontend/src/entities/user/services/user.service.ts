@@ -154,6 +154,15 @@ export class UserService extends CrudService<User, CreateUserDto, UpdateUserDto>
     if (params.isActiveFilter !== undefined) {
       queryParams.isActiveFilter = params.isActiveFilter;
     }
+    if (params.sortBy !== undefined) {
+      queryParams.sortBy = params.sortBy;
+    }
+    if (params.sortDescending !== undefined) {
+      queryParams.sortDescending = params.sortDescending;
+    }
+    if (params.showInactive !== undefined) {
+      queryParams.showInactive = params.showInactive;
+    }
 
     return queryParams;
   }

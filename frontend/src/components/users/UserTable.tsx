@@ -13,7 +13,10 @@ import {
 } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { User, getUserRoleLabel, getUserRoleBadgeColor } from '@/entities/user';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import { User, getUserRoleLabel, getUserRoleBadgeColor, UserRoles } from '@/entities/user';
 import { formatRelativeTime } from '@/utils/formatters';
 import { 
   Edit,
@@ -38,9 +41,13 @@ interface UserTableProps {
   };
   sorting: SortingState;
   globalFilter: string;
+  roleFilter?: string;
+  showInactive?: boolean;
   onPaginationChange: (pagination: PaginationState) => void;
   onSortingChange: (sorting: SortingState) => void;
   onGlobalFilterChange: (filter: string) => void;
+  onRoleFilterChange?: (role: string | undefined) => void;
+  onShowInactiveChange?: (showInactive: boolean) => void;
   onEditUser: (user: User) => void;
   onEditRole: (user: User) => void;
   onDeleteUser: (user: User) => void;
@@ -55,9 +62,13 @@ export const UserTable: React.FC<UserTableProps> = ({
   pagination,
   sorting,
   globalFilter,
+  roleFilter,
+  showInactive,
   onPaginationChange,
   onSortingChange,
   onGlobalFilterChange,
+  onRoleFilterChange,
+  onShowInactiveChange,
   onEditUser,
   onEditRole,
   onDeleteUser,
@@ -102,27 +113,70 @@ export const UserTable: React.FC<UserTableProps> = ({
     },
     {
       accessorKey: 'role',
-      header: 'Role',
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="h-auto p-0 font-semibold"
+        >
+          Role
+          {column.getIsSorted() === "asc" ? (
+            <ArrowUp className="ml-2 h-4 w-4" />
+          ) : column.getIsSorted() === "desc" ? (
+            <ArrowDown className="ml-2 h-4 w-4" />
+          ) : (
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          )}
+        </Button>
+      ),
       cell: ({ row }) => (
         <span className={`px-2 py-1 text-xs rounded-full font-medium ${getUserRoleBadgeColor(row.original.role)}`}>
           {getUserRoleLabel(row.original.role)}
         </span>
       ),
-      enableSorting: false,
     },
     {
       accessorKey: 'jobTitle',
-      header: 'Job Title',
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="h-auto p-0 font-semibold"
+        >
+          Job Title
+          {column.getIsSorted() === "asc" ? (
+            <ArrowUp className="ml-2 h-4 w-4" />
+          ) : column.getIsSorted() === "desc" ? (
+            <ArrowDown className="ml-2 h-4 w-4" />
+          ) : (
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          )}
+        </Button>
+      ),
       cell: ({ row }) => (
         <div className="text-sm">
           {row.original.jobTitle || '-'}
         </div>
       ),
-      enableSorting: false,
     },
     {
       accessorKey: 'isActive',
-      header: 'Status',
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="h-auto p-0 font-semibold"
+        >
+          Status
+          {column.getIsSorted() === "asc" ? (
+            <ArrowUp className="ml-2 h-4 w-4" />
+          ) : column.getIsSorted() === "desc" ? (
+            <ArrowDown className="ml-2 h-4 w-4" />
+          ) : (
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          )}
+        </Button>
+      ),
       cell: ({ row }) => (
         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
           row.original.isActive 
@@ -218,6 +272,8 @@ export const UserTable: React.FC<UserTableProps> = ({
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     manualPagination: true,
+    manualSorting: true,
+    manualFiltering: true,
     pageCount: Math.ceil(totalCount / pagination.pageSize),
   });
 
@@ -231,15 +287,50 @@ export const UserTable: React.FC<UserTableProps> = ({
 
   return (
     <div className="space-y-4">
-      {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-        <Input
-          placeholder="Search users..."
-          value={globalFilter}
-          onChange={(e) => onGlobalFilterChange(e.target.value)}
-          className="pl-10 max-w-sm"
-        />
+      {/* Filters */}
+      <div className="flex flex-wrap gap-4 items-center">
+        {/* Search */}
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <Input
+            placeholder="Search users..."
+            value={globalFilter}
+            onChange={(e) => onGlobalFilterChange(e.target.value)}
+            className="pl-10 w-64"
+          />
+        </div>
+
+        {/* Role Filter */}
+        {onRoleFilterChange && (
+          <Select
+            value={roleFilter || 'all'}
+            onValueChange={(value) => onRoleFilterChange(value === 'all' ? undefined : value)}
+          >
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder="All Roles" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Roles</SelectItem>
+              <SelectItem value={UserRoles.ADMIN}>{getUserRoleLabel(UserRoles.ADMIN)}</SelectItem>
+              <SelectItem value={UserRoles.MANAGER}>{getUserRoleLabel(UserRoles.MANAGER)}</SelectItem>
+              <SelectItem value={UserRoles.EMPLOYEE}>{getUserRoleLabel(UserRoles.EMPLOYEE)}</SelectItem>
+            </SelectContent>
+          </Select>
+        )}
+
+        {/* Show Inactive Filter */}
+        {onShowInactiveChange && (
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="showInactive"
+              checked={showInactive || false}
+              onCheckedChange={(checked) => onShowInactiveChange(checked === true)}
+            />
+            <Label htmlFor="showInactive" className="text-sm font-medium">
+              Show Inactive
+            </Label>
+          </div>
+        )}
       </div>
 
       {/* Table */}

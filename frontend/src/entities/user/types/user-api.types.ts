@@ -11,4 +11,7 @@ export interface UserQueryParams {
   search?: string;
   roleFilter?: string;
   isActiveFilter?: boolean;
+  sortBy?: string;
+  sortDescending?: boolean;
+  showInactive?: boolean;
 }

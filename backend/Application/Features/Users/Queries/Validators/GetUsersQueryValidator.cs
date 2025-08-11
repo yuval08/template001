@@ -28,5 +28,20 @@ public class GetUsersQueryValidator : AbstractValidator<GetUsersQuery> {
             .WithCode(ValidationErrorCodes.InvalidFormat)
             .WithMessage($"Invalid role filter. Must be one of: {string.Join(", ", UserRoles.All)}")
             .When(x => !string.IsNullOrEmpty(x.RoleFilter));
+
+        RuleFor(x => x.SortBy)
+            .Must(sortBy => string.IsNullOrEmpty(sortBy) || IsValidSortField(sortBy))
+            .WithCode(ValidationErrorCodes.InvalidFormat)
+            .WithMessage("Invalid sort field. Must be one of: email, firstname, lastname, fullname, role, jobtitle, department, status, createdat")
+            .When(x => !string.IsNullOrEmpty(x.SortBy));
+    }
+
+    private static bool IsValidSortField(string sortBy) {
+        var validFields = new[] { 
+            "email", "firstname", "lastname", "fullname", 
+            "role", "jobtitle", "department", "status", 
+            "isactive", "createdat" 
+        };
+        return validFields.Contains(sortBy.ToLowerInvariant());
     }
 }

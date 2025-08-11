@@ -16,13 +16,16 @@ namespace IntranetStarter.Api.Controllers;
 [Authorize]
 public class UsersController(IMediator mediator, ILogger<UsersController> logger) : ControllerBase {
     /// <summary>
-    /// Get all users with pagination and filtering (Admin only)
+    /// Get all users with pagination, filtering, and sorting (Admin only)
     /// </summary>
     /// <param name="pageNumber">Page number (default: 1)</param>
     /// <param name="pageSize">Page size (default: 10, max: 100)</param>
     /// <param name="searchTerm">Search term for email, name, department, or job title</param>
     /// <param name="roleFilter">Filter by specific role</param>
     /// <param name="isActiveFilter">Filter by active status</param>
+    /// <param name="sortBy">Field to sort by (email, firstname, lastname, fullname, role, jobtitle, department, status, createdat)</param>
+    /// <param name="sortDescending">Sort in descending order (default: false)</param>
+    /// <param name="showInactive">Include inactive users in results (default: false)</param>
     /// <returns>Paginated list of users</returns>
     [HttpGet]
     [Authorize(Policy = "AdminOnly")]
@@ -31,7 +34,10 @@ public class UsersController(IMediator mediator, ILogger<UsersController> logger
         [FromQuery] int     pageSize       = 10,
         [FromQuery] string? searchTerm     = null,
         [FromQuery] string? roleFilter     = null,
-        [FromQuery] bool?   isActiveFilter = null) {
+        [FromQuery] bool?   isActiveFilter = null,
+        [FromQuery] string? sortBy         = null,
+        [FromQuery] bool    sortDescending = false,
+        [FromQuery] bool    showInactive   = false) {
         try {
             // Validate pagination parameters
             if (pageNumber < 1) pageNumber = 1;
@@ -40,10 +46,10 @@ public class UsersController(IMediator mediator, ILogger<UsersController> logger
 
             string? currentUserEmail = User.FindFirst(ClaimTypes.Email)?.Value;
             logger.LogInformation(
-                "Admin user {Email} requesting users list - Page: {PageNumber}, PageSize: {PageSize}, SearchTerm: {SearchTerm}, RoleFilter: {RoleFilter}, IsActiveFilter: {IsActiveFilter}",
-                currentUserEmail, pageNumber, pageSize, searchTerm, roleFilter, isActiveFilter);
+                "Admin user {Email} requesting users list - Page: {PageNumber}, PageSize: {PageSize}, SearchTerm: {SearchTerm}, RoleFilter: {RoleFilter}, IsActiveFilter: {IsActiveFilter}, SortBy: {SortBy}, SortDescending: {SortDescending}, ShowInactive: {ShowInactive}",
+                currentUserEmail, pageNumber, pageSize, searchTerm, roleFilter, isActiveFilter, sortBy, sortDescending, showInactive);
 
-            var query  = new GetUsersQuery(pageNumber, pageSize, searchTerm, roleFilter, isActiveFilter);
+            var query  = new GetUsersQuery(pageNumber, pageSize, searchTerm, roleFilter, isActiveFilter, sortBy, sortDescending, showInactive);
             var result = await mediator.Send(query);
 
             logger.LogInformation("Successfully retrieved {UserCount} users out of {TotalCount} for admin user {Email}",

@@ -38,6 +38,8 @@ const Users: React.FC = () => {
   // Table state
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
+  const [roleFilter, setRoleFilter] = useState<string>();
+  const [showInactive, setShowInactive] = useState(false);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
@@ -62,6 +64,10 @@ const Users: React.FC = () => {
     pageNumber: pagination.pageIndex + 1,
     pageSize: pagination.pageSize,
     search: globalFilter,
+    roleFilter: roleFilter,
+    showInactive: showInactive,
+    sortBy: sorting.length > 0 ? sorting[0].id : undefined,
+    sortDescending: sorting.length > 0 ? sorting[0].desc : false,
   });
 
   const { 
@@ -247,9 +253,13 @@ const Users: React.FC = () => {
                 pagination={pagination}
                 sorting={sorting}
                 globalFilter={globalFilter}
+                roleFilter={roleFilter}
+                showInactive={showInactive}
                 onPaginationChange={setPagination}
                 onSortingChange={setSorting}
                 onGlobalFilterChange={setGlobalFilter}
+                onRoleFilterChange={setRoleFilter}
+                onShowInactiveChange={setShowInactive}
                 onEditUser={handleEditUser}
                 onEditRole={handleEditRole}
                 onDeleteUser={handleDeleteUser}

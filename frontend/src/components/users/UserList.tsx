@@ -77,11 +77,13 @@ const UserCard: React.FC<{
                   <span className="truncate">{user.jobTitle}</span>
                 </div>
               )}
-              
+
+              {user.createdAt && (
               <div className="flex items-center gap-2 text-sm text-gray-500">
                 <Clock className="h-4 w-4 flex-shrink-0" />
-                <span>Joined {formatRelativeTime(user.createdAt)}</span>
+                <span>Joined {formatRelativeTime(new Date(user.createdAt))}</span>
               </div>
+                )}
             </div>
             
             <div className="flex items-center justify-between mt-3">

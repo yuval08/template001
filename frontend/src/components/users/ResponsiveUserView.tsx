@@ -17,9 +17,13 @@ interface ResponsiveUserViewProps {
     desc: boolean;
   }>;
   globalFilter: string;
+  roleFilter?: string;
+  showInactive?: boolean;
   onPaginationChange: (pagination: { pageIndex: number; pageSize: number }) => void;
   onSortingChange?: (sorting: Array<{ id: string; desc: boolean }>) => void;
   onGlobalFilterChange: (filter: string) => void;
+  onRoleFilterChange?: (role: string | undefined) => void;
+  onShowInactiveChange?: (showInactive: boolean) => void;
   onEditUser: (user: User) => void;
   onEditRole: (user: User) => void;
   onDeleteUser: (user: User) => void;
