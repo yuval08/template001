@@ -108,3 +108,19 @@ export const useNotifications = (callback: (notification: NotificationMessage) =
     return cleanup;
   }, [callback]);
 };
+
+// Hook for listening to notification refresh events
+export const useNotificationRefresh = (callback: () => void) => {
+  useEffect(() => {
+    const cleanup = signalRService.onRefreshNotifications(callback);
+    return cleanup;
+  }, [callback]);
+};
+
+// Hook for listening to unread count updates
+export const useUnreadCountUpdate = (callback: (count: number) => void) => {
+  useEffect(() => {
+    const cleanup = signalRService.onUnreadCountUpdated(callback);
+    return cleanup;
+  }, [callback]);
+};

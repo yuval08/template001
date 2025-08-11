@@ -12,14 +12,17 @@ interface ExtendedNotificationItem extends NotificationItem {
 interface ExtendedNotificationStore extends Omit<NotificationStore, 'items' | 'add'> {
   items: ExtendedNotificationItem[];
   persistentItems: ExtendedNotificationItem[];
+  unreadCount: number;
   add: (notification: Omit<ExtendedNotificationItem, 'id' | 'timestamp'>) => string;
   setPersistentItems: (items: ExtendedNotificationItem[]) => void;
   addFromSignalR: (notification: any) => void;
+  setUnreadCount: (count: number) => void;
 }
 
 const initialState = {
   items: [] as ExtendedNotificationItem[],
   persistentItems: [] as ExtendedNotificationItem[],
+  unreadCount: 0,
 };
 
 export const useNotificationStore = create<ExtendedNotificationStore>()(
@@ -87,6 +90,8 @@ export const useNotificationStore = create<ExtendedNotificationStore>()(
           item.id === id ? { ...item, read: true } : item
         ),
       })),
+      
+      setUnreadCount: (count: number) => set({ unreadCount: count }),
     }),
     { name: 'NotificationStore' }
   )

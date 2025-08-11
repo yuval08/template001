@@ -1,4 +1,4 @@
-using IntranetStarter.Application.Services;
+using IntranetStarter.Application.Interfaces;
 using IntranetStarter.Domain.Entities;
 using IntranetStarter.Domain.Interfaces;
 using Microsoft.Extensions.Logging;

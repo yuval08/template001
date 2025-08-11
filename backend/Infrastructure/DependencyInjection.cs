@@ -1,6 +1,6 @@
 using Hangfire;
 using Hangfire.PostgreSql;
-using IntranetStarter.Application.Services;
+using IntranetStarter.Application.Interfaces;
 using IntranetStarter.Domain.Interfaces;
 using IntranetStarter.Infrastructure.BackgroundJobs;
 using IntranetStarter.Infrastructure.Data;

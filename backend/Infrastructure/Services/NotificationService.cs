@@ -1,5 +1,5 @@
 using IntranetStarter.Application.Features.Notifications.Commands;
-using IntranetStarter.Application.Services;
+using IntranetStarter.Application.Interfaces;
 using IntranetStarter.Infrastructure.Hubs;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
@@ -42,7 +42,7 @@ public class NotificationService(
                 IsRead    = false
             };
 
-            await hubContext.Clients.User(userId).SendAsync("ReceiveNotification", notification, cancellationToken);
+            await hubContext.Clients.Group($"User:{userId}").SendAsync("ReceiveNotification", notification, cancellationToken);
 
             logger.LogInformation("Notification sent to user {UserId}: {Message}", userId, message);
         }
@@ -83,6 +83,32 @@ public class NotificationService(
         }
         catch (Exception ex) {
             logger.LogError(ex, "Error sending notification to all users: {Message}", message);
+            throw;
+        }
+    }
+
+    public async Task SendNotificationUpdateAsync(string userId, CancellationToken cancellationToken = default) {
+        try {
+            // Send a signal to the user group to refresh their notification list
+            await hubContext.Clients.Group($"User:{userId}").SendAsync("RefreshNotifications", cancellationToken);
+            
+            logger.LogInformation("Notification update signal sent to user {UserId}", userId);
+        }
+        catch (Exception ex) {
+            logger.LogError(ex, "Error sending notification update signal to user {UserId}", userId);
+            throw;
+        }
+    }
+
+    public async Task SendUnreadCountUpdateAsync(string userId, int unreadCount, CancellationToken cancellationToken = default) {
+        try {
+            // Send the updated unread count to the user group
+            await hubContext.Clients.Group($"User:{userId}").SendAsync("UpdateUnreadCount", unreadCount, cancellationToken);
+            
+            logger.LogInformation("Unread count update sent to user {UserId}: {Count}", userId, unreadCount);
+        }
+        catch (Exception ex) {
+            logger.LogError(ex, "Error sending unread count update to user {UserId}", userId);
             throw;
         }
     }

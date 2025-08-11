@@ -1,24 +1,34 @@
+using System.Security.Claims;
+using IntranetStarter.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace IntranetStarter.Infrastructure.Hubs;
 
 [Authorize]
-public class RealtimeHub(ILogger<RealtimeHub> logger) : Hub {
+public class RealtimeHub(
+    ILogger<RealtimeHub> logger,
+    ApplicationDbContext dbContext) : Hub {
+    
     public override async Task OnConnectedAsync() {
-        string? userId   = Context.UserIdentifier;
+        string? userEmail = Context.User?.FindFirst(ClaimTypes.Email)?.Value;
         string? userName = Context.User?.Identity?.Name;
 
-        logger.LogInformation("User connected to notification hub: {UserId} ({UserName})", userId, userName);
+        logger.LogInformation("User connected to notification hub: {UserEmail} ({UserName})", userEmail, userName);
 
         // Add user to a group based on their role
         string userRole = Context.User?.FindFirst("role")?.Value ?? "Employee";
         await Groups.AddToGroupAsync(Context.ConnectionId, $"Role:{userRole}");
 
-        // Add user to their personal group for targeted notifications
-        if (!string.IsNullOrEmpty(userId)) {
-            await Groups.AddToGroupAsync(Context.ConnectionId, $"User:{userId}");
+        // Get user ID from database and add to personal group
+        if (!string.IsNullOrEmpty(userEmail)) {
+            var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
+            if (user != null) {
+                await Groups.AddToGroupAsync(Context.ConnectionId, $"User:{user.Id}");
+                logger.LogInformation("User {UserId} ({UserEmail}) added to personal group", user.Id, userEmail);
+            }
         }
 
         // Don't send automatic notification on connection - it causes duplicate toasts
@@ -46,8 +56,17 @@ public class RealtimeHub(ILogger<RealtimeHub> logger) : Hub {
     /// <param name="userId">User ID to join</param>
     public async Task JoinUserGroup(string userId) {
         if (!string.IsNullOrEmpty(userId)) {
-            await Groups.AddToGroupAsync(Context.ConnectionId, $"User:{userId}");
-            logger.LogInformation("User {UserId} joined their personal notification group", userId);
+            // Verify the user is joining their own group
+            var userEmail = Context.User?.FindFirst(ClaimTypes.Email)?.Value;
+            if (!string.IsNullOrEmpty(userEmail)) {
+                var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
+                if (user != null && user.Id.ToString() == userId) {
+                    await Groups.AddToGroupAsync(Context.ConnectionId, $"User:{userId}");
+                    logger.LogInformation("User {UserId} joined their personal notification group", userId);
+                    return;
+                }
+            }
+            logger.LogWarning("User attempted to join unauthorized group: {UserId}", userId);
         }
     }
 

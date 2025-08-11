@@ -180,6 +180,45 @@ class SignalRService {
         
       toast[toastType]({ title: announcement.title, description: announcement.message });
     });
+
+    // Handle notification list refresh signal
+    this.connection.on('RefreshNotifications', () => {
+      console.log('Received signal to refresh notifications');
+      
+      // Invalidate React Query cache to refresh notification list
+      import('../App').then(({ queryClient }) => {
+        if (queryClient) {
+          queryClient.invalidateQueries({ queryKey: ['notifications'] });
+        }
+      });
+      
+      // Emit custom event for components to listen to
+      const event = new CustomEvent('signalr:refreshNotifications');
+      window.dispatchEvent(event);
+    });
+
+    // Handle unread count update
+    this.connection.on('UpdateUnreadCount', (unreadCount: number) => {
+      console.log('Received unread count update:', unreadCount);
+      
+      // Update the notification store directly
+      import('../stores/core/notification.store').then(({ useNotificationStore }) => {
+        useNotificationStore.getState().setUnreadCount(unreadCount);
+      });
+      
+      // Invalidate React Query cache for unread count
+      import('../App').then(({ queryClient }) => {
+        if (queryClient) {
+          queryClient.invalidateQueries({ queryKey: ['notifications-unread-count'] });
+        }
+      });
+      
+      // Emit custom event with the new count
+      const event = new CustomEvent('signalr:unreadCountUpdated', {
+        detail: { count: unreadCount }
+      });
+      window.dispatchEvent(event);
+    });
   }
 
   private handleNotification(notification: NotificationMessage): void {
@@ -347,6 +386,24 @@ class SignalRService {
     
     return () => {
       window.removeEventListener('signalr:notification', handler as EventListener);
+    };
+  }
+
+  onRefreshNotifications(callback: () => void): () => void {
+    const handler = () => callback();
+    window.addEventListener('signalr:refreshNotifications', handler);
+    
+    return () => {
+      window.removeEventListener('signalr:refreshNotifications', handler);
+    };
+  }
+
+  onUnreadCountUpdated(callback: (count: number) => void): () => void {
+    const handler = (event: CustomEvent) => callback(event.detail.count);
+    window.addEventListener('signalr:unreadCountUpdated', handler as EventListener);
+    
+    return () => {
+      window.removeEventListener('signalr:unreadCountUpdated', handler as EventListener);
     };
   }
 }

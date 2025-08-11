@@ -1,3 +1,5 @@
+using IntranetStarter.Application.Features.Notifications.Queries;
+using IntranetStarter.Application.Interfaces;
 using IntranetStarter.Domain.Entities;
 using IntranetStarter.Domain.Interfaces;
 using MediatR;
@@ -9,6 +11,8 @@ public record MarkNotificationAsReadCommand(Guid NotificationId, Guid UserId) : 
 
 public class MarkNotificationAsReadCommandHandler(
     IUnitOfWork unitOfWork,
+    INotificationService notificationService,
+    IMediator mediator,
     ILogger<MarkNotificationAsReadCommandHandler> logger) : IRequestHandler<MarkNotificationAsReadCommand, bool> {
     
     public async Task<bool> Handle(MarkNotificationAsReadCommand request, CancellationToken cancellationToken) {
@@ -30,6 +34,24 @@ public class MarkNotificationAsReadCommandHandler(
         await unitOfWork.SaveChangesAsync(cancellationToken);
         
         logger.LogInformation("Marked notification {NotificationId} as read", request.NotificationId);
+        
+        // Send real-time updates to the user
+        try {
+            // Get the updated unread count
+            var unreadCountQuery = new GetUnreadNotificationCountQuery(request.UserId);
+            var unreadCount = await mediator.Send(unreadCountQuery, cancellationToken);
+            
+            // Send unread count update
+            await notificationService.SendUnreadCountUpdateAsync(request.UserId.ToString(), unreadCount, cancellationToken);
+            
+            // Send signal to refresh notification list
+            await notificationService.SendNotificationUpdateAsync(request.UserId.ToString(), cancellationToken);
+        }
+        catch (Exception ex) {
+            // Log but don't fail the command if real-time update fails
+            logger.LogWarning(ex, "Failed to send real-time notification update for user {UserId}", request.UserId);
+        }
+        
         return true;
     }
 }

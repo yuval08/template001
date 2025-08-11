@@ -83,7 +83,8 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddCustomAuthentication(builder.Configuration, builder.Environment.IsDevelopment());
 builder.Services.AddCustomAuthorization();
 
-// Add SignalR
+// Add SignalR with custom user ID provider
+builder.Services.AddSingleton<Microsoft.AspNetCore.SignalR.IUserIdProvider, IntranetStarter.Infrastructure.Hubs.CustomUserIdProvider>();
 builder.Services.AddSignalR();
 
 // Add Health Checks

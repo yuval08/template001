@@ -1,5 +1,5 @@
 using Hangfire;
-using IntranetStarter.Application.Services;
+using IntranetStarter.Application.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace IntranetStarter.Infrastructure.BackgroundJobs;

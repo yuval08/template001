@@ -1,5 +1,5 @@
 using Hangfire;
-using IntranetStarter.Application.Services;
+using IntranetStarter.Application.Interfaces;
 using IntranetStarter.Infrastructure.BackgroundJobs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

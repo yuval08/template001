@@ -33,7 +33,7 @@ backend/
 │   │   ├── Behaviors/       # MediatR behaviors
 │   │   ├── Exceptions/      # Custom exceptions
 │   │   └── Validation/      # Shared validation logic
-│   └── Services/     # Application service interfaces
+│   └── Interfaces/   # Application service interfaces
 ├── Infrastructure/   # External concerns (DB, Email, etc.)
 │   ├── Data/         # DbContext, Repository, UnitOfWork
 │   ├── Migrations/   # EF Core migrations
@@ -118,15 +118,21 @@ public record YourEntityDto(...);
 ```
 
 #### Service Interfaces
-**Service Interfaces** go in `/Application/Services/`:
+**Service Interfaces** go in `/Application/Interfaces/`, each in its own file:
 ```csharp
-// File: /Application/Services/IYourService.cs
-namespace IntranetStarter.Application.Services;
+// File: /Application/Interfaces/IYourService.cs
+namespace IntranetStarter.Application.Interfaces;
 
 public interface IYourService {
     // Methods
 }
 ```
+
+**Important**: Each interface should be in its own file:
+- `/Application/Interfaces/INotificationService.cs`
+- `/Application/Interfaces/IEmailService.cs`
+- `/Application/Interfaces/IPdfService.cs`
+- etc.
 
 **Note:** This project uses a generic repository pattern with Unit of Work.
 - Core interfaces (`IRepository<T>`, `IUnitOfWork`) are in `/Domain/Interfaces/`
@@ -214,8 +220,12 @@ Register services in `/Infrastructure/DependencyInjection.cs`:
 // Services are registered automatically through DI configuration
 services.AddScoped<IUnitOfWork, UnitOfWork>();
 services.AddScoped<INotificationService, NotificationService>();
+services.AddScoped<IEmailService, EmailService>();
+services.AddScoped<IPdfService, PdfService>();
 services.AddScoped<IYourService, YourService>();
 ```
+
+**Note**: Service interfaces are defined in `/Application/Interfaces/` and their implementations in `/Infrastructure/Services/`
 
 ## Validation Pattern
 
@@ -299,10 +309,13 @@ Guid userId = user.Id;
 ✅ **DO** keep related commands, queries, DTOs, and validators together by feature
 ❌ **DON'T** scatter related files across different folders
 
+✅ **DO** put each service interface in its own file in `/Application/Interfaces/`
+❌ **DON'T** put multiple interfaces in a single file
+
 ✅ **DO** create validators for every command and query
 ❌ **DON'T** skip validation even for simple operations
 
-✅ **DO** follow namespace conventions: `IntranetStarter.Application.Features.[Feature].[Type]`
+✅ **DO** follow namespace conventions: `IntranetStarter.Application.Features.[Feature].[Type]` and `IntranetStarter.Application.Interfaces`
 ❌ **DON'T** use inconsistent namespace patterns
 
 ✅ **DO** get user email from claims and look up the user in the database
@@ -393,11 +406,12 @@ public class YourCommandHandler(IUnitOfWork unitOfWork) {
        ├── TaskDto.cs
        └── CreateTaskDto.cs
    ```
-3. **Controller**: `/Api/Controllers/TasksController.cs`
-4. **DbContext**: Add `DbSet<Task> Tasks` to `ApplicationDbContext`
-5. **Migration**: `dotnet ef migrations add AddTaskEntity -p Infrastructure -c ApplicationDbContext -s Api`
-6. **Service (if needed)**: `/Infrastructure/Services/TaskNotificationService.cs`
-7. **DI**: Register services in `DependencyInjection.cs`
+3. **Service Interface (if needed)**: `/Application/Interfaces/ITaskService.cs`
+4. **Service Implementation (if needed)**: `/Infrastructure/Services/TaskService.cs`
+5. **Controller**: `/Api/Controllers/TasksController.cs`
+6. **DbContext**: Add `DbSet<Task> Tasks` to `ApplicationDbContext`
+7. **Migration**: `dotnet ef migrations add AddTaskEntity -p Infrastructure -c ApplicationDbContext -s Api`
+8. **DI**: Register services in `DependencyInjection.cs`
 
 ## Build Commands
 

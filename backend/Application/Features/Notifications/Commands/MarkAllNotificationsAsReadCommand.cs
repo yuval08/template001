@@ -1,3 +1,4 @@
+using IntranetStarter.Application.Interfaces;
 using IntranetStarter.Domain.Entities;
 using IntranetStarter.Domain.Interfaces;
 using MediatR;
@@ -9,6 +10,7 @@ public record MarkAllNotificationsAsReadCommand(Guid UserId) : IRequest<int>;
 
 public class MarkAllNotificationsAsReadCommandHandler(
     IUnitOfWork unitOfWork,
+    INotificationService notificationService,
     ILogger<MarkAllNotificationsAsReadCommandHandler> logger) : IRequestHandler<MarkAllNotificationsAsReadCommand, int> {
     
     public async Task<int> Handle(MarkAllNotificationsAsReadCommand request, CancellationToken cancellationToken) {
@@ -37,6 +39,19 @@ public class MarkAllNotificationsAsReadCommandHandler(
         
         logger.LogInformation("Marked {Count} notifications as read for user {UserId}", 
             notificationsList.Count, request.UserId);
+        
+        // Send real-time updates to the user
+        try {
+            // Send unread count update (now 0 since all are marked as read)
+            await notificationService.SendUnreadCountUpdateAsync(request.UserId.ToString(), 0, cancellationToken);
+            
+            // Send signal to refresh notification list
+            await notificationService.SendNotificationUpdateAsync(request.UserId.ToString(), cancellationToken);
+        }
+        catch (Exception ex) {
+            // Log but don't fail the command if real-time update fails
+            logger.LogWarning(ex, "Failed to send real-time notification update for user {UserId}", request.UserId);
+        }
         
         return notificationsList.Count;
     }

@@ -1,3 +1,5 @@
+using IntranetStarter.Application.Features.Notifications.Queries;
+using IntranetStarter.Application.Interfaces;
 using IntranetStarter.Domain.Entities;
 using IntranetStarter.Domain.Interfaces;
 using MediatR;
@@ -9,13 +11,15 @@ public record CreateNotificationCommand(
     Guid UserId,
     string Title,
     string Message,
-    NotificationType Type,
+    Domain.Entities.NotificationType Type,
     string? ActionUrl = null,
     string? Metadata = null
 ) : IRequest<Guid>;
 
 public class CreateNotificationCommandHandler(
     IUnitOfWork unitOfWork,
+    INotificationService notificationService,
+    IMediator mediator,
     ILogger<CreateNotificationCommandHandler> logger) : IRequestHandler<CreateNotificationCommand, Guid> {
     
     public async Task<Guid> Handle(CreateNotificationCommand request, CancellationToken cancellationToken) {
@@ -36,6 +40,23 @@ public class CreateNotificationCommandHandler(
         await unitOfWork.SaveChangesAsync(cancellationToken);
         
         logger.LogInformation("Notification created with ID: {NotificationId}", created.Id);
+        
+        // Send real-time updates to the user
+        try {
+            // Get the updated unread count
+            var unreadCountQuery = new GetUnreadNotificationCountQuery(request.UserId);
+            var unreadCount = await mediator.Send(unreadCountQuery, cancellationToken);
+            
+            // Send unread count update
+            await notificationService.SendUnreadCountUpdateAsync(request.UserId.ToString(), unreadCount, cancellationToken);
+            
+            // Send signal to refresh notification list
+            await notificationService.SendNotificationUpdateAsync(request.UserId.ToString(), cancellationToken);
+        }
+        catch (Exception ex) {
+            // Log but don't fail the command if real-time update fails
+            logger.LogWarning(ex, "Failed to send real-time notification update for user {UserId}", request.UserId);
+        }
         
         return created.Id;
     }

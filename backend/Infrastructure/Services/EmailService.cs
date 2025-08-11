@@ -1,4 +1,4 @@
-using IntranetStarter.Application.Services;
+using IntranetStarter.Application.Interfaces;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
