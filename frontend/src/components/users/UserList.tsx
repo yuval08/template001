@@ -3,7 +3,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { User, getUserRoleLabel, getUserRoleBadgeColor } from '@/entities/user';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import { User, getUserRoleLabel, getUserRoleBadgeColor, UserRoles } from '@/entities/user';
 import { formatRelativeTime } from '@/utils/formatters';
 import { 
   Edit,
@@ -30,10 +33,14 @@ interface UserListProps {
     pageSize: number;
   };
   globalFilter: string;
+  roleFilter?: string;
+  showInactive?: boolean;
   currentUserEmail?: string;
   hasActiveFilters?: boolean;
   onPaginationChange: (pagination: { pageIndex: number; pageSize: number }) => void;
   onGlobalFilterChange: (filter: string) => void;
+  onRoleFilterChange?: (role: string | undefined) => void;
+  onShowInactiveChange?: (showInactive: boolean) => void;
   onClearFilters?: () => void;
   onEditUser: (user: User) => void;
   onEditRole: (user: User) => void;
@@ -144,10 +151,14 @@ export const UserList: React.FC<UserListProps> = ({
   error,
   pagination,
   globalFilter,
+  roleFilter,
+  showInactive,
   currentUserEmail,
   hasActiveFilters,
   onPaginationChange,
   onGlobalFilterChange,
+  onRoleFilterChange,
+  onShowInactiveChange,
   onClearFilters,
   onEditUser,
   onEditRole,
@@ -207,6 +218,41 @@ export const UserList: React.FC<UserListProps> = ({
             <X className="h-4 w-4 mr-1" />
             Clear
           </Button>
+        )}
+      </div>
+
+      {/* Additional Filters */}
+      <div className="flex flex-col gap-3">
+        {/* Role Filter */}
+        {onRoleFilterChange && (
+          <Select
+            value={roleFilter || 'all'}
+            onValueChange={(value) => onRoleFilterChange(value === 'all' ? undefined : value)}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="All Roles" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Roles</SelectItem>
+              <SelectItem value={UserRoles.ADMIN}>{getUserRoleLabel(UserRoles.ADMIN)}</SelectItem>
+              <SelectItem value={UserRoles.MANAGER}>{getUserRoleLabel(UserRoles.MANAGER)}</SelectItem>
+              <SelectItem value={UserRoles.EMPLOYEE}>{getUserRoleLabel(UserRoles.EMPLOYEE)}</SelectItem>
+            </SelectContent>
+          </Select>
+        )}
+
+        {/* Show Inactive Filter */}
+        {onShowInactiveChange && (
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="showInactive"
+              checked={showInactive || false}
+              onCheckedChange={(checked) => onShowInactiveChange(checked === true)}
+            />
+            <Label htmlFor="showInactive" className="text-sm font-medium">
+              Show Inactive Users
+            </Label>
+          </div>
         )}
       </div>
 
