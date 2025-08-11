@@ -570,53 +570,53 @@ const Buttons: React.FC = () => {
             <div>
               <h4 className="text-sm font-medium mb-3 text-gray-900 dark:text-white">Complex Loading States</h4>
               <div className="flex flex-wrap gap-3">
-{/*                <Button */}
-{/*                  disabled={loadingStates.upload}*/}
-{/*                  onClick={() => handleAsyncAction('upload', 'Upload')}*/}
-{/*                >*/}
-{/*                  {loadingStates.upload ? (*/}
-{/*                    <>*/}
-{/*                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />*/}
-{/*                      Uploading...*/}
-{/*                    </>*/}
-{/*                  ) : (*/}
-{/*                    <>*/}
-{/*                      <Upload className="mr-2 h-4 w-4" />*/}
-{/*                      Upload Files*/}
-{/*                    </>*/}
-{/*                  )}*/}
-{/*                </Button>*/}
+                <Button
+                  disabled={loadingStates.upload}
+                  onClick={() => handleAsyncAction('upload', 'Upload')}
+                >
+                  {loadingStates.upload ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Uploading...
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="mr-2 h-4 w-4" />
+                      Upload Files
+                    </>
+                  )}
+                </Button>
 
-{/*                <Button */}
-{/*                  variant="outline"*/}
-{/*                  disabled={loadingStates.download}*/}
-{/*                  onClick={() => handleAsyncAction('download', 'Download')}*/}
-{/*                >*/}
-{/*                  {loadingStates.download ? (*/}
-{/*                    <>*/}
-{/*                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />*/}
-{/*                      Downloading...*/}
-{/*                    </>*/}
-{/*                  ) : (*/}
-{/*                    <>*/}
-{/*                      <Download className="mr-2 h-4 w-4" />*/}
-{/*                      Download Report*/}
-{/*                    </>*/}
-{/*                  )}*/}
-{/*                </Button>*/}
+                <Button
+                  variant="outline"
+                  disabled={loadingStates.download}
+                  onClick={() => handleAsyncAction('download', 'Download')}
+                >
+                  {loadingStates.download ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Downloading...
+                    </>
+                  ) : (
+                    <>
+                      <Download className="mr-2 h-4 w-4" />
+                      Download Report
+                    </>
+                  )}
+                </Button>
 
-{/*                <Button */}
-{/*                  size="icon"*/}
-{/*                  variant="ghost"*/}
-{/*                  disabled={loadingStates.refresh}*/}
-{/*                  onClick={() => handleAsyncAction('refresh', 'Refresh')}*/}
-{/*                >*/}
-{/*                  {loadingStates.refresh ? (*/}
-{/*                    <Loader2 className="h-4 w-4 animate-spin" />*/}
-{/*                  ) : (*/}
-{/*                    <Settings className="h-4 w-4" />*/}
-{/*                  )}*/}
-{/*                </Button>*/}
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  disabled={loadingStates.refresh}
+                  onClick={() => handleAsyncAction('refresh', 'Refresh')}
+                >
+                  {loadingStates.refresh ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Settings className="h-4 w-4" />
+                  )}
+                </Button>
               </div>
             </div>
 
@@ -667,31 +667,31 @@ const Buttons: React.FC = () => {
             <div>
               <h4 className="text-sm font-medium mb-3 text-gray-900 dark:text-white">Edge Cases & Accessibility</h4>
               <div className="flex flex-wrap gap-3">
-{/*                <Button */}
-{/*                  variant="outline"*/}
-{/*                  onClick={() => toast.info({ title: 'Very long button text that might wrap to multiple lines in small containers' })}*/}
-{/*                  className="max-w-48"*/}
-{/*                >*/}
-{/*                  Very Long Button Text That Demonstrates Wrapping*/}
-{/*                </Button>*/}
+                <Button
+                  variant="outline"
+                  onClick={() => toast.info({ title: 'Very long button text that might wrap to multiple lines in small containers' })}
+                  className="max-w-48"
+                >
+                  Very Long Button Text That Demonstrates Wrapping
+                </Button>
 
-{/*                <Button */}
-{/*                  size="icon"*/}
-{/*                  variant="outline"*/}
-{/*                  aria-label="Favorite this item"*/}
-{/*                  onClick={() => toast.success({ title: 'Added to favorites!' })}*/}
-{/*                >*/}
-{/*                  <Heart className="h-4 w-4" />*/}
-{/*                </Button>*/}
+                <Button
+                  size="icon"
+                  variant="outline"
+                  aria-label="Favorite this item"
+                  onClick={() => toast.success({ title: 'Added to favorites!' })}
+                >
+                  <Heart className="h-4 w-4" />
+                </Button>
 
-{/*                <Button */}
-{/*                  variant="ghost"*/}
-{/*                  disabled*/}
-{/*                  title="This action is currently unavailable"*/}
-{/*                >*/}
-{/*                  <Settings className="mr-2 h-4 w-4 opacity-50" />*/}
-{/*                  Unavailable Action*/}
-{/*                </Button>*/}
+                <Button
+                  variant="ghost"
+                  disabled
+                  title="This action is currently unavailable"
+                >
+                  <Settings className="mr-2 h-4 w-4 opacity-50" />
+                  Unavailable Action
+                </Button>
               </div>
             </div>
           </div>
