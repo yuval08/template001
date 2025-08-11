@@ -540,7 +540,24 @@ create_environment_file() {
         fi
     fi
     
-    # Create backend .env file
+    # Apply any overrides from interactive setup first
+    if [ -n "$ADMIN_EMAIL_OVERRIDE" ]; then
+        if grep -q "ADMIN_EMAIL=" "$env_file"; then
+            sed -i "s/ADMIN_EMAIL=.*/ADMIN_EMAIL=$ADMIN_EMAIL_OVERRIDE/" "$env_file"
+        else
+            echo "ADMIN_EMAIL=$ADMIN_EMAIL_OVERRIDE" >> "$env_file"
+        fi
+    fi
+    
+    if [ -n "$ALLOWED_DOMAIN_OVERRIDE" ]; then
+        if grep -q "ALLOWED_DOMAIN=" "$env_file"; then
+            sed -i "s/ALLOWED_DOMAIN=.*/ALLOWED_DOMAIN=$ALLOWED_DOMAIN_OVERRIDE/" "$env_file"
+        else
+            echo "ALLOWED_DOMAIN=$ALLOWED_DOMAIN_OVERRIDE" >> "$env_file"
+        fi
+    fi
+    
+    # Create backend .env file (after overrides are set)
     if [[ ! -f "backend/Api/.env" ]]; then
         echo -e "${BLUE}📝 Creating backend .env file...${NC}"
         create_backend_env_file
@@ -556,23 +573,6 @@ create_environment_file() {
     if [[ ! -f "frontend/.env" ]]; then
         echo -e "${BLUE}📝 Creating frontend .env file...${NC}"
         create_frontend_env_file
-    fi
-    
-    # Apply any overrides from interactive setup
-    if [ -n "$ADMIN_EMAIL_OVERRIDE" ]; then
-        if grep -q "ADMIN_EMAIL=" "$env_file"; then
-            sed -i "s/ADMIN_EMAIL=.*/ADMIN_EMAIL=$ADMIN_EMAIL_OVERRIDE/" "$env_file"
-        else
-            echo "ADMIN_EMAIL=$ADMIN_EMAIL_OVERRIDE" >> "$env_file"
-        fi
-    fi
-    
-    if [ -n "$ALLOWED_DOMAIN_OVERRIDE" ]; then
-        if grep -q "ALLOWED_DOMAIN=" "$env_file"; then
-            sed -i "s/ALLOWED_DOMAIN=.*/ALLOWED_DOMAIN=$ALLOWED_DOMAIN_OVERRIDE/" "$env_file"
-        else
-            echo "ALLOWED_DOMAIN=$ALLOWED_DOMAIN_OVERRIDE" >> "$env_file"
-        fi
     fi
     
     echo -e "${GREEN}✅ Environment files configured${NC}"
@@ -634,7 +634,11 @@ EOF
 
 # Create backend .env file
 create_backend_env_file() {
-    cat > backend/Api/.env <<'EOF'
+    # Get the admin email and allowed domain from overrides or defaults
+    local admin_email="${ADMIN_EMAIL_OVERRIDE:-admin@localhost.com}"
+    local allowed_domain="${ALLOWED_DOMAIN_OVERRIDE:-localhost.com}"
+    
+    cat > backend/Api/.env <<EOF
 # Database Configuration
 DB_HOST=localhost
 DB_PORT=5433
@@ -646,8 +650,8 @@ DB_PASSWORD=postgres
 ConnectionStrings__DefaultConnection=Host=localhost;Port=5433;Database=intranet_starter_dev;Username=postgres;Password=postgres
 
 # Authentication & Authorization
-ALLOWED_DOMAIN=localhost.com
-ADMIN_EMAIL=admin@localhost.com
+ALLOWED_DOMAIN=$allowed_domain
+ADMIN_EMAIL=$admin_email
 
 # JWT Configuration
 JWT_AUTHORITY=http://localhost:5000
