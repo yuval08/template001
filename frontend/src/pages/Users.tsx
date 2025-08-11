@@ -28,6 +28,7 @@ import {
   X,
 } from 'lucide-react';
 import { debounce } from 'lodash';
+import { PageLayout } from '@/components/common';
 
 type SortingState = Array<{
   id: string;
@@ -284,17 +285,11 @@ const Users: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-            User Management
-          </h1>
-          <p className="mt-2 text-sm sm:text-base text-gray-600 dark:text-gray-400">
-            Manage users, roles, and invitations within the system.
-          </p>
-        </div>
-        <div className="flex flex-col sm:flex-row gap-2">
+    <PageLayout
+      title="User Management"
+      description="Manage users, roles, and invitations within the system."
+      actions={
+        <>
           <Button 
             onClick={() => setIsInviteModalOpen(true)} 
             className="text-sm"
@@ -315,8 +310,9 @@ const Users: React.FC = () => {
             <span className="hidden sm:inline">Add User</span>
             <span className="sm:hidden">Add</span>
           </Button>
-        </div>
-      </div>
+        </>
+      }
+    >
 
       <Tabs value={currentTab} onValueChange={setCurrentTab}>
         <TabsList className="grid w-full grid-cols-2">
@@ -440,7 +436,7 @@ const Users: React.FC = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </PageLayout>
   );
 };
 

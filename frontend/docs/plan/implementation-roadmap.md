@@ -23,8 +23,8 @@
 ## Phase 2: Performance & Developer Experience (3-4 weeks)
 
 ### Code Splitting & Performance
-- [ ] Implement route-based code splitting
-- [ ] Add lazy loading for heavy components
+- [x] Implement route-based code splitting
+- [x] Add lazy loading for heavy components
 - [ ] Optimize images with lazy loading
 - [ ] Set up bundle analysis tooling
 

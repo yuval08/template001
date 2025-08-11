@@ -3,6 +3,7 @@ import { PDFViewer } from '@/components/showcase/reports/PDFViewer';
 import { ReportControls } from '@/components/showcase/reports/ReportControls';
 import { useSampleReport } from '@/entities/report';
 import { toast } from '@/stores/toastStore';
+import { PageLayout } from '@/components/common';
 
 const Reports: React.FC = () => {
   const [pdfData, setPdfData] = useState<Blob | null>(null);
@@ -68,15 +69,11 @@ const Reports: React.FC = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Reports & PDF Viewer
-        </h1>
-        <p className="mt-2 text-gray-600 dark:text-gray-400">
-          Interactive PDF viewer with zoom, rotation, navigation, and download capabilities.
-        </p>
-      </div>
+    <PageLayout
+      title="Reports & PDF Viewer"
+      description="Interactive PDF viewer with zoom, rotation, navigation, and download capabilities."
+      maxWidth="6xl"
+    >
 
       {/* Report Controls */}
       <ReportControls
@@ -102,7 +99,7 @@ const Reports: React.FC = () => {
         onToggleFullscreen={toggleFullscreen}
         onDownload={downloadReport}
       />
-    </div>
+    </PageLayout>
   );
 };
 

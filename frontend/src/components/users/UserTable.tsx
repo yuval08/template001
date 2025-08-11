@@ -361,7 +361,8 @@ export const UserTable: React.FC<UserTableProps> = ({
 
       {/* Table */}
       <div className="rounded-md border">
-        <table className="w-full">
+        <div className="overflow-x-auto">
+          <table className="w-full">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id} className="border-b bg-gray-50 dark:bg-gray-800">
@@ -401,6 +402,7 @@ export const UserTable: React.FC<UserTableProps> = ({
             )}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* Pagination */}

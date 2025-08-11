@@ -11,6 +11,7 @@ import { useFileUpload } from '@/entities/file';
 import { toast } from '@/stores/toastStore';
 import { Upload, X } from 'lucide-react';
 import ReactSelect from 'react-select';
+import { PageLayout } from '@/components/common';
 
 const categoryOptions = [
   { value: 'web-development', label: 'Web Development' },
@@ -109,15 +110,11 @@ const Forms: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Forms Showcase
-        </h1>
-        <p className="mt-2 text-gray-600 dark:text-gray-400">
-          Comprehensive form examples using React Hook Form, Zod validation, and various input types.
-        </p>
-      </div>
+    <PageLayout
+      title="Forms Showcase"
+      description="Comprehensive form examples using React Hook Form, Zod validation, and various input types."
+      maxWidth="4xl"
+    >
 
       <Card>
         <CardHeader>
@@ -424,7 +421,7 @@ const Forms: React.FC = () => {
           </form>
         </CardContent>
       </Card>
-    </div>
+    </PageLayout>
   );
 };
 

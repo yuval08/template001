@@ -4,6 +4,7 @@ import { ResponsiveProjectView } from '@/components/projects/ResponsiveProjectVi
 import { useProjects, Project } from '@/entities/project';
 import type { SortingState, PaginationState, Updater } from '@tanstack/react-table';
 import { debounce } from 'lodash';
+import { PageLayout } from '@/components/common';
 
 const Tables: React.FC = () => {
   // Table state - default sort by name
@@ -109,15 +110,10 @@ const Tables: React.FC = () => {
 
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
-          Tables Showcase
-        </h1>
-        <p className="mt-2 text-sm sm:text-base text-gray-600 dark:text-gray-400">
-          Advanced table functionality with responsive design, debounced search, sorting, filtering, and pagination.
-        </p>
-      </div>
+    <PageLayout
+      title="Tables Showcase"
+      description="Advanced table functionality with responsive design, debounced search, sorting, filtering, and pagination."
+    >
 
       <Card>
         <CardHeader className="p-4 sm:p-6">
@@ -147,7 +143,7 @@ const Tables: React.FC = () => {
           />
         </CardContent>
       </Card>
-    </div>
+    </PageLayout>
   );
 };
 

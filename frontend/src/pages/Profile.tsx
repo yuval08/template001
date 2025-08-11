@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { getUserRoleLabel, getUserRoleBadgeColor, getUserRoleDescription } from '@/entities/user/types/user.types';
+import { PageLayout } from '@/components/common';
 
 const Profile: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
@@ -27,22 +28,26 @@ const Profile: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center space-x-4">
-          <div className="h-16 w-16 bg-primary rounded-full flex items-center justify-center">
-            <span className="text-2xl font-bold text-primary-foreground">
-              {user.firstName?.[0]}{user.lastName?.[0]}
-            </span>
-          </div>
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              {user.firstName} {user.lastName}
-            </h1>
-            <p className="text-lg text-muted-foreground">{user.email}</p>
-          </div>
+    <PageLayout
+      title={`${user.firstName} ${user.lastName}`}
+      description={user.email}
+      maxWidth="4xl"
+      className="py-8"
+    >
+      {/* Profile Avatar */}
+      <div className="flex items-center space-x-4 mb-6">
+        <div className="h-16 w-16 bg-primary rounded-full flex items-center justify-center">
+          <span className="text-2xl font-bold text-primary-foreground">
+            {user.firstName?.[0]}{user.lastName?.[0]}
+          </span>
         </div>
+        <div>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+            {user.firstName} {user.lastName}
+          </h2>
+          <p className="text-muted-foreground">{user.email}</p>
+        </div>
+      </div>
 
         {/* Basic Information */}
         <Card>
@@ -169,8 +174,7 @@ const Profile: React.FC = () => {
             </div>
           </CardContent>
         </Card>
-      </div>
-    </div>
+    </PageLayout>
   );
 };
 

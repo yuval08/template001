@@ -19,6 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { useTheme } from '@/hooks/useTheme';
+import { PageLayout } from '@/components/common';
 
 const Settings: React.FC = () => {
   const { theme, setTheme } = useTheme();
@@ -51,21 +52,12 @@ const Settings: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-              <SettingsIcon className="h-8 w-8" />
-              Settings
-            </h1>
-            <p className="text-muted-foreground mt-1">
-              Manage your account preferences and application settings
-            </p>
-          </div>
-          <Badge variant="secondary">Mock Implementation</Badge>
-        </div>
+    <PageLayout
+      title="Settings"
+      description="Manage your account preferences and application settings"
+      maxWidth="4xl"
+      actions={<Badge variant="secondary">Mock Implementation</Badge>}
+    >
 
         {/* Appearance Settings */}
         <Card>
@@ -318,8 +310,7 @@ const Settings: React.FC = () => {
             Save Settings
           </Button>
         </div>
-      </div>
-    </div>
+    </PageLayout>
   );
 };
 
