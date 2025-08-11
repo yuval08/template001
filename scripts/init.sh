@@ -74,8 +74,64 @@ done
 print_info "New solution name: $SOLUTION_NAME"
 echo
 
+# Function to generate random port in a safe range (10000-30000)
+generate_random_port() {
+    local min_port=10000
+    local max_port=30000
+    echo $((min_port + RANDOM % (max_port - min_port + 1)))
+}
+
+# Function to check if port is available
+is_port_available() {
+    local port=$1
+    if command -v lsof >/dev/null 2>&1; then
+        ! lsof -Pi :$port -sTCP:LISTEN -t >/dev/null 2>&1
+    elif command -v netstat >/dev/null 2>&1; then
+        ! netstat -tuln | grep -q ":$port "
+    elif command -v ss >/dev/null 2>&1; then
+        ! ss -tuln | grep -q ":$port "
+    else
+        # If we can't check, assume it's available
+        true
+    fi
+}
+
+# Function to get available random port
+get_available_port() {
+    local port
+    local attempts=0
+    local max_attempts=50
+    
+    while [ $attempts -lt $max_attempts ]; do
+        port=$(generate_random_port)
+        if is_port_available $port; then
+            echo $port
+            return 0
+        fi
+        ((attempts++))
+    done
+    
+    # If we couldn't find an available port, just return a random one
+    echo $(generate_random_port)
+}
+
+print_info "Generating random ports for services..."
+
+# Generate random ports for services
+POSTGRES_PORT=$(get_available_port)
+REDIS_PORT=$(get_available_port)
+SMTP_WEB_PORT=$(get_available_port)
+SMTP_PORT=$(get_available_port)
+
+print_success "Generated ports:"
+print_info "  PostgreSQL: $POSTGRES_PORT"
+print_info "  Redis: $REDIS_PORT"
+print_info "  SMTP4Dev Web UI: $SMTP_WEB_PORT"
+print_info "  SMTP4Dev SMTP: $SMTP_PORT"
+echo
+
 # Confirm before proceeding
-read -p "This will replace all occurrences of 'intranet_starter' with '$SOLUTION_NAME'. Continue? (y/N): " -n 1 -r
+read -p "This will replace all occurrences of 'intranet_starter' with '$SOLUTION_NAME' and update service ports. Continue? (y/N): " -n 1 -r
 echo
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     print_warning "Operation cancelled"
@@ -149,11 +205,58 @@ else
     print_warning "Solution file backend/IntranetStarter.sln not found, skipping rename"
 fi
 
+# Update ports in .env.development file
+if [ -f ".env.development" ]; then
+    print_info "Updating ports in .env.development..."
+    
+    # Update PostgreSQL port
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        # macOS
+        sed -i '' "s/POSTGRES_HOST_PORT=.*/POSTGRES_HOST_PORT=$POSTGRES_PORT/" ".env.development"
+        sed -i '' "s/REDIS_HOST_PORT=.*/REDIS_HOST_PORT=$REDIS_PORT/" ".env.development"
+        sed -i '' "s/SMTP_HOST_PORT=.*/SMTP_HOST_PORT=$SMTP_WEB_PORT/" ".env.development"
+        sed -i '' "s/SMTP_PORT=.*/SMTP_PORT=$SMTP_PORT/" ".env.development"
+    else
+        # Linux/WSL
+        sed -i "s/POSTGRES_HOST_PORT=.*/POSTGRES_HOST_PORT=$POSTGRES_PORT/" ".env.development"
+        sed -i "s/REDIS_HOST_PORT=.*/REDIS_HOST_PORT=$REDIS_PORT/" ".env.development"
+        sed -i "s/SMTP_HOST_PORT=.*/SMTP_HOST_PORT=$SMTP_WEB_PORT/" ".env.development"
+        sed -i "s/SMTP_PORT=.*/SMTP_PORT=$SMTP_PORT/" ".env.development"
+    fi
+    
+    print_success "Updated service ports in .env.development"
+else
+    print_warning ".env.development not found, ports will need to be configured manually"
+fi
+
+# Update ports in docker-compose.override.yml if it exists
+if [ -f "docker-compose.override.yml" ]; then
+    print_info "Updating ports in docker-compose.override.yml..."
+    
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        # macOS
+        sed -i '' "s/\"[0-9]*:5432\"/\"$POSTGRES_PORT:5432\"/" "docker-compose.override.yml"
+        sed -i '' "s/\"[0-9]*:6379\"/\"$REDIS_PORT:6379\"/" "docker-compose.override.yml"
+    else
+        # Linux/WSL
+        sed -i "s/\"[0-9]*:5432\"/\"$POSTGRES_PORT:5432\"/" "docker-compose.override.yml"
+        sed -i "s/\"[0-9]*:6379\"/\"$REDIS_PORT:6379\"/" "docker-compose.override.yml"
+    fi
+    
+    print_success "Updated service ports in docker-compose.override.yml"
+fi
+
 echo
 print_success "======================================"
 print_success "  Initialization Complete!"
 print_success "======================================"
 print_info "Solution name changed to: $SOLUTION_NAME"
+print_info ""
+print_success "Service ports configured:"
+print_info "  PostgreSQL: localhost:$POSTGRES_PORT"
+print_info "  Redis: localhost:$REDIS_PORT"
+print_info "  SMTP4Dev Web UI: http://localhost:$SMTP_WEB_PORT"
+print_info "  SMTP4Dev SMTP: localhost:$SMTP_PORT"
 echo
 print_info "Next steps:"
 print_info "1. Review the changes using 'git diff'"
