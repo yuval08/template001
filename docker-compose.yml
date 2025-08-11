@@ -33,6 +33,19 @@ services:
       timeout: 10s
       retries: 5
 
+  smtp4dev:
+    image: rnwood/smtp4dev:v3
+    container_name: intranet-smtp
+    ports:
+      - "${SMTP_HOST_PORT:-5001}:80"
+      - "${SMTP_PORT:-25}:25"
+    networks:
+      - intranet-network
+    volumes:
+      - smtp4dev_data:/smtp4dev
+    environment:
+      - ServerOptions__HostName=smtp4dev
+
   api:
     build:
       context: ./backend
@@ -51,11 +64,11 @@ services:
       ADMIN_EMAIL: ${ADMIN_EMAIL}
       ALLOWED_DOMAIN: ${ALLOWED_DOMAIN}
       FileStorage__LocalPath: /app/uploads
-      Email__SmtpHost: ${SMTP_HOST}
-      Email__SmtpPort: ${SMTP_PORT:-587}
+      Email__SmtpHost: ${SMTP_HOST:-smtp4dev}
+      Email__SmtpPort: ${SMTP_PORT:-25}
       Email__Username: ${SMTP_USERNAME}
       Email__Password: ${SMTP_PASSWORD}
-      Email__UseSsl: ${SMTP_USE_SSL:-true}
+      Email__UseSsl: ${SMTP_USE_SSL:-false}
       Email__FromName: ${EMAIL_FROM_NAME:-Intranet Starter}
       Email__FromAddress: ${EMAIL_FROM_ADDRESS:-noreply@company.com}
     ports:
@@ -173,6 +186,8 @@ volumes:
   postgres_data:
     driver: local
   redis_data:
+    driver: local
+  smtp4dev_data:
     driver: local
   api_uploads:
     driver: local

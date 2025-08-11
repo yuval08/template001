@@ -215,6 +215,7 @@ The application follows Clean Architecture with clear separation of concerns:
 - API: http://localhost:5000
 - Swagger: http://localhost:5000/swagger
 - Hangfire: http://localhost:5002/hangfire
+- SMTP4Dev (email testing): http://localhost:5001
 - PostgreSQL: localhost:5433
 - Redis: localhost:6379
 

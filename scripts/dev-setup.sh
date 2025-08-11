@@ -350,7 +350,7 @@ interactive_setup() {
     
     # Setup mode selection
     echo -e "${BLUE}📝 Choose your development setup:${NC}"
-    echo "  1) 🗄️  Dependencies Only (postgres, redis - for local API/frontend development)"
+    echo "  1) 🗄️  Dependencies Only (postgres, redis, smtp4dev - for local API/frontend development)"
     echo "  2) 🚀 Quick Start (all services in Docker)"
     echo "  3) 🔧 Full Development (all services + monitoring)"
     echo "  4) 🎯 Custom Setup (choose specific services)"
@@ -427,7 +427,7 @@ custom_service_selection() {
     echo -e "${BLUE}🎯 Select services to include:${NC}"
     
     # Core services (always included)
-    echo -e "${GREEN}✅ Core services (postgres, redis, api, frontend)${NC}"
+    echo -e "${GREEN}✅ Core services (postgres, redis, smtp4dev, api, frontend)${NC}"
     
     # Optional services
     echo
@@ -526,11 +526,36 @@ configure_ports_and_environment() {
 
 # Create and configure environment file
 create_environment_file() {
+    # Create root .env file
     local env_file=".env"
     
     if [[ ! -f "$env_file" ]]; then
-        echo -e "${BLUE}📝 Creating .env file from template...${NC}"
-        cp .env.development "$env_file"
+        echo -e "${BLUE}📝 Creating .env file from development template...${NC}"
+        if [[ -f ".env.development" ]]; then
+            cp .env.development "$env_file"
+        else
+            echo -e "${YELLOW}⚠️  .env.development not found, creating from template${NC}"
+            create_development_env_file
+            cp .env.development "$env_file"
+        fi
+    fi
+    
+    # Create backend .env file
+    if [[ ! -f "backend/Api/.env" ]]; then
+        echo -e "${BLUE}📝 Creating backend .env file...${NC}"
+        create_backend_env_file
+    fi
+    
+    # Create backend appsettings.Development.json
+    if [[ ! -f "backend/Api/appsettings.Development.json" ]]; then
+        echo -e "${BLUE}📝 Creating backend appsettings.Development.json...${NC}"
+        create_appsettings_development
+    fi
+    
+    # Create frontend .env file
+    if [[ ! -f "frontend/.env" ]]; then
+        echo -e "${BLUE}📝 Creating frontend .env file...${NC}"
+        create_frontend_env_file
     fi
     
     # Apply any overrides from interactive setup
@@ -550,17 +575,208 @@ create_environment_file() {
         fi
     fi
     
-    echo -e "${GREEN}✅ Environment file configured${NC}"
+    echo -e "${GREEN}✅ Environment files configured${NC}"
+}
+
+# Create .env.development file
+create_development_env_file() {
+    cat > .env.development <<'EOF'
+# Development Environment Configuration
+
+# Database Configuration
+POSTGRES_DB=intranet_starter_dev
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_HOST_PORT=5433
+
+# Redis Configuration
+REDIS_HOST_PORT=6380
+
+# Application Environment
+ASPNETCORE_ENVIRONMENT=Development
+BUILD_TARGET=development
+
+# JWT Configuration (Development)
+JWT_AUTHORITY=http://localhost:5000
+JWT_AUDIENCE=intranet-api
+JWT_REQUIRE_HTTPS=false
+
+# CORS Configuration (Development)
+CORS_ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000,http://localhost:5000
+
+# Admin Configuration (Development)
+ADMIN_EMAIL=admin@localhost.com
+ALLOWED_DOMAIN=localhost.com
+
+# Email Configuration (Development - smtp4dev)
+SMTP_HOST=smtp4dev
+SMTP_PORT=25
+SMTP_HOST_PORT=5001
+SMTP_USERNAME=
+SMTP_PASSWORD=
+SMTP_USE_SSL=false
+EMAIL_FROM_NAME=Intranet Dev
+EMAIL_FROM_ADDRESS=noreply@localhost.com
+
+# Frontend Configuration (Development)
+VITE_API_URL=http://localhost:5000
+VITE_SIGNALR_URL=http://localhost:5000
+
+# Monitoring (Optional - Development)
+GRAFANA_USER=admin
+GRAFANA_PASSWORD=admin123
+
+# File Storage (Local Development)
+FileStorage__UseLocal=true
+FileStorage__LocalPath=/app/uploads
+EOF
+}
+
+# Create backend .env file
+create_backend_env_file() {
+    cat > backend/Api/.env <<'EOF'
+# Database Configuration
+DB_HOST=localhost
+DB_PORT=5433
+DB_NAME=intranet_starter_dev
+DB_USER=postgres
+DB_PASSWORD=postgres
+
+# Connection String (alternative to individual DB settings)
+ConnectionStrings__DefaultConnection=Host=localhost;Port=5433;Database=intranet_starter_dev;Username=postgres;Password=postgres
+
+# Authentication & Authorization
+ALLOWED_DOMAIN=localhost.com
+ADMIN_EMAIL=admin@localhost.com
+
+# JWT Configuration
+JWT_AUTHORITY=http://localhost:5000
+JWT_AUDIENCE=intranet-api
+JWT_REQUIRE_HTTPS=false
+
+# Email Configuration (Development - smtp4dev)
+SMTP_HOST=localhost
+SMTP_PORT=25
+SMTP_USERNAME=
+SMTP_PASSWORD=
+SMTP_USE_SSL=false
+EMAIL_FROM_NAME=Intranet Dev
+EMAIL_FROM_ADDRESS=noreply@localhost.com
+
+# File Storage
+FileStorage__UseLocal=true
+FileStorage__LocalPath=./uploads
+
+# Redis
+REDIS_HOST=localhost
+REDIS_PORT=6380
+
+# CORS
+CORS_ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000,http://localhost:5000
+
+# Environment
+ASPNETCORE_ENVIRONMENT=Development
+
+# Kestrel/HTTPS Configuration (leave empty for local development)
+ASPNETCORE_Kestrel__Certificates__Default__Password=
+ASPNETCORE_Kestrel__Certificates__Default__Path=
+
+# Azure AD Configuration (leave empty for local development)
+AZURE_AD_TENANT_ID=
+AZURE_AD_CLIENT_ID=
+AZURE_AD_CLIENT_SECRET=
+
+# Google OAuth (leave empty for local development)
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+EOF
+}
+
+# Create appsettings.Development.json
+create_appsettings_development() {
+    cat > backend/Api/appsettings.Development.json <<'EOF'
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=localhost;Port=5433;Database=intranet_starter_dev;Username=postgres;Password=postgres",
+    "Redis": "localhost:6380"
+  },
+  "Jwt": {
+    "Authority": "http://localhost:5000",
+    "Audience": "intranet-api",
+    "RequireHttpsMetadata": false
+  },
+  "CorsSettings": {
+    "AllowedOrigins": "http://localhost:3000,http://localhost:5173,http://localhost:5000"
+  },
+  "Serilog": {
+    "Using": [ "Serilog.Sinks.Console", "Serilog.Sinks.File" ],
+    "MinimumLevel": {
+      "Default": "Debug",
+      "Override": {
+        "Microsoft": "Warning",
+        "Microsoft.Hosting.Lifetime": "Information",
+        "Microsoft.EntityFrameworkCore": "Information"
+      }
+    },
+    "WriteTo": [
+      {
+        "Name": "Console",
+        "Args": {
+          "theme": "Serilog.Sinks.SystemConsole.Themes.AnsiConsoleTheme::Code, Serilog.Sinks.Console",
+          "outputTemplate": "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}"
+        }
+      },
+      {
+        "Name": "File",
+        "Args": {
+          "path": "logs/api-.txt",
+          "rollingInterval": "Day",
+          "retainedFileCountLimit": 7,
+          "outputTemplate": "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}"
+        }
+      }
+    ]
+  },
+  "Email": {
+    "SmtpHost": "localhost",
+    "SmtpPort": 25,
+    "UseSsl": false,
+    "FromName": "Intranet Dev",
+    "FromAddress": "noreply@localhost.com"
+  },
+  "FileStorage": {
+    "UseLocal": true,
+    "LocalPath": "./uploads"
+  },
+  "Hangfire": {
+    "DashboardUrl": "/hangfire",
+    "EnableDashboard": true
+  }
+}
+EOF
+}
+
+# Create frontend .env file
+create_frontend_env_file() {
+    cat > frontend/.env <<'EOF'
+# Frontend Development Environment
+
+VITE_API_URL=http://localhost:5000
+VITE_SIGNALR_URL=http://localhost:5000
+VITE_APP_NAME=Intranet Starter
+VITE_APP_VERSION=1.0.0
+VITE_ENVIRONMENT=development
+EOF
 }
 
 # Create necessary directories
 create_directories() {
     echo -e "${BLUE}📁 Creating required directories...${NC}"
-    mkdir -p logs uploads
+    mkdir -p logs uploads backend/Api/logs backend/Api/uploads
     
     if [[ "$OSTYPE" != "msys" ]]; then  # Not Windows
-        chmod 755 logs uploads 2>/dev/null || true
-        chown $(whoami):$(whoami) logs uploads 2>/dev/null || true
+        chmod 755 logs uploads backend/Api/logs backend/Api/uploads 2>/dev/null || true
+        chown $(whoami):$(whoami) logs uploads backend/Api/logs backend/Api/uploads 2>/dev/null || true
     fi
     
     echo -e "${GREEN}✅ Directories created${NC}"
@@ -606,14 +822,26 @@ pull_base_images() {
     if [ "$QUICK_MODE" != true ]; then
         echo -e "${BLUE}📥 Pulling base Docker images...${NC}"
         
-        local images=(
-            "postgres:16-alpine"
-            "redis:7-alpine"
-            "mcr.microsoft.com/dotnet/sdk:9.0"
-            "mcr.microsoft.com/dotnet/aspnet:9.0"
-            "node:20-alpine"
-            "nginx:alpine"
-        )
+        local images=()
+        
+        # Only pull dependency images for dependencies mode
+        if [ "$SETUP_MODE" = "dependencies" ]; then
+            images=(
+                "postgres:16-alpine"
+                "redis:7-alpine"
+                "rnwood/smtp4dev:v3"
+            )
+        else
+            images=(
+                "postgres:16-alpine"
+                "redis:7-alpine"
+                "rnwood/smtp4dev:v3"
+                "mcr.microsoft.com/dotnet/sdk:9.0"
+                "mcr.microsoft.com/dotnet/aspnet:9.0"
+                "node:20-alpine"
+                "nginx:alpine"
+            )
+        fi
         
         for image in "${images[@]}"; do
             if [ "$VERBOSE" = true ]; then
@@ -631,6 +859,12 @@ pull_base_images() {
 
 # Build Docker services
 build_services() {
+    # Skip building for dependencies-only mode
+    if [ "$SETUP_MODE" = "dependencies" ]; then
+        echo -e "${BLUE}⏭️  Skipping service builds (dependencies-only mode)${NC}"
+        return
+    fi
+    
     echo -e "${BLUE}🔨 Building services...${NC}"
     
     local build_args=""
@@ -667,18 +901,18 @@ start_services() {
     
     # Start services based on setup mode
     if [ "$SETUP_MODE" = "dependencies" ]; then
-        echo -e "${BLUE}🗄️ Starting dependencies only (postgres, redis)...${NC}"
-        if ! docker compose up -d postgres redis; then
+        echo -e "${BLUE}🗄️ Starting dependencies only (postgres, redis, smtp4dev)...${NC}"
+        if ! docker compose up -d postgres redis smtp4dev; then
             echo -e "${RED}❌ Failed to start dependencies${NC}"
             echo -e "${BLUE}📋 Container status:${NC}"
             docker compose ps
             echo -e "${BLUE}📋 Recent logs:${NC}"
-            docker compose logs --tail=20 postgres redis
+            docker compose logs --tail=20 postgres redis smtp4dev
             
             echo -e "${BLUE}💡 Troubleshooting steps:${NC}"
             echo "  1. Check if ports are already in use: ./scripts/port-manager.sh --check-only"
             echo "  2. Try resetting: $0 --reset"
-            echo "  3. View detailed logs: docker compose logs postgres redis"
+            echo "  3. View detailed logs: docker compose logs postgres redis smtp4dev"
             exit 1
         fi
     else
@@ -732,8 +966,8 @@ wait_for_services() {
         
         # Check if services are ready based on setup mode
         if [ "$SETUP_MODE" = "dependencies" ]; then
-            # For dependencies-only mode, just need postgres and redis
-            if [ $healthy_services -ge 2 ] && [ $total_services -ge 2 ]; then
+            # For dependencies-only mode, need postgres, redis, and smtp4dev
+            if [ $healthy_services -ge 2 ] && [ $total_services -ge 3 ]; then
                 echo -e "\\r${GREEN}✅ Dependencies are ready!${NC}                    "
                 break
             fi
@@ -865,12 +1099,14 @@ show_status_dashboard() {
     # Get actual ports from environment
     local postgres_port=${POSTGRES_HOST_PORT:-5433}
     local redis_port=${REDIS_HOST_PORT:-6380}
+    local smtp_port=${SMTP_HOST_PORT:-5001}
     
     # Service URLs section
     echo -e "${BLUE}🌐 Service URLs:${NC}"
     if [ "$SETUP_MODE" = "dependencies" ]; then
         echo -e "  ${GREEN}┌─ Database:${NC}          localhost:$postgres_port (user: postgres, password: postgres)"
-        echo -e "  ${GREEN}└─ Redis:${NC}             localhost:$redis_port"
+        echo -e "  ${GREEN}├─ Redis:${NC}             localhost:$redis_port"
+        echo -e "  ${GREEN}└─ SMTP (email):${NC}      http://localhost:$smtp_port"
         echo
         echo -e "${YELLOW}📝 To start local development:${NC}"
         echo -e "  ${CYAN}Backend API:${NC}          cd backend/Api && dotnet run --urls \"http://localhost:5000\""
@@ -880,6 +1116,7 @@ show_status_dashboard() {
         echo -e "  ${GREEN}├─ API:${NC}               http://localhost:5000"
         echo -e "  ${GREEN}├─ API Documentation:${NC} http://localhost:5000/swagger"
         echo -e "  ${GREEN}├─ Hangfire Dashboard:${NC} http://localhost:5002/hangfire"
+        echo -e "  ${GREEN}├─ SMTP (email):${NC}      http://localhost:$smtp_port"
         echo -e "  ${GREEN}├─ Database:${NC}          localhost:$postgres_port (user: postgres, password: postgres)"
         echo -e "  ${GREEN}└─ Redis:${NC}             localhost:$redis_port"
     fi
