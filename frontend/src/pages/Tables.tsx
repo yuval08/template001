@@ -341,10 +341,10 @@ const Tables: React.FC = () => {
             Manage projects with advanced table features including sorting, filtering, pagination, and row selection.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-4 sm:p-6">
           {/* Table Controls */}
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
               {/* Global Search */}
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -352,7 +352,7 @@ const Tables: React.FC = () => {
                   placeholder="Search projects..."
                   value={globalFilter}
                   onChange={(e) => setGlobalFilter(e.target.value)}
-                  className="pl-10 w-80"
+                  className="pl-10 w-full sm:w-80"
                 />
               </div>
 
@@ -362,7 +362,7 @@ const Tables: React.FC = () => {
                 onChange={(e) => {
                   table.getColumn('status')?.setFilterValue(e.target.value || undefined);
                 }}
-                className="px-3 py-2 border border-input rounded-md bg-background text-foreground"
+                className="px-3 py-2 border border-input rounded-md bg-background text-foreground w-full sm:w-auto text-sm"
               >
                 <option value="">All Statuses</option>
                 <option value="active">Active</option>
@@ -371,46 +371,51 @@ const Tables: React.FC = () => {
               </select>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               {/* Bulk Actions */}
               {selectedRowCount > 0 && (
-                <div className="flex items-center gap-2 mr-4">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                <div className="flex flex-wrap items-center gap-2 mr-0 sm:mr-4 w-full sm:w-auto">
+                  <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                     {selectedRowCount} selected
                   </span>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => handleBulkAction('export')}
+                    className="text-xs sm:text-sm flex-1 sm:flex-none"
                   >
-                    Export Selected
+                    <span className="hidden sm:inline">Export Selected</span>
+                    <span className="sm:hidden">Export</span>
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => handleBulkAction('delete')}
-                    className="text-red-600 hover:text-red-700"
+                    className="text-red-600 hover:text-red-700 text-xs sm:text-sm flex-1 sm:flex-none"
                   >
-                    Delete Selected
+                    <span className="hidden sm:inline">Delete Selected</span>
+                    <span className="sm:hidden">Delete</span>
                   </Button>
                 </div>
               )}
 
-              <Button variant="outline" onClick={exportData}>
-                <Download className="mr-2 h-4 w-4" />
-                Export CSV
+              <Button variant="outline" onClick={exportData} className="text-xs sm:text-sm w-full sm:w-auto">
+                <Download className="mr-1 sm:mr-2 h-4 w-4" />
+                <span className="hidden sm:inline">Export CSV</span>
+                <span className="sm:hidden">Export</span>
               </Button>
             </div>
           </div>
 
           {/* Table */}
-          <div className="rounded-md border">
-            <table className="w-full">
+          <div className="rounded-md border overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[800px] sm:min-w-[600px]">
               <thead>
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr key={headerGroup.id} className="border-b bg-gray-50 dark:bg-gray-800">
                     {headerGroup.headers.map((header) => (
-                      <th key={header.id} className="px-4 py-3 text-left font-semibold">
+                      <th key={header.id} className="px-2 sm:px-4 py-2 sm:py-3 text-left font-semibold text-xs sm:text-sm whitespace-nowrap">
                         {header.isPlaceholder
                           ? null
                           : flexRender(
@@ -425,7 +430,7 @@ const Tables: React.FC = () => {
               <tbody>
                 {isLoading ? (
                   <tr>
-                    <td colSpan={columns.length} className="px-4 py-8 text-center">
+                    <td colSpan={columns.length} className="px-2 sm:px-4 py-4 sm:py-8 text-center">
                       <div className="flex items-center justify-center">
                         <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
                         <span className="ml-2">Loading projects...</span>
@@ -434,7 +439,7 @@ const Tables: React.FC = () => {
                   </tr>
                 ) : table.getRowModel().rows.length === 0 ? (
                   <tr>
-                    <td colSpan={columns.length} className="px-4 py-8 text-center text-gray-500">
+                    <td colSpan={columns.length} className="px-2 sm:px-4 py-4 sm:py-8 text-center text-gray-500">
                       No projects found
                     </td>
                   </tr>
@@ -445,7 +450,7 @@ const Tables: React.FC = () => {
                       className="border-b hover:bg-gray-50 dark:hover:bg-gray-800"
                     >
                       {row.getVisibleCells().map((cell) => (
-                        <td key={cell.id} className="px-4 py-3">
+                        <td key={cell.id} className="px-2 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm">
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </td>
                       ))}
@@ -453,7 +458,8 @@ const Tables: React.FC = () => {
                   ))
                 )}
               </tbody>
-            </table>
+              </table>
+            </div>
           </div>
 
           {/* Pagination */}

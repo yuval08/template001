@@ -202,10 +202,10 @@ export default function Notifications() {
 
   return (
     <div className="container mx-auto py-6 space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Notifications</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl sm:text-3xl font-bold">Notifications</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">
             {unreadCount > 0 ? `You have ${unreadCount} unread notification${unreadCount === 1 ? '' : 's'}` : 'All caught up!'}
           </p>
         </div>
@@ -223,11 +223,11 @@ export default function Notifications() {
       </div>
 
       <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+        <CardHeader className="p-4 sm:p-6">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
               <Select value={typeFilter} onValueChange={(value: NotificationTypeFilter) => setTypeFilter(value)}>
-                <SelectTrigger className="w-[140px]">
+                <SelectTrigger className="w-full sm:w-[140px]">
                   <Filter className="h-4 w-4 mr-2" />
                   <SelectValue placeholder="Filter by type" />
                 </SelectTrigger>
@@ -241,7 +241,7 @@ export default function Notifications() {
               </Select>
               
               <Select value={readFilter} onValueChange={(value: NotificationReadFilter) => setReadFilter(value)}>
-                <SelectTrigger className="w-[140px]">
+                <SelectTrigger className="w-full sm:w-[140px]">
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -252,7 +252,7 @@ export default function Notifications() {
               </Select>
             </div>
             
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               {selectedIds.size > 0 && (
                 <>
                   <Button
@@ -260,9 +260,11 @@ export default function Notifications() {
                     size="sm"
                     onClick={handleDeleteSelectedClick}
                     disabled={isDeleting}
+                    className="text-xs sm:text-sm"
                   >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Delete Selected ({selectedIds.size})
+                    <Trash2 className="h-4 w-4 mr-1 sm:mr-2" />
+                    <span className="hidden sm:inline">Delete Selected</span>
+                    <span className="sm:hidden">Delete</span> ({selectedIds.size})
                   </Button>
                   <Separator orientation="vertical" className="h-6" />
                 </>
@@ -274,9 +276,11 @@ export default function Notifications() {
                   size="sm"
                   onClick={handleMarkAllAsRead}
                   disabled={isMarkingAllAsRead}
+                  className="text-xs sm:text-sm"
                 >
-                  <CheckCheck className="h-4 w-4 mr-2" />
-                  Mark All as Read
+                  <CheckCheck className="h-4 w-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Mark All as Read</span>
+                  <span className="sm:hidden">Mark Read</span>
                 </Button>
               )}
             </div>
@@ -297,7 +301,7 @@ export default function Notifications() {
           ) : (
             <div className="divide-y">
               {notifications.length > 0 && (
-                <div className="px-6 py-3 bg-gray-50 dark:bg-gray-900 flex items-center gap-3">
+                <div className="px-4 sm:px-6 py-3 bg-gray-50 dark:bg-gray-900 flex items-center gap-3">
                   <Checkbox
                     checked={selectedIds.size === notifications.length && notifications.length > 0}
                     onCheckedChange={handleSelectAll}
@@ -312,38 +316,44 @@ export default function Notifications() {
                 <div
                   key={notification.id}
                   className={cn(
-                    "px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer",
+                    "px-4 sm:px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer",
                     !notification.isRead && "bg-blue-50 dark:bg-blue-950/20"
                   )}
                   onClick={() => handleViewDetails(notification)}
                 >
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-start sm:items-center gap-2 sm:gap-4">
                     <Checkbox
                       checked={selectedIds.has(notification.id)}
                       onCheckedChange={() => handleSelectOne(notification.id)}
                       onClick={(e) => e.stopPropagation()}
+                      className="mt-1 sm:mt-0"
                     />
                     
-                    <div>
+                    <div className="hidden sm:block">
                       {getNotificationIcon(notification.type)}
                     </div>
                     
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <p className={cn(
-                          "text-base",
-                          !notification.isRead && "font-semibold"
-                        )}>
-                          {notification.title}
-                        </p>
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-1">
+                        <div className="flex items-center gap-2">
+                          <div className="sm:hidden">
+                            {getNotificationIcon(notification.type)}
+                          </div>
+                          <p className={cn(
+                            "text-sm sm:text-base",
+                            !notification.isRead && "font-semibold"
+                          )}>
+                            {notification.title}
+                          </p>
+                        </div>
                         {getNotificationBadge(notification.type)}
                       </div>
                       
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                      <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 line-clamp-2 sm:line-clamp-none">
                         {notification.message}
                       </p>
                       
-                      <div className="flex items-center gap-4 mt-2">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 mt-2">
                         <p className="text-xs text-gray-500 dark:text-gray-500">
                           {format(new Date(notification.createdAt), 'PPpp')}
                         </p>
@@ -364,7 +374,7 @@ export default function Notifications() {
                       </div>
                     </div>
                     
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1 ml-auto sm:ml-0">
                       {!notification.isRead && (
                         <Button
                           variant="ghost"

@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { UserTable } from '@/components/users/UserTable';
+import { ResponsiveUserView } from '@/components/users/ResponsiveUserView';
 import { CreateUserDialog } from '@/components/users/CreateUserDialog';
 import { EditUserDialog } from '@/components/users/EditUserDialog';
 import { UserRoleSelect } from '@/components/users/UserRoleSelect';
@@ -194,48 +194,52 @@ const Users: React.FC = () => {
   }
 
   return (
-    <div className="space-y-8">
-      <div className="flex justify-between items-center">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
             User Management
           </h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400">
+          <p className="mt-2 text-sm sm:text-base text-gray-600 dark:text-gray-400">
             Manage users, roles, and invitations within the system.
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button onClick={() => setIsInviteModalOpen(true)}>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Button onClick={() => setIsInviteModalOpen(true)} className="text-sm">
             <Mail className="mr-2 h-4 w-4" />
-            Send Invitation
+            <span className="hidden sm:inline">Send Invitation</span>
+            <span className="sm:hidden">Invite</span>
           </Button>
-          <Button onClick={() => setIsCreateModalOpen(true)}>
+          <Button onClick={() => setIsCreateModalOpen(true)} className="text-sm">
             <UserPlus className="mr-2 h-4 w-4" />
-            Add User
+            <span className="hidden sm:inline">Add User</span>
+            <span className="sm:hidden">Add</span>
           </Button>
         </div>
       </div>
 
       <Tabs value={currentTab} onValueChange={setCurrentTab}>
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="users">
-            Users ({totalUsersCount})
+          <TabsTrigger value="users" className="text-xs sm:text-sm">
+            <span className="hidden sm:inline">Users ({totalUsersCount})</span>
+            <span className="sm:hidden">Users</span>
           </TabsTrigger>
-          <TabsTrigger value="invitations">
-            Pending Invitations ({totalInvitationsCount})
+          <TabsTrigger value="invitations" className="text-xs sm:text-sm">
+            <span className="hidden sm:inline">Pending Invitations ({totalInvitationsCount})</span>
+            <span className="sm:hidden">Invites</span>
           </TabsTrigger>
         </TabsList>
         
         <TabsContent value="users" className="space-y-4">
           <Card>
-            <CardHeader>
-              <CardTitle>Users</CardTitle>
-              <CardDescription>
+            <CardHeader className="p-4 sm:p-6">
+              <CardTitle className="text-lg sm:text-xl">Users</CardTitle>
+              <CardDescription className="text-sm">
                 Manage all users in the system, their roles, and profile information.
               </CardDescription>
             </CardHeader>
-            <CardContent>
-              <UserTable
+            <CardContent className="p-4 sm:p-6">
+              <ResponsiveUserView
                 users={users}
                 totalCount={totalUsersCount}
                 loading={usersLoading}
