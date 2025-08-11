@@ -1,4 +1,4 @@
 # TODO
 
 ## Features
-- [ ] Enable Send Invitation email
+- [x] Enable Send Invitation email - Implemented in CreatePendingInvitationCommand
