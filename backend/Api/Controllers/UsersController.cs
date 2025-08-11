@@ -8,13 +8,15 @@ using IntranetStarter.Application.Features.Invitations.DTOs;
 using IntranetStarter.Application.Features.Users.Commands;
 using IntranetStarter.Application.Features.Users.DTOs;
 using IntranetStarter.Application.Features.Users.Queries;
+using IntranetStarter.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace IntranetStarter.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class UsersController(IMediator mediator, ILogger<UsersController> logger) : ControllerBase {
+public class UsersController(IMediator mediator, ApplicationDbContext context, IConfiguration configuration, ILogger<UsersController> logger) : ControllerBase {
     /// <summary>
     /// Get all users with pagination, filtering, and sorting (Admin only)
     /// </summary>
@@ -140,6 +142,73 @@ public class UsersController(IMediator mediator, ILogger<UsersController> logger
         catch (Exception ex) {
             logger.LogError(ex, "Error creating user");
             return StatusCode(500, "An error occurred while creating the user");
+        }
+    }
+
+    /// <summary>
+    /// Validate if an email is available for user creation (Admin only)
+    /// </summary>
+    /// <param name="email">Email to validate</param>
+    /// <returns>Validation result</returns>
+    [HttpGet("validate-email")]
+    [Authorize(Policy = "AdminOnly")]
+    public async Task<ActionResult<object>> ValidateEmail([FromQuery] string email) {
+        try {
+            if (string.IsNullOrWhiteSpace(email)) {
+                return Ok(new { 
+                    isAvailable = false, 
+                    message = "Email is required" 
+                });
+            }
+
+            // Validate domain restriction
+            string? allowedDomain = configuration["ALLOWED_DOMAIN"];
+            if (!string.IsNullOrEmpty(allowedDomain)) {
+                if (!email.EndsWith($"@{allowedDomain}", StringComparison.OrdinalIgnoreCase)) {
+                    logger.LogDebug("Email validation failed: {Email} is not from allowed domain @{Domain}", 
+                        email, allowedDomain);
+                    return Ok(new { 
+                        isAvailable = false, 
+                        message = $"Email must be from the @{allowedDomain} domain" 
+                    });
+                }
+            }
+
+            // Check if user already exists
+            var existingUser = await context.Users
+                .FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
+            
+            if (existingUser != null) {
+                logger.LogDebug("Email validation failed: {Email} already exists", email);
+                return Ok(new { 
+                    isAvailable = false, 
+                    message = "This email is already registered" 
+                });
+            }
+
+            // Check for pending invitations
+            var pendingInvitation = await context.PendingInvitations
+                .FirstOrDefaultAsync(i => i.Email.ToLower() == email.ToLower() 
+                    && !i.IsUsed 
+                    && i.ExpiresAt > DateTime.UtcNow);
+            
+            if (pendingInvitation != null) {
+                logger.LogDebug("Email validation failed: {Email} has a pending invitation", email);
+                return Ok(new { 
+                    isAvailable = false, 
+                    message = "This email has a pending invitation" 
+                });
+            }
+
+            logger.LogDebug("Email validation successful: {Email} is available", email);
+            return Ok(new { 
+                isAvailable = true, 
+                message = "Email is available" 
+            });
+        }
+        catch (Exception ex) {
+            logger.LogError(ex, "Error validating email {Email}", email);
+            return StatusCode(500, "An error occurred while validating the email");
         }
     }
 

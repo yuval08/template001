@@ -35,8 +35,10 @@ const Users: React.FC = () => {
   const { user: currentUser, hasAnyRole } = useAuth();
   const isAdmin = hasAnyRole(['Admin']);
   
-  // Table state
-  const [sorting, setSorting] = useState<SortingState>([]);
+  // Table state - default sort by fullname
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: 'fullname', desc: false }
+  ]);
   const [globalFilter, setGlobalFilter] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>();
   const [showInactive, setShowInactive] = useState(false);
@@ -99,12 +101,8 @@ const Users: React.FC = () => {
     department?: string;
     jobTitle?: string;
   }) => {
-    try {
-      await createUserMutation.mutateAsync(data);
-      setIsCreateModalOpen(false);
-    } catch (error) {
-      // Error is handled by the mutation
-    }
+    await createUserMutation.mutateAsync(data);
+    setIsCreateModalOpen(false);
   };
 
   const handleInviteUser = async (data: {
@@ -113,12 +111,8 @@ const Users: React.FC = () => {
     invitedById: string;
     expirationDays?: number;
   }) => {
-    try {
-      await createInvitationMutation.mutateAsync(data);
-      setIsInviteModalOpen(false);
-    } catch (error) {
-      // Error is handled by the mutation
-    }
+    await createInvitationMutation.mutateAsync(data);
+    setIsInviteModalOpen(false);
   };
 
   const handleEditUser = (user: User) => {

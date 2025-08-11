@@ -21,6 +21,16 @@ public class CreatePendingInvitationCommandHandler(
     public async Task<PendingInvitationDto> Handle(CreatePendingInvitationCommand request, CancellationToken cancellationToken) {
         logger.LogInformation("Creating pending invitation for email: {Email}", request.Invitation.Email);
 
+        // Validate domain restriction
+        string? allowedDomain = configuration["ALLOWED_DOMAIN"];
+        if (!string.IsNullOrEmpty(allowedDomain)) {
+            if (!request.Invitation.Email.EndsWith($"@{allowedDomain}", StringComparison.OrdinalIgnoreCase)) {
+                logger.LogWarning("Attempted to create invitation for email {Email} outside of allowed domain @{Domain}", 
+                    request.Invitation.Email, allowedDomain);
+                throw new ArgumentException($"Invitation email must be from the @{allowedDomain} domain");
+            }
+        }
+
         // Validate role
         if (!UserRoles.IsValidRole(request.Invitation.IntendedRole)) {
             throw new ArgumentException($"Invalid role '{request.Invitation.IntendedRole}'. Valid roles are: {string.Join(", ", UserRoles.All)}");

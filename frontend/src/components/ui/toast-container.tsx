@@ -22,7 +22,7 @@ export const ToastContainer: React.FC = () => {
   const remove = useToastStore((state) => state.remove);
 
   return (
-    <div className="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm">
+    <div className="fixed top-4 right-4 z-[9999] flex flex-col gap-2 max-w-sm">
       {items.map((toast) => (
         <div
           key={toast.id}

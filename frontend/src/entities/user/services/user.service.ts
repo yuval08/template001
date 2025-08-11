@@ -77,6 +77,13 @@ export class UserService extends CrudService<User, CreateUserDto, UpdateUserDto>
   }
 
   /**
+   * Validate if an email is available for user creation
+   */
+  async validateEmail(email: string): Promise<{ isAvailable: boolean; message: string }> {
+    return this.get<{ isAvailable: boolean; message: string }>(`${this.entityPath}/validate-email`, { email });
+  }
+
+  /**
    * Business logic methods using DTOs for clean separation
    */
   async createUserFromForm(formData: {
