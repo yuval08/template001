@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace IntranetStarter.Application.Features.Users.Commands;
 
-public record UpdateUserProfileCommand(UpdateUserProfileDto UserProfile) : IRequest<UserDto>;
+public record UpdateUserProfileCommand(UpdateUserProfileDto UserProfile, string? CurrentUserEmail = null) : IRequest<UserDto>;
 
 public class UpdateUserProfileCommandHandler(IUnitOfWork unitOfWork, ILogger<UpdateUserProfileCommandHandler> logger) : IRequestHandler<UpdateUserProfileCommand, UserDto> {
     public async Task<UserDto> Handle(UpdateUserProfileCommand request, CancellationToken cancellationToken) {
@@ -19,6 +19,14 @@ public class UpdateUserProfileCommandHandler(IUnitOfWork unitOfWork, ILogger<Upd
         var user = await userRepository.GetByIdAsync(request.UserProfile.UserId, cancellationToken);
         if (user == null) {
             throw new ArgumentException($"User with ID '{request.UserProfile.UserId}' not found");
+        }
+
+        // Prevent self-deactivation if current user email is provided
+        if (!string.IsNullOrEmpty(request.CurrentUserEmail) && 
+            user.Email.Equals(request.CurrentUserEmail, StringComparison.OrdinalIgnoreCase) &&
+            user.IsActive && !request.UserProfile.IsActive) {
+            logger.LogWarning("User {Email} attempted to deactivate their own account", request.CurrentUserEmail);
+            throw new InvalidOperationException("You cannot deactivate your own account");
         }
 
         // Update profile fields (excluding role which should be updated via UpdateUserRoleCommand)

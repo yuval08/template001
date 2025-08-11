@@ -247,7 +247,7 @@ public class UsersController(IMediator mediator, ApplicationDbContext context, I
 
             logger.LogInformation("User {Email} updating profile for user ID: {UserId}", currentUserEmail, id);
 
-            var command = new UpdateUserProfileCommand(updateUserProfileDto);
+            var command = new UpdateUserProfileCommand(updateUserProfileDto, currentUserEmail);
 
             await mediator.Send(command);
 
@@ -326,6 +326,58 @@ public class UsersController(IMediator mediator, ApplicationDbContext context, I
         catch (Exception ex) {
             logger.LogError(ex, "Error updating user role {UserId}", id);
             return StatusCode(500, "An error occurred while updating the user role");
+        }
+    }
+
+    /// <summary>
+    /// Delete (soft delete) a user by setting IsActive to false (Admin only)
+    /// Prevents self-deletion of admin users
+    /// </summary>
+    /// <param name="id">User ID</param>
+    /// <returns>Success status</returns>
+    [HttpDelete("{id:guid}")]
+    [Authorize(Policy = "AdminOnly")]
+    public async Task<ActionResult> DeleteUser(Guid id) {
+        try {
+            string? currentUserEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+
+            // First, get the user to check if it's self-deletion
+            var getUserQuery = new GetUserByIdQuery(id);
+            var existingUser = await mediator.Send(getUserQuery);
+
+            if (existingUser == null) {
+                logger.LogWarning("User with ID {UserId} not found for deletion", id);
+                return NotFound($"User with ID {id} not found");
+            }
+
+            // Prevent self-deletion
+            if (existingUser.Email == currentUserEmail) {
+                logger.LogWarning("Admin user {Email} attempted to delete themselves", currentUserEmail);
+                return BadRequest("You cannot delete your own account");
+            }
+
+            logger.LogInformation("Admin user {Email} deleting user ID: {UserId} ({UserEmail})",
+                currentUserEmail, id, existingUser.Email);
+
+            var command = new DeleteUserCommand(id, currentUserEmail ?? "System", currentUserEmail);
+            var result = await mediator.Send(command);
+
+            logger.LogInformation("Successfully soft deleted user {UserId} ({UserEmail}) by admin {AdminEmail}",
+                id, existingUser.Email, currentUserEmail);
+
+            return NoContent();
+        }
+        catch (ArgumentException ex) {
+            logger.LogWarning(ex, "Invalid argument when deleting user");
+            return BadRequest(ex.Message);
+        }
+        catch (InvalidOperationException ex) {
+            logger.LogWarning(ex, "Business rule violation when deleting user");
+            return Conflict(ex.Message);
+        }
+        catch (Exception ex) {
+            logger.LogError(ex, "Error deleting user {UserId}", id);
+            return StatusCode(500, "An error occurred while deleting the user");
         }
     }
 
