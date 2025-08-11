@@ -1,0 +1,83 @@
+{
+  "title": "Users",
+  "subtitle": "Manage user accounts and permissions",
+  "table": {
+    "headers": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "status": "Status",
+      "created": "Created",
+      "last_login": "Last Login",
+      "actions": "Actions"
+    },
+    "search_placeholder": "Search users...",
+    "filter_all_roles": "All Roles",
+    "no_results": "No users found"
+  },
+  "actions": {
+    "edit_profile": "Edit Profile",
+    "change_role": "Change Role", 
+    "delete_user": "Delete User",
+    "cannot_delete_yourself": "Cannot delete yourself",
+    "invite_user": "Invite User"
+  },
+  "roles": {
+    "admin": "Admin",
+    "manager": "Manager",
+    "employee": "Employee"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "pending": "Pending"
+  },
+  "dialogs": {
+    "create_user": {
+      "title": "Create New User",
+      "first_name": "First Name",
+      "last_name": "Last Name",
+      "email": "Email Address",
+      "role": "Role",
+      "role_placeholder": "Select a role"
+    },
+    "edit_user": {
+      "title": "Edit User Profile",
+      "first_name": "First Name",
+      "last_name": "Last Name",
+      "email": "Email Address"
+    },
+    "invite_user": {
+      "title": "Invite New User",
+      "email": "Email Address",
+      "role": "Role",
+      "role_placeholder": "Select a role for this user"
+    },
+    "change_role": {
+      "title": "Change User Role",
+      "current_role": "Current Role",
+      "new_role": "New Role",
+      "new_role_placeholder": "Select a new role"
+    }
+  },
+  "invitations": {
+    "title": "Pending Invitations",
+    "email": "Email",
+    "role": "Role", 
+    "invited_by": "Invited By",
+    "sent": "Sent",
+    "expires": "Expires",
+    "actions": "Actions",
+    "resend": "Resend",
+    "cancel": "Cancel",
+    "no_pending": "No pending invitations"
+  },
+  "messages": {
+    "user_created": "User created successfully",
+    "user_updated": "User updated successfully",
+    "user_deleted": "User deleted successfully",
+    "invitation_sent": "Invitation sent successfully",
+    "invitation_cancelled": "Invitation cancelled",
+    "role_updated": "User role updated successfully"
+  }
+}

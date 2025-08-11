@@ -1,0 +1,59 @@
+{
+  "title": "Dashboard",
+  "subtitle": "Overview of your projects and activity with interactive charts and statistics.",
+  "metrics": {
+    "total_projects": "Total Projects",
+    "active_projects": "Active Projects", 
+    "completed_projects": "Completed",
+    "on_hold": "On Hold",
+    "of_total": "of total"
+  },
+  "trends": {
+    "from_last_month": "from last month",
+    "completion_rate": "completion rate"
+  },
+  "charts": {
+    "project_status_distribution": {
+      "title": "Project Status Distribution",
+      "description": "Current breakdown of projects by status"
+    },
+    "monthly_activity": {
+      "title": "Monthly Activity",
+      "description": "Project activity over the last 6 months"
+    },
+    "monthly_comparison": {
+      "title": "Monthly Comparison",
+      "description": "Comparison of projects created vs completed over time",
+      "created": "Created",
+      "completed": "Completed"
+    },
+    "user_growth": {
+      "title": "User Growth Trend",
+      "description": "User registration and engagement over time",
+      "active_users": "Active Users"
+    }
+  },
+  "recent_activity": {
+    "title": "Recent Activity",
+    "description": "Latest actions in your workspace",
+    "actions": {
+      "new_project_created": "New project created",
+      "project_status_updated": "Project status updated",
+      "user_added_to_project": "User added to project",
+      "report_generated": "Report generated",
+      "project_completed": "Project completed"
+    },
+    "by": "by",
+    "time": {
+      "minutes_ago": "{{count}} minute ago",
+      "minutes_ago_plural": "{{count}} minutes ago",
+      "hours_ago": "{{count}} hour ago",
+      "hours_ago_plural": "{{count}} hours ago"
+    }
+  },
+  "status_labels": {
+    "active": "Active",
+    "completed": "Completed", 
+    "paused": "Paused"
+  }
+}

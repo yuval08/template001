@@ -1,0 +1,26 @@
+{
+  "title": "Notifications",
+  "mark_as_read": "Mark as read",
+  "mark_all_as_read": "Mark all as read",
+  "delete_notification": "Delete notification",
+  "delete_all": "Delete all",
+  "no_notifications": "No notifications",
+  "unread_count": "{{count}} unread notification",
+  "unread_count_plural": "{{count}} unread notifications",
+  "dialogs": {
+    "delete_notification": {
+      "title": "Delete Notification",
+      "description": "Are you sure you want to delete this notification? This action cannot be undone."
+    },
+    "delete_all": {
+      "title": "Delete All Notifications",
+      "description": "Are you sure you want to delete all notifications? This action cannot be undone."
+    }
+  },
+  "messages": {
+    "marked_as_read": "Notification marked as read",
+    "all_marked_as_read": "All notifications marked as read",
+    "notification_deleted": "Notification deleted",
+    "all_deleted": "All notifications deleted"
+  }
+}

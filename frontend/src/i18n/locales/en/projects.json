@@ -1,0 +1,47 @@
+{
+  "title": "Projects",
+  "subtitle": "Manage and track your projects",
+  "table": {
+    "headers": {
+      "name": "Name",
+      "description": "Description",
+      "status": "Status",
+      "created": "Created",
+      "updated": "Updated",
+      "actions": "Actions"
+    },
+    "search_placeholder": "Search projects...",
+    "no_results": "No projects found"
+  },
+  "actions": {
+    "create_project": "Create Project",
+    "edit_project": "Edit Project",
+    "delete_project": "Delete Project",
+    "view_details": "View Details"
+  },
+  "status": {
+    "active": "Active",
+    "completed": "Completed",
+    "paused": "Paused",
+    "cancelled": "Cancelled"
+  },
+  "dialogs": {
+    "create_project": {
+      "title": "Create New Project",
+      "name": "Project Name",
+      "description": "Description",
+      "status": "Status"
+    },
+    "edit_project": {
+      "title": "Edit Project",
+      "name": "Project Name", 
+      "description": "Description",
+      "status": "Status"
+    }
+  },
+  "messages": {
+    "project_created": "Project created successfully",
+    "project_updated": "Project updated successfully",
+    "project_deleted": "Project deleted successfully"
+  }
+}

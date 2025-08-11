@@ -1,4 +1,6 @@
-import { format, formatDistanceToNow, parseISO } from 'date-fns';
+import { format } from 'date-fns/format';
+import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
+import { parseISO } from 'date-fns/parseISO';
 
 export const formatDate = (date: string | Date, pattern = 'MMM dd, yyyy') => {
   const dateObj = typeof date === 'string' ? parseISO(date) : date;

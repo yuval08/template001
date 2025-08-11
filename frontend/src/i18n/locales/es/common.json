@@ -1,0 +1,89 @@
+{
+  "buttons": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "add": "Agregar",
+    "create": "Crear",
+    "update": "Actualizar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "clear": "Limpiar",
+    "submit": "Enviar",
+    "close": "Cerrar",
+    "confirm": "Confirmar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "refresh": "Actualizar",
+    "export": "Exportar",
+    "import": "Importar",
+    "download": "Descargar",
+    "upload": "Subir"
+  },
+  "navigation": {
+    "dashboard": "Panel de Control",
+    "users": "Usuarios",
+    "projects": "Proyectos",
+    "reports": "Reportes",
+    "settings": "Configuración",
+    "profile": "Perfil",
+    "notifications": "Notificaciones",
+    "logout": "Cerrar Sesión",
+    "home": "Inicio"
+  },
+  "status": {
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "pending": "Pendiente",
+    "completed": "Completado",
+    "cancelled": "Cancelado",
+    "draft": "Borrador",
+    "published": "Publicado"
+  },
+  "actions": {
+    "view": "Ver",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "duplicate": "Duplicar",
+    "archive": "Archivar",
+    "restore": "Restaurar"
+  },
+  "forms": {
+    "required": "Este campo es requerido",
+    "invalid_email": "Por favor ingresa un correo electrónico válido",
+    "min_length": "Debe tener al menos {{count}} caracteres",
+    "max_length": "No debe tener más de {{count}} caracteres",
+    "passwords_match": "Las contraseñas deben coincidir"
+  },
+  "messages": {
+    "loading": "Cargando...",
+    "no_data": "No hay datos disponibles",
+    "error": "Ocurrió un error",
+    "success": "Operación completada exitosamente",
+    "confirm_delete": "¿Estás seguro de que quieres eliminar este elemento?",
+    "unsaved_changes": "Tienes cambios sin guardar. ¿Estás seguro de que quieres salir?",
+    "network_error": "Error de red. Por favor verifica tu conexión e intenta nuevamente."
+  },
+  "date": {
+    "today": "Hoy",
+    "yesterday": "Ayer",
+    "tomorrow": "Mañana",
+    "last_week": "La semana pasada",
+    "this_week": "Esta semana",
+    "next_week": "La próxima semana",
+    "last_month": "El mes pasado",
+    "this_month": "Este mes",
+    "next_month": "El próximo mes"
+  },
+  "time": {
+    "just_now": "Ahora mismo",
+    "minutes_ago": "Hace {{count}} minuto",
+    "minutes_ago_plural": "Hace {{count}} minutos",
+    "hours_ago": "Hace {{count}} hora",
+    "hours_ago_plural": "Hace {{count}} horas",
+    "days_ago": "Hace {{count}} día",
+    "days_ago_plural": "Hace {{count}} días"
+  }
+}

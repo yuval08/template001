@@ -1,0 +1,47 @@
+{
+  "title": "Proyectos",
+  "subtitle": "Gestionar y seguir tus proyectos",
+  "table": {
+    "headers": {
+      "name": "Nombre",
+      "description": "Descripción",
+      "status": "Estado",
+      "created": "Creado",
+      "updated": "Actualizado",
+      "actions": "Acciones"
+    },
+    "search_placeholder": "Buscar proyectos...",
+    "no_results": "No se encontraron proyectos"
+  },
+  "actions": {
+    "create_project": "Crear Proyecto",
+    "edit_project": "Editar Proyecto",
+    "delete_project": "Eliminar Proyecto",
+    "view_details": "Ver Detalles"
+  },
+  "status": {
+    "active": "Activo",
+    "completed": "Completado",
+    "paused": "Pausado",
+    "cancelled": "Cancelado"
+  },
+  "dialogs": {
+    "create_project": {
+      "title": "Crear Nuevo Proyecto",
+      "name": "Nombre del Proyecto",
+      "description": "Descripción",
+      "status": "Estado"
+    },
+    "edit_project": {
+      "title": "Editar Proyecto",
+      "name": "Nombre del Proyecto",
+      "description": "Descripción",
+      "status": "Estado"
+    }
+  },
+  "messages": {
+    "project_created": "Proyecto creado exitosamente",
+    "project_updated": "Proyecto actualizado exitosamente",
+    "project_deleted": "Proyecto eliminado exitosamente"
+  }
+}

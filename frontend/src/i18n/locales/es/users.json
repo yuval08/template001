@@ -1,0 +1,83 @@
+{
+  "title": "Usuarios",
+  "subtitle": "Gestionar cuentas de usuario y permisos",
+  "table": {
+    "headers": {
+      "name": "Nombre",
+      "email": "Correo Electrónico",
+      "role": "Rol",
+      "status": "Estado",
+      "created": "Creado",
+      "last_login": "Último Acceso",
+      "actions": "Acciones"
+    },
+    "search_placeholder": "Buscar usuarios...",
+    "filter_all_roles": "Todos los Roles",
+    "no_results": "No se encontraron usuarios"
+  },
+  "actions": {
+    "edit_profile": "Editar Perfil",
+    "change_role": "Cambiar Rol",
+    "delete_user": "Eliminar Usuario",
+    "cannot_delete_yourself": "No puedes eliminarte a ti mismo",
+    "invite_user": "Invitar Usuario"
+  },
+  "roles": {
+    "admin": "Administrador",
+    "manager": "Gerente",
+    "employee": "Empleado"
+  },
+  "status": {
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "pending": "Pendiente"
+  },
+  "dialogs": {
+    "create_user": {
+      "title": "Crear Nuevo Usuario",
+      "first_name": "Nombre",
+      "last_name": "Apellido",
+      "email": "Correo Electrónico",
+      "role": "Rol",
+      "role_placeholder": "Selecciona un rol"
+    },
+    "edit_user": {
+      "title": "Editar Perfil de Usuario",
+      "first_name": "Nombre",
+      "last_name": "Apellido",
+      "email": "Correo Electrónico"
+    },
+    "invite_user": {
+      "title": "Invitar Nuevo Usuario",
+      "email": "Correo Electrónico",
+      "role": "Rol",
+      "role_placeholder": "Selecciona un rol para este usuario"
+    },
+    "change_role": {
+      "title": "Cambiar Rol de Usuario",
+      "current_role": "Rol Actual",
+      "new_role": "Nuevo Rol",
+      "new_role_placeholder": "Selecciona un nuevo rol"
+    }
+  },
+  "invitations": {
+    "title": "Invitaciones Pendientes",
+    "email": "Correo Electrónico",
+    "role": "Rol",
+    "invited_by": "Invitado Por",
+    "sent": "Enviado",
+    "expires": "Expira",
+    "actions": "Acciones",
+    "resend": "Reenviar",
+    "cancel": "Cancelar",
+    "no_pending": "No hay invitaciones pendientes"
+  },
+  "messages": {
+    "user_created": "Usuario creado exitosamente",
+    "user_updated": "Usuario actualizado exitosamente",
+    "user_deleted": "Usuario eliminado exitosamente",
+    "invitation_sent": "Invitación enviada exitosamente",
+    "invitation_cancelled": "Invitación cancelada",
+    "role_updated": "Rol de usuario actualizado exitosamente"
+  }
+}

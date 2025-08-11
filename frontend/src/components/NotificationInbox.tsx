@@ -12,7 +12,7 @@ import {
   Loader2,
   Inbox
 } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 import { cn } from '@/utils/cn';
 import { Button } from '@/components/ui/button';
 import {

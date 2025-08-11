@@ -1,0 +1,26 @@
+{
+  "title": "Notificaciones",
+  "mark_as_read": "Marcar como leído",
+  "mark_all_as_read": "Marcar todas como leídas",
+  "delete_notification": "Eliminar notificación",
+  "delete_all": "Eliminar todas",
+  "no_notifications": "No hay notificaciones",
+  "unread_count": "{{count}} notificación sin leer",
+  "unread_count_plural": "{{count}} notificaciones sin leer",
+  "dialogs": {
+    "delete_notification": {
+      "title": "Eliminar Notificación",
+      "description": "¿Estás seguro de que quieres eliminar esta notificación? Esta acción no se puede deshacer."
+    },
+    "delete_all": {
+      "title": "Eliminar Todas las Notificaciones",
+      "description": "¿Estás seguro de que quieres eliminar todas las notificaciones? Esta acción no se puede deshacer."
+    }
+  },
+  "messages": {
+    "marked_as_read": "Notificación marcada como leída",
+    "all_marked_as_read": "Todas las notificaciones marcadas como leídas",
+    "notification_deleted": "Notificación eliminada",
+    "all_deleted": "Todas las notificaciones eliminadas"
+  }
+}

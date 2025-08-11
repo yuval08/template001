@@ -1,0 +1,59 @@
+{
+  "title": "Panel de Control",
+  "subtitle": "Resumen de tus proyectos y actividad con gráficos interactivos y estadísticas.",
+  "metrics": {
+    "total_projects": "Proyectos Totales",
+    "active_projects": "Proyectos Activos",
+    "completed_projects": "Completados",
+    "on_hold": "En Espera",
+    "of_total": "del total"
+  },
+  "trends": {
+    "from_last_month": "desde el mes pasado",
+    "completion_rate": "tasa de finalización"
+  },
+  "charts": {
+    "project_status_distribution": {
+      "title": "Distribución del Estado de Proyectos",
+      "description": "Desglose actual de proyectos por estado"
+    },
+    "monthly_activity": {
+      "title": "Actividad Mensual",
+      "description": "Actividad de proyectos en los últimos 6 meses"
+    },
+    "monthly_comparison": {
+      "title": "Comparación Mensual",
+      "description": "Comparación de proyectos creados vs completados a lo largo del tiempo",
+      "created": "Creados",
+      "completed": "Completados"
+    },
+    "user_growth": {
+      "title": "Tendencia de Crecimiento de Usuarios",
+      "description": "Registro de usuarios y participación a lo largo del tiempo",
+      "active_users": "Usuarios Activos"
+    }
+  },
+  "recent_activity": {
+    "title": "Actividad Reciente",
+    "description": "Últimas acciones en tu espacio de trabajo",
+    "actions": {
+      "new_project_created": "Nuevo proyecto creado",
+      "project_status_updated": "Estado del proyecto actualizado",
+      "user_added_to_project": "Usuario agregado al proyecto",
+      "report_generated": "Reporte generado",
+      "project_completed": "Proyecto completado"
+    },
+    "by": "por",
+    "time": {
+      "minutes_ago": "Hace {{count}} minuto",
+      "minutes_ago_plural": "Hace {{count}} minutos",
+      "hours_ago": "Hace {{count}} hora",
+      "hours_ago_plural": "Hace {{count}} horas"
+    }
+  },
+  "status_labels": {
+    "active": "Activo",
+    "completed": "Completado",
+    "paused": "Pausado"
+  }
+}
