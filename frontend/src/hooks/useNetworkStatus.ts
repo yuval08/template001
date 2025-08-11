@@ -120,7 +120,7 @@ export const useNetworkStatus = () => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 5000);
 
-      const response = await fetch('/api/health', {
+      const response = await fetch('/health', {
         method: 'HEAD',
         cache: 'no-cache',
         signal: controller.signal,
