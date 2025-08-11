@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -49,6 +49,20 @@ export const CreateUserDialog: React.FC<CreateUserDialogProps> = ({
   const handleSubmit = (data: CreateUserFormData) => {
     onSubmit(data);
   };
+
+  // Reset form when dialog opens
+  useEffect(() => {
+    if (isOpen) {
+      form.reset({
+        email: '',
+        firstName: '',
+        lastName: '',
+        role: '',
+        department: '',
+        jobTitle: '',
+      });
+    }
+  }, [isOpen, form]);
 
   const handleClose = () => {
     form.reset();
@@ -114,7 +128,7 @@ export const CreateUserDialog: React.FC<CreateUserDialogProps> = ({
           <div className="space-y-2">
             <Label htmlFor="role">Role *</Label>
             <Select
-              value={form.watch('role')}
+              value={form.watch('role') || ''}
               onValueChange={(value) => form.setValue('role', value, { shouldValidate: true })}
             >
               <SelectTrigger className={form.formState.errors.role ? 'border-red-500' : ''}>
