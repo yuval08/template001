@@ -1,4 +1,4 @@
-using IntranetStarter.Application.Commands;
+using IntranetStarter.Application.Features.Notifications.Commands;
 using IntranetStarter.Application.Services;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;

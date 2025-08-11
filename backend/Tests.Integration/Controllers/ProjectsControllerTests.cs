@@ -1,5 +1,5 @@
 using FluentAssertions;
-using IntranetStarter.Application.DTOs;
+using IntranetStarter.Application.Features.Projects.DTOs;
 using IntranetStarter.Infrastructure.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;

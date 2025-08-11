@@ -1,5 +1,3 @@
-using IntranetStarter.Application.Commands;
-using IntranetStarter.Application.Queries;
 using IntranetStarter.Domain.Entities;
 using IntranetStarter.Infrastructure.Data;
 using MediatR;
@@ -7,7 +5,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using IntranetStarter.Application.DTOs;
+using IntranetStarter.Application.Features.Notifications.Queries;
+using IntranetStarter.Application.Features.Notifications.Commands;
+using IntranetStarter.Application.Features.Notifications.DTOs;
 
 namespace IntranetStarter.Api.Controllers;
 

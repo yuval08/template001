@@ -1,5 +1,4 @@
 #if DEBUG
-using IntranetStarter.Application.Commands;
 using IntranetStarter.Domain.Entities;
 using IntranetStarter.Infrastructure.Data;
 using MediatR;
@@ -9,6 +8,7 @@ using Microsoft.AspNetCore.SignalR;
 using IntranetStarter.Api.Hubs;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using IntranetStarter.Application.Features.Notifications.Commands;
 
 namespace IntranetStarter.Api.Controllers;
 

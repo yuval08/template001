@@ -9,9 +9,38 @@ This backend follows Clean Architecture principles with a specific folder struct
 ```
 backend/
 ├── Domain/           # Core business logic (no dependencies)
+│   ├── Common/       # Base entities and shared domain code
+│   ├── Entities/     # Domain entities
+│   └── Interfaces/   # Core interfaces (IRepository, IUnitOfWork)
 ├── Application/      # Use cases and business rules
+│   ├── Features/     # Feature-based organization
+│   │   ├── Users/    # User feature
+│   │   │   ├── Commands/    # User commands
+│   │   │   ├── Queries/     # User queries
+│   │   │   ├── DTOs/        # User DTOs
+│   │   │   └── Validators/  # User validators
+│   │   ├── Projects/ # Project feature
+│   │   │   ├── Commands/    # Project commands
+│   │   │   ├── Queries/     # Project queries
+│   │   │   ├── DTOs/        # Project DTOs
+│   │   │   └── Validators/  # Project validators
+│   │   └── Notifications/ # Notification feature
+│   │       ├── Commands/    # Notification commands
+│   │       ├── Queries/     # Notification queries
+│   │       ├── DTOs/        # Notification DTOs
+│   │       └── Validators/  # Notification validators
+│   ├── Common/       # Shared application code
+│   │   ├── Behaviors/       # MediatR behaviors
+│   │   ├── Exceptions/      # Custom exceptions
+│   │   └── Validation/      # Shared validation logic
+│   └── Services/     # Application service interfaces
 ├── Infrastructure/   # External concerns (DB, Email, etc.)
+│   ├── Data/         # DbContext, Repository, UnitOfWork
+│   ├── Migrations/   # EF Core migrations
+│   └── Services/     # Service implementations
 ├── Api/             # Web API layer
+│   ├── Controllers/  # API controllers
+│   └── Hubs/        # SignalR hubs
 └── Tests/           # Unit and Integration tests
 ```
 
@@ -39,11 +68,14 @@ public enum YourEnumType {
 
 ### 2. Application Layer (`/Application/`)
 
-#### Commands - FLAT STRUCTURE
-**Commands** go directly in `/Application/Commands/`:
+#### Feature-Based Organization
+All application logic is organized by feature. Each feature has its own folder containing commands, queries, DTOs, and validators.
+
+#### Commands
+**Commands** go in feature-specific folders:
 ```csharp
-// File: /Application/Commands/CreateYourEntityCommand.cs
-namespace IntranetStarter.Application.Commands; // NOT nested in feature folders!
+// File: /Application/Features/YourFeature/Commands/CreateYourEntityCommand.cs
+namespace IntranetStarter.Application.Features.YourFeature.Commands;
 
 public record CreateYourEntityCommand(...) : IRequest<ReturnType>;
 
@@ -52,21 +84,11 @@ public class CreateYourEntityCommandHandler : IRequestHandler<CreateYourEntityCo
 }
 ```
 
-**Command Validators** go in `/Application/Commands/Validators/`:
+#### Queries
+**Queries** go in feature-specific folders:
 ```csharp
-// File: /Application/Commands/Validators/CreateYourEntityCommandValidator.cs
-namespace IntranetStarter.Application.Commands.Validators;
-
-public class CreateYourEntityCommandValidator : AbstractValidator<CreateYourEntityCommand> {
-    // Validation rules
-}
-```
-
-#### Queries - FLAT STRUCTURE
-**Queries** go directly in `/Application/Queries/`:
-```csharp
-// File: /Application/Queries/GetYourEntityQuery.cs
-namespace IntranetStarter.Application.Queries; // NOT nested in feature folders!
+// File: /Application/Features/YourFeature/Queries/GetYourEntityQuery.cs
+namespace IntranetStarter.Application.Features.YourFeature.Queries;
 
 public record GetYourEntityQuery(...) : IRequest<ReturnType>;
 
@@ -75,45 +97,55 @@ public class GetYourEntityQueryHandler : IRequestHandler<GetYourEntityQuery, Ret
 }
 ```
 
-**Query Validators** go in `/Application/Queries/Validators/`:
+#### Validators
+**Validators** go in feature-specific Validators folders:
 ```csharp
-// File: /Application/Queries/Validators/GetYourEntityQueryValidator.cs
-namespace IntranetStarter.Application.Queries.Validators;
+// File: /Application/Features/YourFeature/Validators/CreateYourEntityCommandValidator.cs
+namespace IntranetStarter.Application.Features.YourFeature.Validators;
 
-public class GetYourEntityQueryValidator : AbstractValidator<GetYourEntityQuery> {
+public class CreateYourEntityCommandValidator : AbstractValidator<CreateYourEntityCommand> {
     // Validation rules
 }
 ```
 
-#### Interfaces
-**Repository Interfaces** go in `/Application/Interfaces/`:
-```csharp
-// File: /Application/Interfaces/IYourRepository.cs
-namespace IntranetStarter.Application.Interfaces;
-
-public interface IYourRepository {
-    // Methods
-}
-```
-
 #### DTOs
-**DTOs** go in `/Application/DTOs/`:
+**DTOs** go in feature-specific DTOs folders:
 ```csharp
-// File: /Application/DTOs/YourEntityDto.cs
-namespace IntranetStarter.Application.DTOs;
+// File: /Application/Features/YourFeature/DTOs/YourEntityDto.cs
+namespace IntranetStarter.Application.Features.YourFeature.DTOs;
 
 public record YourEntityDto(...);
 ```
 
+#### Service Interfaces
+**Service Interfaces** go in `/Application/Services/`:
+```csharp
+// File: /Application/Services/IYourService.cs
+namespace IntranetStarter.Application.Services;
+
+public interface IYourService {
+    // Methods
+}
+```
+
+**Note:** This project uses a generic repository pattern with Unit of Work.
+- Core interfaces (`IRepository<T>`, `IUnitOfWork`) are in `/Domain/Interfaces/`
+- No need to create specific repository interfaces for each entity
+- Access entities through `unitOfWork.Repository<YourEntity>()`
+
 ### 3. Infrastructure Layer (`/Infrastructure/`)
 
-**Repositories** go in `/Infrastructure/Repositories/`:
+**Generic Repository Implementation** is in `/Infrastructure/Data/`:
 ```csharp
-// File: /Infrastructure/Repositories/YourRepository.cs
-namespace IntranetStarter.Infrastructure.Repositories;
-
-public class YourRepository : IYourRepository {
-    // Implementation
+// The generic Repository<T> and UnitOfWork are already implemented
+// Access entities through dependency injection of IUnitOfWork:
+public class YourCommandHandler(IUnitOfWork unitOfWork) {
+    public async Task Handle(...) {
+        var repository = unitOfWork.Repository<YourEntity>();
+        var entity = await repository.GetByIdAsync(id);
+        // ... work with entity
+        await unitOfWork.SaveChangesAsync();
+    }
 }
 ```
 
@@ -167,11 +199,21 @@ public class YourController : ControllerBase {
    dotnet ef database update -p Infrastructure -c ApplicationDbContext -s Api
    ```
 
+## Existing Entities
+
+The project includes the following domain entities:
+- **User** - System users with authentication and roles (Admin, Manager, Employee)
+- **Project** - Business projects/items that users work with
+- **Notification** - User notifications with read/unread status
+- **PendingInvitation** - User invitations waiting to be accepted
+
 ## Dependency Injection
 
 Register services in `/Infrastructure/DependencyInjection.cs`:
 ```csharp
-services.AddScoped<IYourRepository, YourRepository>();
+// Services are registered automatically through DI configuration
+services.AddScoped<IUnitOfWork, UnitOfWork>();
+services.AddScoped<INotificationService, NotificationService>();
 services.AddScoped<IYourService, YourService>();
 ```
 
@@ -249,22 +291,25 @@ var user = await context.Users.FirstOrDefaultAsync(u => u.Email == email);
 Guid userId = user.Id;
 ```
 
-## Common Mistakes to Avoid
+## Best Practices & Common Mistakes to Avoid
 
-❌ **DON'T** create nested folders like `/Application/Features/[Feature]/Commands/`
-✅ **DO** use flat structure: `/Application/Commands/`
+✅ **DO** organize code by features in `/Application/Features/[Feature]/`
+❌ **DON'T** use flat structure with all commands/queries in one folder
 
-❌ **DON'T** put commands and queries in feature folders
-✅ **DO** put them directly in `/Application/Commands/` and `/Application/Queries/`
+✅ **DO** keep related commands, queries, DTOs, and validators together by feature
+❌ **DON'T** scatter related files across different folders
 
-❌ **DON'T** forget validators
 ✅ **DO** create validators for every command and query
+❌ **DON'T** skip validation even for simple operations
 
-❌ **DON'T** use different namespace patterns
-✅ **DO** follow exact namespace conventions shown above
+✅ **DO** follow namespace conventions: `IntranetStarter.Application.Features.[Feature].[Type]`
+❌ **DON'T** use inconsistent namespace patterns
 
-❌ **DON'T** try to get user ID from claims (ClaimTypes.NameIdentifier, "sub", "id")
 ✅ **DO** get user email from claims and look up the user in the database
+❌ **DON'T** try to get user ID from claims (ClaimTypes.NameIdentifier, "sub", "id")
+
+✅ **DO** use the generic repository pattern through IUnitOfWork
+❌ **DON'T** create specific repository interfaces for each entity
 
 ## Testing
 
@@ -272,25 +317,87 @@ Guid userId = user.Id;
 - Integration tests go in `/Tests.Integration/`
 - Follow existing test patterns and naming conventions
 
-## Example: Adding a "Notification" Feature
+## SignalR Real-time Notifications
 
-1. **Domain**: `/Domain/Entities/Notification.cs`
-2. **Interface**: `/Application/Interfaces/INotificationRepository.cs`
-3. **Commands**: 
-   - `/Application/Commands/CreateNotificationCommand.cs`
-   - `/Application/Commands/DeleteNotificationCommand.cs`
-4. **Command Validators**:
-   - `/Application/Commands/Validators/CreateNotificationCommandValidator.cs`
-   - `/Application/Commands/Validators/DeleteNotificationCommandValidator.cs`
-5. **Queries**:
-   - `/Application/Queries/GetNotificationsQuery.cs`
-6. **Query Validators**:
-   - `/Application/Queries/Validators/GetNotificationsQueryValidator.cs`
-7. **Repository**: `/Infrastructure/Repositories/NotificationRepository.cs`
-8. **Controller**: `/Api/Controllers/NotificationsController.cs`
-9. **DbContext**: Update `ApplicationDbContext` with DbSet and configuration
-10. **DI**: Register in `DependencyInjection.cs`
-11. **Migration**: Create and apply EF migration
+The application uses SignalR for real-time communication:
+
+### NotificationHub (`/Api/Hubs/NotificationHub.cs`)
+- Handles real-time connections
+- Manages user/role/project groups
+- Methods: `JoinUserGroup`, `LeaveUserGroup`, `JoinProjectGroup`, `SendToAll`, etc.
+
+### NotificationService (`/Infrastructure/Services/NotificationService.cs`)
+- Sends notifications via SignalR
+- Persists notifications to database
+- Integrates with MediatR commands
+
+### Sending Notifications
+```csharp
+// Inject INotificationService
+public class YourService(INotificationService notificationService) {
+    public async Task NotifyUser(string userId, string message) {
+        await notificationService.SendNotificationAsync(
+            userId, 
+            message, 
+            NotificationType.Info
+        );
+    }
+}
+```
+
+## Repository Pattern with Unit of Work
+
+This project uses a generic repository pattern:
+
+```csharp
+// In command/query handlers, inject IUnitOfWork
+public class YourCommandHandler(IUnitOfWork unitOfWork) {
+    public async Task<Result> Handle(Command request, CancellationToken ct) {
+        // Get repository for any entity
+        var repository = unitOfWork.Repository<YourEntity>();
+        
+        // Use repository methods
+        var entity = await repository.GetByIdAsync(id, ct);
+        var all = await repository.GetAllAsync(ct);
+        var filtered = await repository.FindAsync(e => e.IsActive, ct);
+        
+        // Add/Update/Delete
+        await repository.AddAsync(newEntity, ct);
+        await repository.UpdateAsync(entity, ct);
+        await repository.DeleteAsync(entity, ct);
+        
+        // Save all changes
+        await unitOfWork.SaveChangesAsync(ct);
+    }
+}
+```
+
+## Example: Adding a New Feature (e.g., "Tasks")
+
+1. **Domain Entity**: `/Domain/Entities/Task.cs`
+2. **Feature Folder Structure**:
+   ```
+   /Application/Features/Tasks/
+   ├── Commands/
+   │   ├── CreateTaskCommand.cs
+   │   ├── UpdateTaskCommand.cs
+   │   └── DeleteTaskCommand.cs
+   ├── Queries/
+   │   ├── GetTasksQuery.cs
+   │   └── GetTaskByIdQuery.cs
+   ├── Validators/
+   │   ├── CreateTaskCommandValidator.cs
+   │   ├── UpdateTaskCommandValidator.cs
+   │   └── GetTasksQueryValidator.cs
+   └── DTOs/
+       ├── TaskDto.cs
+       └── CreateTaskDto.cs
+   ```
+3. **Controller**: `/Api/Controllers/TasksController.cs`
+4. **DbContext**: Add `DbSet<Task> Tasks` to `ApplicationDbContext`
+5. **Migration**: `dotnet ef migrations add AddTaskEntity -p Infrastructure -c ApplicationDbContext -s Api`
+6. **Service (if needed)**: `/Infrastructure/Services/TaskNotificationService.cs`
+7. **DI**: Register services in `DependencyInjection.cs`
 
 ## Build Commands
 

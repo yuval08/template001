@@ -1,6 +1,6 @@
-using IntranetStarter.Application.Commands;
-using IntranetStarter.Application.DTOs;
-using IntranetStarter.Application.Queries;
+using IntranetStarter.Application.Features.Projects.Commands;
+using IntranetStarter.Application.Features.Projects.DTOs;
+using IntranetStarter.Application.Features.Projects.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

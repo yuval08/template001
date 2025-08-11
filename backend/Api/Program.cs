@@ -1,5 +1,6 @@
 using Hangfire;
 using Hangfire.Dashboard;
+using IntranetStarter.Api;
 using IntranetStarter.Api.Extensions;
 using IntranetStarter.Api.Middleware;
 using IntranetStarter.Application;
@@ -35,12 +36,12 @@ builder.Services.AddSwaggerGen(c =>
     // Add JWT authentication to Swagger
     c.AddSecurityDefinition("Bearer", new()
     {
-        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-        Description = "Please enter a valid token",
-        Name = "Authorization",
-        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+        In           = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Description  = "Please enter a valid token",
+        Name         = "Authorization",
+        Type         = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
         BearerFormat = "JWT",
-        Scheme = "Bearer"
+        Scheme       = "Bearer"
     });
     
     c.AddSecurityRequirement(new()
@@ -51,7 +52,7 @@ builder.Services.AddSwaggerGen(c =>
                 Reference = new ()
                 {
                     Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                    Id = "Bearer"
+                    Id   = "Bearer"
                 }
             },
             Array.Empty<string>()
@@ -164,19 +165,20 @@ using (var scope = app.Services.CreateScope())
 
 app.Run();
 
-
-// Make Program class public for integration tests
-public partial class Program { }
+namespace IntranetStarter.Api {
+    // Make Program class public for integration tests
+    public partial class Program { }
 
 // Custom Hangfire authorization filter for production
-public class HangfireAuthorizationFilter : IDashboardAuthorizationFilter
-{
-    public bool Authorize(DashboardContext context)
+    public class HangfireAuthorizationFilter : IDashboardAuthorizationFilter
     {
-        var httpContext = context.GetHttpContext();
+        public bool Authorize(DashboardContext context)
+        {
+            var httpContext = context.GetHttpContext();
         
-        // Only allow authenticated admin users
-        return httpContext.User.Identity?.IsAuthenticated == true &&
-               httpContext.User.IsInRole("Admin");
+            // Only allow authenticated admin users
+            return httpContext.User.Identity?.IsAuthenticated == true &&
+                   httpContext.User.IsInRole("Admin");
+        }
     }
 }

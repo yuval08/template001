@@ -22,16 +22,7 @@ import {
 } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+import { DeleteConfirmationDialog } from '@/components/DeleteConfirmationDialog';
 import { useNotifications } from '@/entities/notification';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -51,8 +42,7 @@ export const NotificationInbox: React.FC<NotificationInboxProps> = ({ className 
     isLoading,
     markAsRead,
     markAllAsRead,
-    deleteNotification,
-    refetch
+    deleteNotification
   } = useNotifications();
 
   const getNotificationIcon = (type: number | string) => {
@@ -266,24 +256,15 @@ export const NotificationInbox: React.FC<NotificationInboxProps> = ({ className 
       </PopoverContent>
     </Popover>
 
-    <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Delete Notification</AlertDialogTitle>
-          <AlertDialogDescription>
-            Are you sure you want to delete this notification? This action cannot be undone.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel onClick={() => setNotificationToDelete(null)}>
-            Cancel
-          </AlertDialogCancel>
-          <AlertDialogAction onClick={handleConfirmDelete}>
-            Delete
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+    <DeleteConfirmationDialog
+      open={deleteDialogOpen}
+      onOpenChange={setDeleteDialogOpen}
+      onConfirm={handleConfirmDelete}
+      onCancel={() => setNotificationToDelete(null)}
+      title="Delete Notification"
+      description="Are you sure you want to delete this notification? This action cannot be undone."
+      confirmText="Delete"
+    />
     </>
   );
 };

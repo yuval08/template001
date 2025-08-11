@@ -1,10 +1,13 @@
-using IntranetStarter.Application.Commands;
-using IntranetStarter.Application.DTOs;
-using IntranetStarter.Application.Queries;
+using IntranetStarter.Application.Features.Invitations.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using IntranetStarter.Application.Features.Invitations.Commands;
+using IntranetStarter.Application.Features.Invitations.DTOs;
+using IntranetStarter.Application.Features.Users.Commands;
+using IntranetStarter.Application.Features.Users.DTOs;
+using IntranetStarter.Application.Features.Users.Queries;
 
 namespace IntranetStarter.Api.Controllers;
 

@@ -1,5 +1,6 @@
 using FluentAssertions;
-using IntranetStarter.Application.Queries;
+using IntranetStarter.Application.Features.Projects.DTOs;
+using IntranetStarter.Application.Features.Projects.Queries;
 using IntranetStarter.Domain.Entities;
 using IntranetStarter.Domain.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -66,14 +67,14 @@ public class GetProjectsQueryTests
 
         // Assert
         result.Should().NotBeNull();
-        result.Projects.Should().HaveCount(2);
+        result.Data.Should().HaveCount(2);
         result.TotalCount.Should().Be(2);
-        result.Page.Should().Be(1);
+        result.PageNumber.Should().Be(1);
         result.PageSize.Should().Be(10);
         result.TotalPages.Should().Be(1);
 
-        result.Projects.First().Name.Should().Be("Project 1");
-        result.Projects.Last().Name.Should().Be("Project 2");
+        result.Data.First().Name.Should().Be("Project 1");
+        result.Data.Last().Name.Should().Be("Project 2");
 
         _mockProjectRepository.Verify(x => x.GetAllAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
@@ -118,9 +119,9 @@ public class GetProjectsQueryTests
 
         // Assert
         result.Should().NotBeNull();
-        result.Projects.Should().HaveCount(1);
+        result.Data.Should().HaveCount(1);
         result.TotalCount.Should().Be(1);
-        result.Projects.First().Name.Should().Be("Web Project");
+        result.Data.First().Name.Should().Be("Web Project");
     }
 
     [Fact]
@@ -151,15 +152,15 @@ public class GetProjectsQueryTests
 
         // Assert
         result.Should().NotBeNull();
-        result.Projects.Should().HaveCount(10);
+        result.Data.Should().HaveCount(10);
         result.TotalCount.Should().Be(25);
-        result.Page.Should().Be(2);
+        result.PageNumber.Should().Be(2);
         result.PageSize.Should().Be(10);
         result.TotalPages.Should().Be(3);
 
         // Should return projects 11-20 (second page)
-        result.Projects.First().Name.Should().Be("Project 11");
-        result.Projects.Last().Name.Should().Be("Project 20");
+        result.Data.First().Name.Should().Be("Project 11");
+        result.Data.Last().Name.Should().Be("Project 20");
     }
 
     [Fact]
@@ -177,9 +178,9 @@ public class GetProjectsQueryTests
 
         // Assert
         result.Should().NotBeNull();
-        result.Projects.Should().BeEmpty();
+        result.Data.Should().BeEmpty();
         result.TotalCount.Should().Be(0);
-        result.Page.Should().Be(1);
+        result.PageNumber.Should().Be(1);
         result.PageSize.Should().Be(10);
         result.TotalPages.Should().Be(0);
     }
@@ -213,7 +214,7 @@ public class GetProjectsQueryTests
 
         // Assert
         result.Should().NotBeNull();
-        result.Projects.Should().BeEmpty();
+        result.Data.Should().BeEmpty();
         result.TotalCount.Should().Be(0);
         result.TotalPages.Should().Be(0);
     }

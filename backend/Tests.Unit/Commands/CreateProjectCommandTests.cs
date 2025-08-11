@@ -1,6 +1,6 @@
 using FluentAssertions;
-using IntranetStarter.Application.Commands;
-using IntranetStarter.Application.DTOs;
+using IntranetStarter.Application.Features.Projects.Commands;
+using IntranetStarter.Application.Features.Projects.DTOs;
 using IntranetStarter.Domain.Entities;
 using IntranetStarter.Domain.Interfaces;
 using Microsoft.Extensions.Logging;
