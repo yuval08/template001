@@ -75,7 +75,7 @@ print_info "New solution name: $SOLUTION_NAME"
 echo
 
 # Confirm before proceeding
-read -p "This will replace all occurrences of 'intranet_starter' with '$SOLUTION_NAME'. Continue? (y/N): " -n 1 -r
+read -p "This will replace all occurrences of 'myapp' with '$SOLUTION_NAME'. Continue? (y/N): " -n 1 -r
 echo
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     print_warning "Operation cancelled"
@@ -85,99 +85,58 @@ fi
 echo
 print_info "Starting replacement process..."
 
-# Count files that will be modified
-FILE_COUNT=0
-while IFS= read -r -d '' file; do
-    if grep -q "intranet_starter" "$file" 2>/dev/null; then
-        ((FILE_COUNT++))
-    fi
-done < <(find . -type f \( \
-    -name "*.cs" -o \
-    -name "*.csproj" -o \
-    -name "*.sln" -o \
-    -name "*.json" -o \
-    -name "*.yml" -o \
-    -name "*.yaml" -o \
-    -name "*.xml" -o \
-    -name "*.config" -o \
-    -name "*.md" -o \
-    -name "*.txt" -o \
-    -name "*.sh" -o \
-    -name "*.env*" -o \
-    -name "Dockerfile*" -o \
-    -name "docker-compose*" \
-    \) -not -path "./node_modules/*" \
-    -not -path "./.git/*" \
-    -not -path "./bin/*" \
-    -not -path "./obj/*" \
-    -not -path "./dist/*" \
-    -not -path "./build/*" \
-    -not -path "./.vs/*" \
-    -not -path "./.vscode/*" \
-    -not -path "./frontend/node_modules/*" \
-    -not -path "./frontend/dist/*" \
-    -not -path "./backend/*/bin/*" \
-    -not -path "./backend/*/obj/*" \
-    -print0)
+# Find all files containing myapp
+FILES=$(grep -rl "myapp" . \
+    --include="*.cs" \
+    --include="*.csproj" \
+    --include="*.sln" \
+    --include="*.json" \
+    --include="*.yml" \
+    --include="*.yaml" \
+    --include="*.xml" \
+    --include="*.config" \
+    --include="*.md" \
+    --include="*.txt" \
+    --include="*.sh" \
+    --include="*.env*" \
+    --include="Dockerfile*" \
+    --include="docker-compose*" \
+    --exclude-dir=node_modules \
+    --exclude-dir=.git \
+    --exclude-dir=bin \
+    --exclude-dir=obj \
+    --exclude-dir=dist \
+    --exclude-dir=build \
+    --exclude-dir=.vs \
+    --exclude-dir=.vscode \
+    2>/dev/null || true)
 
-print_info "Found $FILE_COUNT files containing 'intranet_starter'"
-
-# Replace in all relevant files
-MODIFIED_COUNT=0
-while IFS= read -r -d '' file; do
-    if grep -q "intranet_starter" "$file" 2>/dev/null; then
-        # Create backup
-        cp "$file" "$file.bak"
+if [ -z "$FILES" ]; then
+    print_warning "No files found containing 'myapp'"
+else
+    FILE_COUNT=$(echo "$FILES" | wc -l)
+    print_info "Found $FILE_COUNT files containing 'myapp'"
+    
+    # Replace in all files
+    echo "$FILES" | while IFS= read -r file; do
+        print_info "Modifying: $file"
         
-        # Replace content
+        # Use sed to replace all occurrences
         if [[ "$OSTYPE" == "darwin"* ]]; then
             # macOS
-            sed -i '' "s/intranet_starter/$SOLUTION_NAME/g" "$file"
+            sed -i '' "s/myapp/$SOLUTION_NAME/g" "$file"
         else
-            # Linux
-            sed -i "s/intranet_starter/$SOLUTION_NAME/g" "$file"
+            # Linux/WSL
+            sed -i "s/myapp/$SOLUTION_NAME/g" "$file"
         fi
         
-        # Remove backup if replacement was successful
         if [ $? -eq 0 ]; then
-            rm "$file.bak"
-            ((MODIFIED_COUNT++))
-            print_success "Modified: $file"
+            print_success "✓ $file"
         else
-            mv "$file.bak" "$file"
-            print_error "Failed to modify: $file"
+            print_error "✗ Failed to modify $file"
         fi
-    fi
-done < <(find . -type f \( \
-    -name "*.cs" -o \
-    -name "*.csproj" -o \
-    -name "*.sln" -o \
-    -name "*.json" -o \
-    -name "*.yml" -o \
-    -name "*.yaml" -o \
-    -name "*.xml" -o \
-    -name "*.config" -o \
-    -name "*.md" -o \
-    -name "*.txt" -o \
-    -name "*.sh" -o \
-    -name "*.env*" -o \
-    -name "Dockerfile*" -o \
-    -name "docker-compose*" \
-    \) -not -path "./node_modules/*" \
-    -not -path "./.git/*" \
-    -not -path "./bin/*" \
-    -not -path "./obj/*" \
-    -not -path "./dist/*" \
-    -not -path "./build/*" \
-    -not -path "./.vs/*" \
-    -not -path "./.vscode/*" \
-    -not -path "./frontend/node_modules/*" \
-    -not -path "./frontend/dist/*" \
-    -not -path "./backend/*/bin/*" \
-    -not -path "./backend/*/obj/*" \
-    -print0)
-
-print_info "Modified $MODIFIED_COUNT files"
+    done
+fi
 
 # Rename solution file if it exists
 if [ -f "backend/IntranetStarter.sln" ]; then
@@ -197,7 +156,6 @@ print_success "======================================"
 print_success "  Initialization Complete!"
 print_success "======================================"
 print_info "Solution name changed to: $SOLUTION_NAME"
-print_info "Total files modified: $MODIFIED_COUNT"
 echo
 print_info "Next steps:"
 print_info "1. Review the changes using 'git diff'"
