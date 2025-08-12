@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { 
   Search, 
   Command as CommandIcon, 
@@ -57,6 +58,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   onClose,
   onResultSelect
 }) => {
+  const { t } = useTranslation(['search', 'common']);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [activeCategory, setActiveCategory] = useState<'all' | 'pages' | 'search' | 'recent'>('all');
@@ -122,7 +124,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
           id: cmd.id,
           type: 'navigation',
           data: cmd,
-          category: 'Pages'
+          category: t('search:categories.pages')
         });
       });
     }
@@ -134,7 +136,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
           id: result.id,
           type: 'search',
           data: result,
-          category: 'Search Results'
+          category: t('search:categories.search')
         });
       });
     }
@@ -146,7 +148,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
           id: search.id,
           type: 'recent',
           data: search,
-          category: 'Recent'
+          category: t('search:categories.recent')
         });
       });
     }
@@ -276,7 +278,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
             </div>
           </div>
           <Badge variant="secondary" className="text-xs">
-            {searchResult.entityType}
+            {t(`search:entity_types.${searchResult.entityType.toLowerCase()}`)}
           </Badge>
           <ArrowRight className="h-4 w-4 text-gray-400 flex-shrink-0" />
         </div>
@@ -304,7 +306,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
             </div>
             {recentSearch.resultsCount > 0 && (
               <div className="text-xs text-gray-500 dark:text-gray-400">
-                {recentSearch.resultsCount} results
+                {t('search:results_count', { count: recentSearch.resultsCount })}
               </div>
             )}
           </div>
@@ -336,12 +338,12 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
         {/* Header */}
         <DialogHeader className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
           <DialogTitle className="sr-only">
-            Command Palette - Search and Navigate
+            {t('search:commands.command_palette')}
           </DialogTitle>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
               <CommandIcon className="h-4 w-4" />
-              <span className="text-sm font-medium">Command Palette</span>
+              <span className="text-sm font-medium">{t('search:commands.command_palette')}</span>
             </div>
             <div className="flex-1" />
             <button
@@ -365,7 +367,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                 setSearchTerm(e.target.value);
                 setSelectedIndex(0);
               }}
-              placeholder="Search for anything or type a command..."
+              placeholder={t('search:placeholder_command')}
               className="pl-10 border-0 shadow-none focus:ring-0 text-base"
               autoFocus
             />
@@ -378,14 +380,14 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
             <div className="flex items-center justify-center h-32 text-gray-500 dark:text-gray-400">
               <div className="flex items-center gap-2">
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
-                <span className="text-sm">Searching...</span>
+                <span className="text-sm">{t('search:searching')}</span>
               </div>
             </div>
           ) : organizedItems.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-32 text-gray-500 dark:text-gray-400">
               <Search className="h-8 w-8 mb-2 text-gray-300 dark:text-gray-600" />
               <p className="text-sm">
-                {searchTerm ? 'No results found' : 'Start typing to search or browse commands'}
+                {searchTerm ? t('search:no_results') : t('search:start_typing_command')}
               </p>
             </div>
           ) : (
@@ -421,20 +423,20 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-1">
                 <kbd className="px-1.5 py-0.5 text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded">↑↓</kbd>
-                <span>Navigate</span>
+                <span>{t('search:commands.navigate')}</span>
               </div>
               <div className="flex items-center gap-1">
                 <kbd className="px-1.5 py-0.5 text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded">↵</kbd>
-                <span>Select</span>
+                <span>{t('search:commands.select')}</span>
               </div>
               <div className="flex items-center gap-1">
                 <kbd className="px-1.5 py-0.5 text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded">Tab</kbd>
-                <span>Filter</span>
+                <span>{t('search:commands.filter')}</span>
               </div>
             </div>
             <div className="flex items-center gap-1">
               <kbd className="px-1.5 py-0.5 text-xs bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded">Esc</kbd>
-              <span>Close</span>
+              <span>{t('search:commands.close')}</span>
             </div>
           </div>
         </div>

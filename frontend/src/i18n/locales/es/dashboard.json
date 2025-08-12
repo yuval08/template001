@@ -9,7 +9,7 @@
     "of_total": "del total"
   },
   "trends": {
-    "from_last_month": "desde el mes pasado",
+    "from_last_month": "{{value}} desde el mes pasado",
     "completion_rate": "tasa de finalización"
   },
   "charts": {
@@ -55,5 +55,138 @@
     "active": "Activo",
     "completed": "Completado",
     "paused": "Pausado"
+  },
+  "reports": {
+    "title": "Reportes y Visor de PDF",
+    "subtitle": "Visor de PDF interactivo con zoom, rotación, navegación y capacidades de descarga.",
+    "controls": {
+      "sample_report": "Reporte de Ejemplo",
+      "sample_report_description": "Cargar un reporte PDF de ejemplo para demostrar la funcionalidad del visor",
+      "load_sample_report": "Cargar Reporte de Ejemplo",
+      "loading": "Cargando...",
+      "report_status": "Estado del Reporte",
+      "report_status_description": "Información actual del reporte",
+      "export_options": "Opciones de Exportación",
+      "export_options_description": "Descargar o compartir el reporte actual",
+      "download_pdf": "Descargar PDF"
+    },
+    "status": {
+      "loaded": "Cargado",
+      "no_report": "Sin Reporte",
+      "pdf_document": "Documento PDF"
+    },
+    "pdf_viewer": "Visor de PDF",
+    "no_pdf_loaded": "No hay PDF cargado. Haz clic en \"Cargar Reporte de Muestra\" para comenzar.",
+    "page_of": "Página {{current}} de {{total}}",
+    "failed_to_load_pdf": "Error al cargar PDF",
+    "labels": {
+      "status": "Estado:",
+      "size": "Tamaño:",
+      "type": "Tipo:"
+    },
+    "instructions": {
+      "title": "Instrucciones del Visor de PDF",
+      "description": "Cómo usar los controles del visor de PDF",
+      "navigation": {
+        "title": "Navegación",
+        "arrow_buttons": "Usar botones de flecha para navegar páginas",
+        "page_numbers": "Hacer clic en números de página para navegación rápida",
+        "scroll": "Desplazarse dentro del visor para páginas largas"
+      },
+      "viewing_options": {
+        "title": "Opciones de Vista",
+        "zoom": "Acercar/alejar con los botones + y -",
+        "rotate": "Rotar páginas con el botón de rotación",
+        "fullscreen": "Alternar pantalla completa para mejor visualización"
+      },
+      "actions": {
+        "title": "Acciones",
+        "download": "Descargar el archivo PDF",
+        "view_info": "Ver información de página y zoom",
+        "load_reports": "Cargar diferentes reportes de ejemplo"
+      }
+    }
+  },
+  "settings": {
+    "title": "Configuración",
+    "subtitle": "Gestiona las preferencias de tu cuenta y la configuración de la aplicación",
+    "mock_badge": "Implementación de Prueba",
+    "appearance": {
+      "title": "Apariencia",
+      "description": "Personaliza cómo se ve y se siente la aplicación",
+      "theme": "Tema",
+      "theme_placeholder": "Seleccionar tema",
+      "light": "Claro",
+      "dark": "Oscuro",
+      "system": "Sistema"
+    },
+    "notifications": {
+      "title": "Notificaciones",
+      "description": "Configura cuándo y cómo recibir notificaciones",
+      "email": {
+        "title": "Notificaciones por Email",
+        "description": "Recibir notificaciones por correo electrónico"
+      },
+      "push": {
+        "title": "Notificaciones Push",
+        "description": "Recibir notificaciones push en tu navegador"
+      },
+      "desktop": {
+        "title": "Notificaciones de Escritorio",
+        "description": "Mostrar notificaciones en tu escritorio"
+      },
+      "marketing": {
+        "title": "Comunicaciones de Marketing",
+        "description": "Recibir actualizaciones sobre nuevas funciones y anuncios"
+      }
+    },
+    "privacy": {
+      "title": "Privacidad y Seguridad",
+      "description": "Controla tus preferencias de privacidad y seguridad",
+      "profile_visibility": {
+        "title": "Visibilidad del Perfil",
+        "description": "Hacer visible tu perfil a otros usuarios"
+      },
+      "activity_status": {
+        "title": "Estado de Actividad",
+        "description": "Mostrar cuando estás en línea y activo"
+      },
+      "show_email": {
+        "title": "Mostrar Dirección de Email",
+        "description": "Mostrar tu dirección de correo electrónico en tu perfil"
+      }
+    },
+    "localization": {
+      "title": "Idioma y Región",
+      "description": "Establece tu idioma preferido y configuración regional",
+      "language": "Idioma",
+      "language_placeholder": "Seleccionar idioma",
+      "timezone": "Zona Horaria",
+      "timezone_placeholder": "Seleccionar zona horaria",
+      "languages": {
+        "en": "English",
+        "es": "Español",
+        "fr": "Français",
+        "de": "Deutsch",
+        "it": "Italiano"
+      },
+      "timezones": {
+        "utc": "UTC (Tiempo Universal Coordinado)",
+        "est": "EST (Hora Estándar del Este)",
+        "pst": "PST (Hora Estándar del Pacífico)",
+        "gmt": "GMT (Hora del Meridiano de Greenwich)",
+        "cet": "CET (Hora de Europa Central)"
+      }
+    },
+    "security": {
+      "title": "Seguridad de la Cuenta",
+      "description": "Gestiona la seguridad de tu cuenta y autenticación",
+      "change_password": "Cambiar Contraseña",
+      "enable_2fa": "Habilitar Autenticación de Dos Factores",
+      "active_sessions": "Sesiones Activas"
+    },
+    "actions": {
+      "save_settings": "Guardar Configuración"
+    }
   }
 }

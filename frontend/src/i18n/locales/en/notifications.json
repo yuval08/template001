@@ -1,12 +1,37 @@
 {
   "title": "Notifications",
+  "test_title": "Test Notifications",
+  "test_description": "Development tools for testing the notification system",
   "mark_as_read": "Mark as read",
   "mark_all_as_read": "Mark all as read",
   "delete_notification": "Delete notification",
   "delete_all": "Delete all",
+  "delete_selected": "Delete Selected",
+  "delete": "Delete",
   "no_notifications": "No notifications",
+  "all_caught_up": "All caught up!",
+  "all_caught_up_description": "You're all caught up!",
+  "refresh": "Refresh",
   "unread_count": "{{count}} unread notification",
   "unread_count_plural": "{{count}} unread notifications",
+  "unread_status": "You have {{count}} unread notification",
+  "unread_status_plural": "You have {{count}} unread notifications",
+  "select_all": "Select all ({{count}})",
+  "view_details": "View details →",
+  "filter": {
+    "by_type": "Filter by type",
+    "by_status": "Filter by status",
+    "all_types": "All Types",
+    "all": "All",
+    "unread": "Unread", 
+    "read": "Read"
+  },
+  "types": {
+    "info": "Info",
+    "success": "Success",
+    "warning": "Warning",
+    "error": "Error"
+  },
   "dialogs": {
     "delete_notification": {
       "title": "Delete Notification",
@@ -15,6 +40,13 @@
     "delete_all": {
       "title": "Delete All Notifications",
       "description": "Are you sure you want to delete all notifications? This action cannot be undone."
+    },
+    "delete_selected": {
+      "title": "Delete Selected Notifications",
+      "description": "Are you sure you want to delete {{count}} selected notification? This action cannot be undone.",
+      "description_plural": "Are you sure you want to delete {{count}} selected notifications? This action cannot be undone.",
+      "confirm": "Delete {{count}} Notification",
+      "confirm_plural": "Delete {{count}} Notifications"
     }
   },
   "messages": {
@@ -22,5 +54,77 @@
     "all_marked_as_read": "All notifications marked as read",
     "notification_deleted": "Notification deleted",
     "all_deleted": "All notifications deleted"
+  },
+  "test": {
+    "tabs": {
+      "quick": "Quick Tests",
+      "custom": "Custom", 
+      "advanced": "Advanced",
+      "stats": "Statistics"
+    },
+    "quick": {
+      "title": "Quick Test Notifications",
+      "description": "Create test notifications of different types",
+      "info": "Info Notification",
+      "success": "Success Notification",
+      "warning": "Warning Notification", 
+      "error": "Error Notification",
+      "realtime": "Test Real-time",
+      "simulate_job": "Simulate Long Job"
+    },
+    "custom": {
+      "title": "Custom Notification",
+      "description": "Create a notification with custom title and message",
+      "title_label": "Title",
+      "title_placeholder": "Enter notification title",
+      "message_label": "Message",
+      "message_placeholder": "Enter notification message",
+      "create": "Create Custom Notification"
+    },
+    "advanced": {
+      "title": "Advanced Testing",
+      "description": "Bulk operations and system testing",
+      "bulk_count": "Bulk Count",
+      "create_bulk": "Create {{count}} Notifications",
+      "bulk_limit": "Maximum 20 notifications at once",
+      "clear_all": "Clear All Notifications",
+      "clear_warning": "This will delete all your notifications permanently"
+    },
+    "stats": {
+      "title": "Notification Statistics",
+      "description": "View your notification statistics",
+      "refresh": "Refresh Statistics",
+      "total": "Total Notifications",
+      "unread": "Unread",
+      "by_type": "By Type"
+    },
+    "guide": {
+      "title": "Testing Guide",
+      "step1": "Use Quick Tests to create notifications of different types",
+      "step2": "Check the bell icon in the header to see notifications in the inbox",
+      "step3": "Navigate to the Notifications page to see all notifications",
+      "step4": "Test real-time updates with the Real-time button",
+      "step5": "Simulate a long-running job to see progress notifications",
+      "step6": "Use bulk operations to test performance with many notifications",
+      "step7": "Test marking as read, deleting, and bulk actions",
+      "step8": "Clear all notifications when done testing"
+    },
+    "toasts": {
+      "created": "Notification created",
+      "custom_created": "Custom notification created",
+      "bulk_created": "Bulk notifications created",
+      "realtime_test": "Real-time test",
+      "job_started": "Job simulation started",
+      "cleared": "Notifications cleared",
+      "stats_retrieved": "Stats retrieved",
+      "stats_updated": "Statistics updated",
+      "create_failed": "Failed to create notification",
+      "bulk_failed": "Failed to create bulk notifications",
+      "realtime_failed": "Failed to test real-time",
+      "job_failed": "Failed to simulate job", 
+      "clear_failed": "Failed to clear notifications",
+      "stats_failed": "Failed to get stats",
+      "enter_title_or_message": "Please enter a title or message"
+    }
   }
 }

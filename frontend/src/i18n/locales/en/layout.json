@@ -1,0 +1,38 @@
+{
+  "brand": {
+    "app_name": "Intranet"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "users": "Users", 
+    "reports": "Reports",
+    "showcase": "Showcase",
+    "forms": "Forms",
+    "tables": "Tables",
+    "ui_showcase": "UI Showcase",
+    "buttons": "Buttons",
+    "alerts": "Alerts",
+    "dialogs": "Dialogs",
+    "cards_badges": "Cards & Badges",
+    "inputs": "Inputs",
+    "notifications": "Notifications",
+    "test_notifications": "Test Notifications"
+  },
+  "topbar": {
+    "search_placeholder": "Search everything... (⌘K)",
+    "search_aria_label": "Open search",
+    "theme": {
+      "light": "Light",
+      "dark": "Dark", 
+      "system": "System"
+    },
+    "profile": {
+      "profile": "Profile",
+      "settings": "Settings",
+      "sign_out": "Sign Out"
+    }
+  },
+  "offline": {
+    "disconnected_message": "You've been disconnected from the internet. Please check your connection to continue using all features."
+  }
+}

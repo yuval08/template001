@@ -1,0 +1,68 @@
+{
+  "placeholder": "Buscar todo...",
+  "placeholder_command": "Buscar cualquier cosa o escribir un comando...",
+  "searching": "Buscando...",
+  "no_results": "No se encontraron resultados",
+  "no_results_description": "Intenta ajustar tu búsqueda o navega por búsquedas recientes",
+  "start_typing": "Comienza a escribir para buscar",
+  "start_typing_description": "Busca en proyectos, usuarios, documentos y tareas",
+  "start_typing_command": "Comienza a escribir para buscar o navegar comandos",
+  "clear_search": "Limpiar búsqueda",
+  "recent_searches": "Búsquedas Recientes",
+  "clear": "Limpiar",
+  "results_count": "{{count}} resultado",
+  "results_count_plural": "{{count}} resultados",
+  "showing_results": "Mostrando {{count}} resultado para \"{{term}}\"",
+  "showing_results_plural": "Mostrando {{count}} resultados para \"{{term}}\"",
+  "categories": {
+    "all": "Todo",
+    "pages": "Páginas",
+    "search": "Resultados de Búsqueda",
+    "recent": "Reciente"
+  },
+  "entity_types": {
+    "project": "Proyecto",
+    "projects": "Proyectos", 
+    "user": "Usuario",
+    "users": "Usuarios",
+    "document": "Documento",
+    "documents": "Documentos",
+    "task": "Tarea",
+    "tasks": "Tareas"
+  },
+  "commands": {
+    "navigate": "Navegar",
+    "select": "Seleccionar",
+    "filter": "Filtrar", 
+    "close": "Cerrar",
+    "view_details": "Ver detalles",
+    "command_palette": "Paleta de Comandos"
+  },
+  "navigation": {
+    "dashboard": {
+      "title": "Panel de Control",
+      "description": "Ir al panel principal",
+      "keywords": ["inicio", "principal", "resumen"]
+    },
+    "projects": {
+      "title": "Proyectos",
+      "description": "Ver y administrar proyectos",
+      "keywords": ["proyecto", "trabajo", "tareas"]
+    },
+    "users": {
+      "title": "Usuarios",
+      "description": "Administrar miembros del equipo y usuarios",
+      "keywords": ["equipo", "miembros", "personas"]
+    },
+    "reports": {
+      "title": "Reportes",
+      "description": "Ver analíticas y reportes",
+      "keywords": ["analíticas", "datos", "estadísticas"]
+    },
+    "notifications": {
+      "title": "Notificaciones",
+      "description": "Revisar tus notificaciones",
+      "keywords": ["alertas", "mensajes", "actualizaciones"]
+    }
+  }
+}

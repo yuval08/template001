@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -58,6 +59,7 @@ class TestApiService extends BaseApiService {
 const testApi = new TestApiService();
 
 export default function TestNotifications() {
+  const { t } = useTranslation(['notifications', 'common']);
   const [isLoading, setIsLoading] = useState(false);
   const [customTitle, setCustomTitle] = useState('');
   const [customMessage, setCustomMessage] = useState('');
@@ -89,12 +91,12 @@ export default function TestNotifications() {
       }
       
       toast.success({ 
-        title: 'Notification created', 
+        title: t('notifications:test.toasts.created'), 
         description: result.message || `Test ${type} notification created` 
       });
     } catch (error) {
       toast.error({ 
-        title: 'Failed to create notification', 
+        title: t('notifications:test.toasts.create_failed'), 
         description: error instanceof Error ? error.message : 'Unknown error' 
       });
     } finally {
@@ -104,7 +106,7 @@ export default function TestNotifications() {
 
   const handleCreateCustomNotification = async () => {
     if (!customTitle && !customMessage) {
-      toast.error({ title: 'Error', description: 'Please enter a title or message' });
+      toast.error({ title: t('common:messages.error'), description: t('notifications:test.toasts.enter_title_or_message') });
       return;
     }
     
@@ -117,14 +119,14 @@ export default function TestNotifications() {
         actionUrl: '/dashboard'
       });
       toast.success({ 
-        title: 'Custom notification created', 
+        title: t('notifications:test.toasts.custom_created'), 
         description: result.message 
       });
       setCustomTitle('');
       setCustomMessage('');
     } catch (error) {
       toast.error({ 
-        title: 'Failed to create notification', 
+        title: t('notifications:test.toasts.create_failed'), 
         description: error instanceof Error ? error.message : 'Unknown error' 
       });
     } finally {
@@ -137,12 +139,12 @@ export default function TestNotifications() {
     try {
       const result = await testApi.createBulkNotifications(bulkCount);
       toast.success({ 
-        title: 'Bulk notifications created', 
+        title: t('notifications:test.toasts.bulk_created'), 
         description: result.message 
       });
     } catch (error) {
       toast.error({ 
-        title: 'Failed to create bulk notifications', 
+        title: t('notifications:test.toasts.bulk_failed'), 
         description: error instanceof Error ? error.message : 'Unknown error' 
       });
     } finally {
@@ -155,12 +157,12 @@ export default function TestNotifications() {
     try {
       const result = await testApi.testRealtimeNotification();
       toast.success({ 
-        title: 'Real-time test', 
+        title: t('notifications:test.toasts.realtime_test'), 
         description: result.message 
       });
     } catch (error) {
       toast.error({ 
-        title: 'Failed to test real-time', 
+        title: t('notifications:test.toasts.realtime_failed'), 
         description: error instanceof Error ? error.message : 'Unknown error' 
       });
     } finally {
@@ -173,12 +175,12 @@ export default function TestNotifications() {
     try {
       const result = await testApi.simulateJob();
       toast.success({ 
-        title: 'Job simulation started', 
+        title: t('notifications:test.toasts.job_started'), 
         description: result.message 
       });
     } catch (error) {
       toast.error({ 
-        title: 'Failed to simulate job', 
+        title: t('notifications:test.toasts.job_failed'), 
         description: error instanceof Error ? error.message : 'Unknown error' 
       });
     } finally {
@@ -191,12 +193,12 @@ export default function TestNotifications() {
     try {
       const result = await testApi.clearAllNotifications();
       toast.success({ 
-        title: 'Notifications cleared', 
+        title: t('notifications:test.toasts.cleared'), 
         description: result.message 
       });
     } catch (error) {
       toast.error({ 
-        title: 'Failed to clear notifications', 
+        title: t('notifications:test.toasts.clear_failed'), 
         description: error instanceof Error ? error.message : 'Unknown error' 
       });
     } finally {
@@ -210,12 +212,12 @@ export default function TestNotifications() {
       const result = await testApi.getTestStats();
       setStats(result);
       toast.success({ 
-        title: 'Stats retrieved', 
-        description: 'Statistics updated' 
+        title: t('notifications:test.toasts.stats_retrieved'), 
+        description: t('notifications:test.toasts.stats_updated') 
       });
     } catch (error) {
       toast.error({ 
-        title: 'Failed to get stats', 
+        title: t('notifications:test.toasts.stats_failed'), 
         description: error instanceof Error ? error.message : 'Unknown error' 
       });
     } finally {
@@ -226,24 +228,24 @@ export default function TestNotifications() {
   return (
     <div className="container mx-auto py-6 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold mb-2">Test Notifications</h1>
-        <p className="text-muted-foreground">Development tools for testing the notification system</p>
+        <h1 className="text-3xl font-bold mb-2">{t('notifications:test_title')}</h1>
+        <p className="text-muted-foreground">{t('notifications:test_description')}</p>
       </div>
       
       <Tabs defaultValue="quick" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="quick">Quick Tests</TabsTrigger>
-          <TabsTrigger value="custom">Custom</TabsTrigger>
-          <TabsTrigger value="advanced">Advanced</TabsTrigger>
-          <TabsTrigger value="stats">Statistics</TabsTrigger>
+          <TabsTrigger value="quick">{t('notifications:test.tabs.quick')}</TabsTrigger>
+          <TabsTrigger value="custom">{t('notifications:test.tabs.custom')}</TabsTrigger>
+          <TabsTrigger value="advanced">{t('notifications:test.tabs.advanced')}</TabsTrigger>
+          <TabsTrigger value="stats">{t('notifications:test.tabs.stats')}</TabsTrigger>
         </TabsList>
         
         <TabsContent value="quick">
           <Card>
             <CardHeader>
-              <CardTitle>Quick Test Notifications</CardTitle>
+              <CardTitle>{t('notifications:test.quick.title')}</CardTitle>
               <CardDescription>
-                Create test notifications of different types
+                {t('notifications:test.quick.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -255,7 +257,7 @@ export default function TestNotifications() {
                   disabled={isLoading}
                 >
                   {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Info Notification
+                  {t('notifications:test.quick.info')}
                 </Button>
                 
                 <Button 
@@ -265,7 +267,7 @@ export default function TestNotifications() {
                   disabled={isLoading}
                 >
                   {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Success Notification
+                  {t('notifications:test.quick.success')}
                 </Button>
                 
                 <Button 
@@ -275,7 +277,7 @@ export default function TestNotifications() {
                   disabled={isLoading}
                 >
                   {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Warning Notification
+                  {t('notifications:test.quick.warning')}
                 </Button>
                 
                 <Button 
@@ -285,7 +287,7 @@ export default function TestNotifications() {
                   disabled={isLoading}
                 >
                   {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Error Notification
+                  {t('notifications:test.quick.error')}
                 </Button>
               </div>
               
@@ -296,7 +298,7 @@ export default function TestNotifications() {
                   disabled={isLoading}
                 >
                   {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Test Real-time
+                  {t('notifications:test.quick.realtime')}
                 </Button>
                 
                 <Button 
@@ -305,7 +307,7 @@ export default function TestNotifications() {
                   disabled={isLoading}
                 >
                   {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Simulate Long Job
+                  {t('notifications:test.quick.simulate_job')}
                 </Button>
               </div>
             </CardContent>
@@ -315,27 +317,27 @@ export default function TestNotifications() {
         <TabsContent value="custom">
           <Card>
             <CardHeader>
-              <CardTitle>Custom Notification</CardTitle>
+              <CardTitle>{t('notifications:test.custom.title')}</CardTitle>
               <CardDescription>
-                Create a notification with custom title and message
+                {t('notifications:test.custom.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="title">Title</Label>
+                <Label htmlFor="title">{t('notifications:test.custom.title_label')}</Label>
                 <Input 
                   id="title"
-                  placeholder="Enter notification title"
+                  placeholder={t('notifications:test.custom.title_placeholder')}
                   value={customTitle}
                   onChange={(e) => setCustomTitle(e.target.value)}
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="message">Message</Label>
+                <Label htmlFor="message">{t('notifications:test.custom.message_label')}</Label>
                 <Textarea 
                   id="message"
-                  placeholder="Enter notification message"
+                  placeholder={t('notifications:test.custom.message_placeholder')}
                   value={customMessage}
                   onChange={(e) => setCustomMessage(e.target.value)}
                   rows={4}
@@ -348,7 +350,7 @@ export default function TestNotifications() {
                 className="w-full"
               >
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Create Custom Notification
+                {t('notifications:test.custom.create')}
               </Button>
             </CardContent>
           </Card>
@@ -357,14 +359,14 @@ export default function TestNotifications() {
         <TabsContent value="advanced">
           <Card>
             <CardHeader>
-              <CardTitle>Advanced Testing</CardTitle>
+              <CardTitle>{t('notifications:test.advanced.title')}</CardTitle>
               <CardDescription>
-                Bulk operations and system testing
+                {t('notifications:test.advanced.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="bulk-count">Bulk Count</Label>
+                <Label htmlFor="bulk-count">{t('notifications:test.advanced.bulk_count')}</Label>
                 <div className="flex gap-2">
                   <Input 
                     id="bulk-count"
@@ -380,10 +382,10 @@ export default function TestNotifications() {
                     disabled={isLoading}
                   >
                     {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    Create {bulkCount} Notifications
+                    {t('notifications:test.advanced.create_bulk', { count: bulkCount })}
                   </Button>
                 </div>
-                <p className="text-xs text-muted-foreground">Maximum 20 notifications at once</p>
+                <p className="text-xs text-muted-foreground">{t('notifications:test.advanced.bulk_limit')}</p>
               </div>
               
               <div className="pt-4 border-t">
@@ -394,10 +396,10 @@ export default function TestNotifications() {
                   className="w-full"
                 >
                   {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Clear All Notifications
+                  {t('notifications:test.advanced.clear_all')}
                 </Button>
                 <p className="text-xs text-muted-foreground mt-2">
-                  This will delete all your notifications permanently
+                  {t('notifications:test.advanced.clear_warning')}
                 </p>
               </div>
             </CardContent>
@@ -407,9 +409,9 @@ export default function TestNotifications() {
         <TabsContent value="stats">
           <Card>
             <CardHeader>
-              <CardTitle>Notification Statistics</CardTitle>
+              <CardTitle>{t('notifications:test.stats.title')}</CardTitle>
               <CardDescription>
-                View your notification statistics
+                {t('notifications:test.stats.description')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -419,25 +421,25 @@ export default function TestNotifications() {
                 className="w-full"
               >
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Refresh Statistics
+                {t('notifications:test.stats.refresh')}
               </Button>
               
               {stats && (
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
-                      <p className="text-sm text-muted-foreground">Total Notifications</p>
+                      <p className="text-sm text-muted-foreground">{t('notifications:test.stats.total')}</p>
                       <p className="text-2xl font-bold">{stats.total}</p>
                     </div>
                     <div className="p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
-                      <p className="text-sm text-muted-foreground">Unread</p>
+                      <p className="text-sm text-muted-foreground">{t('notifications:test.stats.unread')}</p>
                       <p className="text-2xl font-bold text-blue-600">{stats.unread}</p>
                     </div>
                   </div>
                   
                   {stats.byType && stats.byType.length > 0 && (
                     <div>
-                      <p className="text-sm font-medium mb-2">By Type</p>
+                      <p className="text-sm font-medium mb-2">{t('notifications:test.stats.by_type')}</p>
                       <div className="space-y-2">
                         {stats.byType.map((item: any) => (
                           <div key={item.Type} className="flex justify-between items-center">
@@ -457,18 +459,18 @@ export default function TestNotifications() {
       
       <Card>
         <CardHeader>
-          <CardTitle>Testing Guide</CardTitle>
+          <CardTitle>{t('notifications:test.guide.title')}</CardTitle>
         </CardHeader>
         <CardContent>
           <ol className="list-decimal list-inside space-y-2 text-sm text-gray-600 dark:text-gray-400">
-            <li>Use Quick Tests to create notifications of different types</li>
-            <li>Check the bell icon in the header to see notifications in the inbox</li>
-            <li>Navigate to the Notifications page to see all notifications</li>
-            <li>Test real-time updates with the Real-time button</li>
-            <li>Simulate a long-running job to see progress notifications</li>
-            <li>Use bulk operations to test performance with many notifications</li>
-            <li>Test marking as read, deleting, and bulk actions</li>
-            <li>Clear all notifications when done testing</li>
+            <li>{t('notifications:test.guide.step1')}</li>
+            <li>{t('notifications:test.guide.step2')}</li>
+            <li>{t('notifications:test.guide.step3')}</li>
+            <li>{t('notifications:test.guide.step4')}</li>
+            <li>{t('notifications:test.guide.step5')}</li>
+            <li>{t('notifications:test.guide.step6')}</li>
+            <li>{t('notifications:test.guide.step7')}</li>
+            <li>{t('notifications:test.guide.step8')}</li>
           </ol>
         </CardContent>
       </Card>

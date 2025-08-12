@@ -10,21 +10,20 @@
 - [x] Setup i18next configuration with proper TypeScript types
 - [x] When language change save it in permanent cookie, when page reloads use that cookie, should apply to app and login
 
-### Phase 2: Frontend Localization
-- [ ] Localize Dashboard page (titles, descriptions, chart labels, activity feed)
-- [ ] Localize Users page (table headers, buttons, form labels, validation messages)
-- [ ] Localize Projects page (table headers, buttons, form fields)
-- [ ] Localize common components (DeleteConfirmationDialog, NotificationInbox, etc.)
-- [ ] Localize authentication pages (Login, Profile)
-- [ ] Setup date/number formatting with Spanish LATAM formatting
-- [ ] Implement proper pluralization rules for Spanish
+### Phase 2: Frontend Localization ✅
+- [x] Localize Dashboard page (titles, descriptions, chart labels, activity feed)
+- [x] Localize Users page (table headers, buttons, form labels, validation messages)
+- [x] Localize Projects page (table headers, buttons, form fields)
+- [x] Localize common components (DeleteConfirmationDialog, NotificationInbox, etc.)
+- [x] Localize authentication pages (Login, Profile)
+- [x] Setup date/number formatting to use local machine date format as it's doing today
+- [x] Implement proper pluralization rules for Spanish
 
 ### Phase 3: Backend Localization
 - [ ] Create configuration system for default language and multi-language toggle
 - [ ] Setup RESX resource files for .NET localization
 - [ ] Localize email templates (InvitationEmail.html)
 - [ ] Localize API validation messages and error responses
-- [ ] Add admin settings to control language configuration
 - [ ] Update email service to use localized templates
 
 ### Phase 4: Integration & Testing
@@ -41,3 +40,5 @@
 - [ ] Add environment variable documentation
 - [ ] Test template deployment with different language configurations
 
+
+### Other: Dark mode pagina [number] dosen't look good with input 

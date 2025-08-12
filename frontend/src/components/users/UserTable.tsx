@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   useReactTable,
   getCoreRowModel,
@@ -82,6 +83,7 @@ export const UserTable: React.FC<UserTableProps> = ({
   onDeleteUser,
   canEditUsers,
 }) => {
+  const { t } = useTranslation(['users', 'common']);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   const columns: ColumnDef<User>[] = [
@@ -93,7 +95,7 @@ export const UserTable: React.FC<UserTableProps> = ({
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="h-auto p-0 font-semibold"
         >
-          Name
+          {t('table.headers.name')}
           {column.getIsSorted() === "asc" ? (
             <ArrowUp className="ml-2 h-4 w-4" />
           ) : column.getIsSorted() === "desc" ? (
@@ -127,7 +129,7 @@ export const UserTable: React.FC<UserTableProps> = ({
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="h-auto p-0 font-semibold"
         >
-          Role
+          {t('table.headers.role')}
           {column.getIsSorted() === "asc" ? (
             <ArrowUp className="ml-2 h-4 w-4" />
           ) : column.getIsSorted() === "desc" ? (
@@ -151,7 +153,7 @@ export const UserTable: React.FC<UserTableProps> = ({
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="h-auto p-0 font-semibold"
         >
-          Job Title
+          {t('table.headers.job_title')}
           {column.getIsSorted() === "asc" ? (
             <ArrowUp className="ml-2 h-4 w-4" />
           ) : column.getIsSorted() === "desc" ? (
@@ -175,7 +177,7 @@ export const UserTable: React.FC<UserTableProps> = ({
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="h-auto p-0 font-semibold"
         >
-          Status
+          {t('table.headers.status')}
           {column.getIsSorted() === "asc" ? (
             <ArrowUp className="ml-2 h-4 w-4" />
           ) : column.getIsSorted() === "desc" ? (
@@ -191,7 +193,7 @@ export const UserTable: React.FC<UserTableProps> = ({
             ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
             : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
         }`}>
-          {row.original.isActive ? 'Active' : 'Inactive'}
+          {row.original.isActive ? t('status.active') : t('status.inactive')}
         </span>
       ),
     },
@@ -203,7 +205,7 @@ export const UserTable: React.FC<UserTableProps> = ({
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="h-auto p-0 font-semibold"
         >
-          Created
+          {t('table.headers.created')}
           {column.getIsSorted() === "asc" ? (
             <ArrowUp className="ml-2 h-4 w-4" />
           ) : column.getIsSorted() === "desc" ? (
@@ -217,14 +219,14 @@ export const UserTable: React.FC<UserTableProps> = ({
     },
     ...(canEditUsers ? [{
       id: 'actions',
-      header: 'Actions',
+      header: t('table.headers.actions'),
       cell: ({ row }: { row: any }) => (
         <div className="flex gap-2">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => onEditUser(row.original)}
-            title="Edit Profile"
+            title={t('actions.edit_profile')}
           >
             <Edit className="h-4 w-4" />
           </Button>
@@ -232,7 +234,7 @@ export const UserTable: React.FC<UserTableProps> = ({
             variant="ghost"
             size="sm"
             onClick={() => onEditRole(row.original)}
-            title="Change Role"
+            title={t('actions.change_role')}
           >
             <Shield className="h-4 w-4" />
           </Button>
@@ -242,7 +244,7 @@ export const UserTable: React.FC<UserTableProps> = ({
             onClick={() => onDeleteUser(row.original)}
             disabled={row.original.email === currentUserEmail}
             className={`${row.original.email === currentUserEmail ? 'text-gray-400' : 'text-red-600 hover:text-red-700'}`}
-            title={row.original.email === currentUserEmail ? "Cannot delete yourself" : "Delete User"}
+            title={row.original.email === currentUserEmail ? t('actions.cannot_delete_yourself') : t('actions.delete_user')}
           >
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -289,7 +291,7 @@ export const UserTable: React.FC<UserTableProps> = ({
   if (error) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-red-500">Error loading users: {error.message}</p>
+        <p className="text-red-500">{t('table.error_loading', { message: error.message })}</p>
       </div>
     );
   }
@@ -306,7 +308,7 @@ export const UserTable: React.FC<UserTableProps> = ({
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input
-            placeholder="Search users..."
+            placeholder={t('table.search_placeholder')}
             value={globalFilter}
             onChange={(e) => onGlobalFilterChange(e.target.value)}
             className="pl-10 w-64"
@@ -320,10 +322,10 @@ export const UserTable: React.FC<UserTableProps> = ({
             onValueChange={(value) => onRoleFilterChange(value === 'all' ? undefined : value)}
           >
             <SelectTrigger className="w-40">
-              <SelectValue placeholder="All Roles" />
+              <SelectValue placeholder={t('table.filter_all_roles')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Roles</SelectItem>
+              <SelectItem value="all">{t('table.filter_all_roles')}</SelectItem>
               <SelectItem value={UserRoles.ADMIN}>{getUserRoleLabel(UserRoles.ADMIN)}</SelectItem>
               <SelectItem value={UserRoles.MANAGER}>{getUserRoleLabel(UserRoles.MANAGER)}</SelectItem>
               <SelectItem value={UserRoles.EMPLOYEE}>{getUserRoleLabel(UserRoles.EMPLOYEE)}</SelectItem>
@@ -340,7 +342,7 @@ export const UserTable: React.FC<UserTableProps> = ({
               onCheckedChange={(checked) => onShowInactiveChange(checked === true)}
             />
             <Label htmlFor="showInactive" className="text-sm font-medium">
-              Show Inactive
+              {t('buttons.show_inactive')}
             </Label>
           </div>
         )}
@@ -354,7 +356,7 @@ export const UserTable: React.FC<UserTableProps> = ({
             className="ml-auto text-sm"
           >
             <X className="mr-2 h-4 w-4" />
-            Clear Filters
+            {t('buttons.clear_filters')}
           </Button>
         )}
       </div>
@@ -383,7 +385,7 @@ export const UserTable: React.FC<UserTableProps> = ({
             {table.getRowModel().rows.length === 0 ? (
               <tr>
                 <td colSpan={columns.length} className="px-4 py-8 text-center text-gray-500">
-                  No users found
+                  {t('table.no_results')}
                 </td>
               </tr>
             ) : (
@@ -408,12 +410,11 @@ export const UserTable: React.FC<UserTableProps> = ({
       {/* Pagination */}
       <div className="flex items-center justify-between">
         <div className="text-sm text-gray-600 dark:text-gray-400">
-          Showing {pagination.pageIndex * pagination.pageSize + 1} to{' '}
-          {Math.min(
-            (pagination.pageIndex + 1) * pagination.pageSize,
-            totalCount
-          )}{' '}
-          of {totalCount} users
+          {t('table.pagination.showing', {
+            from: pagination.pageIndex * pagination.pageSize + 1,
+            to: Math.min((pagination.pageIndex + 1) * pagination.pageSize, totalCount),
+            total: totalCount
+          })}
         </div>
 
         <div className="flex items-center gap-2">
@@ -424,7 +425,7 @@ export const UserTable: React.FC<UserTableProps> = ({
             disabled={!table.getCanPreviousPage()}
           >
             <ChevronLeft className="h-4 w-4" />
-            Previous
+            {t('table.pagination.previous')}
           </Button>
           <Button
             variant="outline"
@@ -432,7 +433,7 @@ export const UserTable: React.FC<UserTableProps> = ({
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            Next
+            {t('table.pagination.next')}
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>

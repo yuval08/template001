@@ -20,6 +20,7 @@ import {
   ChevronsRight,
 } from 'lucide-react';
 import { cn } from '@/utils/cn';
+import { useTranslation } from 'react-i18next';
 
 interface DataTableProps<TData> {
   data: TData[];
@@ -63,11 +64,12 @@ export function DataTable<TData>({
   onSortingChange,
   manualSorting = true,
   className,
-  emptyMessage = "No results found.",
+  emptyMessage,
   enableRowSelection = false,
   onRowSelectionChange,
   rowSelection,
 }: DataTableProps<TData>) {
+  const { t } = useTranslation('common');
   const table = useReactTable({
     data,
     columns,
@@ -102,7 +104,7 @@ export function DataTable<TData>({
   if (error) {
     return (
       <div className="flex items-center justify-center h-32 text-red-500">
-        <p>Error loading data: {error.message}</p>
+        <p>{t('dataTable.errorLoading', { message: error.message })}</p>
       </div>
     );
   }
@@ -141,14 +143,14 @@ export function DataTable<TData>({
                   <td colSpan={columns.length} className="px-4 py-8 text-center">
                     <div className="flex items-center justify-center space-x-2">
                       <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                      <span className="text-muted-foreground">Loading...</span>
+                      <span className="text-muted-foreground">{t('messages.loading')}</span>
                     </div>
                   </td>
                 </tr>
               ) : table.getRowModel().rows.length === 0 ? (
                 <tr>
                   <td colSpan={columns.length} className="px-4 py-8 text-center text-muted-foreground">
-                    {emptyMessage}
+                    {emptyMessage || t('dataTable.noResults')}
                   </td>
                 </tr>
               ) : (
@@ -174,14 +176,16 @@ export function DataTable<TData>({
       {pagination && onPaginationChange && totalCount !== undefined && totalCount > 0 && (
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-sm text-muted-foreground">
-            Showing {Math.min((pagination.pageIndex * pagination.pageSize) + 1, totalCount)} to{' '}
-            {Math.min((pagination.pageIndex + 1) * pagination.pageSize, totalCount)} of{' '}
-            {totalCount} results
+            {t('dataTable.showing', {
+              from: Math.min((pagination.pageIndex * pagination.pageSize) + 1, totalCount),
+              to: Math.min((pagination.pageIndex + 1) * pagination.pageSize, totalCount),
+              total: totalCount
+            })}
           </div>
           
           <div className="flex items-center space-x-2">
             <div className="flex items-center space-x-2">
-              <span className="text-sm text-muted-foreground">Rows per page:</span>
+              <span className="text-sm text-muted-foreground">{t('dataTable.rowsPerPage')}</span>
               <Select
                 value={pagination.pageSize.toString()}
                 onValueChange={(value) =>
@@ -233,7 +237,7 @@ export function DataTable<TData>({
               </Button>
               
               <span className="px-3 py-1 text-sm">
-                Page {currentPage} of {totalPages}
+                {t('dataTable.page', { current: currentPage, total: totalPages })}
               </span>
               
               <Button

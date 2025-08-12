@@ -9,7 +9,7 @@
     "of_total": "of total"
   },
   "trends": {
-    "from_last_month": "from last month",
+    "from_last_month": "{{value}} from last month",
     "completion_rate": "completion rate"
   },
   "charts": {
@@ -55,5 +55,138 @@
     "active": "Active",
     "completed": "Completed", 
     "paused": "Paused"
+  },
+  "reports": {
+    "title": "Reports & PDF Viewer",
+    "subtitle": "Interactive PDF viewer with zoom, rotation, navigation, and download capabilities.",
+    "controls": {
+      "sample_report": "Sample Report",
+      "sample_report_description": "Load a sample PDF report to demonstrate the viewer functionality",
+      "load_sample_report": "Load Sample Report",
+      "loading": "Loading...",
+      "report_status": "Report Status",
+      "report_status_description": "Current report information",
+      "export_options": "Export Options",
+      "export_options_description": "Download or share the current report",
+      "download_pdf": "Download PDF"
+    },
+    "status": {
+      "loaded": "Loaded",
+      "no_report": "No Report",
+      "pdf_document": "PDF Document"
+    },
+    "pdf_viewer": "PDF Viewer",
+    "no_pdf_loaded": "No PDF loaded. Click \"Load Sample Report\" to begin.",
+    "page_of": "Page {{current}} of {{total}}",
+    "failed_to_load_pdf": "Failed to load PDF",
+    "labels": {
+      "status": "Status:",
+      "size": "Size:",
+      "type": "Type:"
+    },
+    "instructions": {
+      "title": "PDF Viewer Instructions",
+      "description": "How to use the PDF viewer controls",
+      "navigation": {
+        "title": "Navigation",
+        "arrow_buttons": "Use arrow buttons to navigate pages",
+        "page_numbers": "Click page numbers for quick navigation",
+        "scroll": "Scroll within the viewer for long pages"
+      },
+      "viewing_options": {
+        "title": "Viewing Options",
+        "zoom": "Zoom in/out with + and - buttons",
+        "rotate": "Rotate pages with the rotate button",
+        "fullscreen": "Toggle fullscreen for better viewing"
+      },
+      "actions": {
+        "title": "Actions",
+        "download": "Download the PDF file",
+        "view_info": "View page and zoom information",
+        "load_reports": "Load different sample reports"
+      }
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your account preferences and application settings",
+    "mock_badge": "Mock Implementation",
+    "appearance": {
+      "title": "Appearance",
+      "description": "Customize how the application looks and feels",
+      "theme": "Theme",
+      "theme_placeholder": "Select theme",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Configure when and how you receive notifications",
+      "email": {
+        "title": "Email Notifications",
+        "description": "Receive notifications via email"
+      },
+      "push": {
+        "title": "Push Notifications",
+        "description": "Receive push notifications in your browser"
+      },
+      "desktop": {
+        "title": "Desktop Notifications",
+        "description": "Show notifications on your desktop"
+      },
+      "marketing": {
+        "title": "Marketing Communications",
+        "description": "Receive updates about new features and announcements"
+      }
+    },
+    "privacy": {
+      "title": "Privacy & Security",
+      "description": "Control your privacy and security preferences",
+      "profile_visibility": {
+        "title": "Profile Visibility",
+        "description": "Make your profile visible to other users"
+      },
+      "activity_status": {
+        "title": "Activity Status",
+        "description": "Show when you're online and active"
+      },
+      "show_email": {
+        "title": "Show Email Address",
+        "description": "Display your email address on your profile"
+      }
+    },
+    "localization": {
+      "title": "Language & Region",
+      "description": "Set your preferred language and regional settings",
+      "language": "Language",
+      "language_placeholder": "Select language",
+      "timezone": "Timezone",
+      "timezone_placeholder": "Select timezone",
+      "languages": {
+        "en": "English",
+        "es": "Español",
+        "fr": "Français",
+        "de": "Deutsch",
+        "it": "Italiano"
+      },
+      "timezones": {
+        "utc": "UTC (Coordinated Universal Time)",
+        "est": "EST (Eastern Standard Time)",
+        "pst": "PST (Pacific Standard Time)",
+        "gmt": "GMT (Greenwich Mean Time)",
+        "cet": "CET (Central European Time)"
+      }
+    },
+    "security": {
+      "title": "Account Security",
+      "description": "Manage your account security and authentication",
+      "change_password": "Change Password",
+      "enable_2fa": "Enable Two-Factor Authentication",
+      "active_sessions": "Active Sessions"
+    },
+    "actions": {
+      "save_settings": "Save Settings"
+    }
   }
 }

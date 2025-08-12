@@ -3,6 +3,7 @@ import { AlertTriangle, RefreshCw, Home, Bug } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import i18n from '@/i18n';
 
 interface Props {
   children: ReactNode;
@@ -114,10 +115,10 @@ export class ErrorBoundary extends Component<Props, State> {
                 <AlertTriangle className="w-6 h-6 text-destructive" />
               </div>
               <CardTitle className="text-2xl font-bold text-foreground">
-                Oops! Something went wrong
+                {i18n.t('common:errors.somethingWentWrong')}
               </CardTitle>
               <CardDescription className="text-muted-foreground">
-                We apologize for the inconvenience. An unexpected error has occurred.
+                {i18n.t('common:errors.unexpectedError')}
               </CardDescription>
             </CardHeader>
             
@@ -125,9 +126,9 @@ export class ErrorBoundary extends Component<Props, State> {
               {errorId && (
                 <Alert>
                   <AlertDescription>
-                    <strong>Error ID:</strong> {errorId}
+                    <strong>{i18n.t('common:errors.errorId')}</strong> {errorId}
                     <br />
-                    Please reference this ID if you need to contact support.
+                    {i18n.t('common:errors.errorIdDescription')}
                   </AlertDescription>
                 </Alert>
               )}
@@ -137,19 +138,19 @@ export class ErrorBoundary extends Component<Props, State> {
                   <Alert variant="destructive">
                     <Bug className="h-4 w-4" />
                     <AlertDescription>
-                      <strong>Development Mode - Error Details:</strong>
+                      <strong>{i18n.t('common:errors.developmentError')}</strong>
                     </AlertDescription>
                   </Alert>
                   
                   <div className="bg-destructive/5 border border-destructive/20 rounded-lg p-4 space-y-2">
                     <div>
-                      <strong className="text-destructive">Error:</strong>
+                      <strong className="text-destructive">{i18n.t('common:errors.errorLabel')}</strong>
                       <p className="text-sm font-mono mt-1">{error.message}</p>
                     </div>
                     
                     {error.stack && (
                       <div>
-                        <strong className="text-destructive">Stack Trace:</strong>
+                        <strong className="text-destructive">{i18n.t('common:errors.stackTrace')}</strong>
                         <pre className="text-xs font-mono mt-1 overflow-x-auto whitespace-pre-wrap bg-background/50 p-2 rounded border">
                           {error.stack}
                         </pre>
@@ -158,7 +159,7 @@ export class ErrorBoundary extends Component<Props, State> {
                     
                     {errorInfo && (
                       <div>
-                        <strong className="text-destructive">Component Stack:</strong>
+                        <strong className="text-destructive">{i18n.t('common:errors.componentStack')}</strong>
                         <pre className="text-xs font-mono mt-1 overflow-x-auto whitespace-pre-wrap bg-background/50 p-2 rounded border">
                           {errorInfo.componentStack}
                         </pre>
@@ -174,7 +175,7 @@ export class ErrorBoundary extends Component<Props, State> {
                   className="flex items-center gap-2"
                 >
                   <RefreshCw className="w-4 h-4" />
-                  Try Again
+                  {i18n.t('common:errors.tryAgain')}
                 </Button>
                 
                 <Button 
@@ -183,7 +184,7 @@ export class ErrorBoundary extends Component<Props, State> {
                   className="flex items-center gap-2"
                 >
                   <Home className="w-4 h-4" />
-                  Go Home
+                  {i18n.t('common:errors.goHome')}
                 </Button>
                 
                 <Button 
@@ -192,13 +193,13 @@ export class ErrorBoundary extends Component<Props, State> {
                   className="flex items-center gap-2"
                 >
                   <Bug className="w-4 h-4" />
-                  Report Bug
+                  {i18n.t('common:errors.reportBug')}
                 </Button>
               </div>
 
               {!isDevelopment && (
                 <div className="text-center text-sm text-muted-foreground pt-2">
-                  If this problem persists, please contact our support team.
+                  {i18n.t('common:errors.persistentProblem')}
                 </div>
               )}
             </CardContent>
@@ -233,11 +234,11 @@ class ErrorReportingService {
           }),
         }).catch(() => {
           // Silently fail if error reporting fails
-          console.warn('Failed to report error to service');
+          console.warn(i18n.t('common:errors.reportingFailed'));
         });
       }
     } catch (reportingError) {
-      console.warn('Error reporting failed:', reportingError);
+      console.warn(i18n.t('common:errors.errorReportingFailed'), reportingError);
     }
   }
 }

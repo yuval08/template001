@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Menu, Moon, Sun, Monitor, Search, User, LogOut, Settings, ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@/hooks/useTheme';
@@ -28,6 +29,7 @@ export const Topbar: React.FC<TopbarProps> = ({ onMenuToggle }) => {
   const { theme, setTheme } = useTheme();
   const { isOpen, open, close } = useCommandPalette();
   const { user, isAuthenticated, signOut } = useAuth();
+  const { t } = useTranslation('layout');
   const navigate = useNavigate();
 
   return (
@@ -47,7 +49,7 @@ export const Topbar: React.FC<TopbarProps> = ({ onMenuToggle }) => {
           {/* Center - Search (hidden on mobile, shown on larger screens) */}
           <div className="flex-1 max-w-2xl mx-4 hidden md:block">
             <GlobalSearch 
-              placeholder="Search everything... (⌘K)"
+              placeholder={t('topbar.search_placeholder')}
               showCommandHint
               className="w-full"
             />
@@ -61,7 +63,7 @@ export const Topbar: React.FC<TopbarProps> = ({ onMenuToggle }) => {
               size="sm" 
               className="p-2 md:hidden" 
               onClick={open}
-              aria-label="Open search"
+              aria-label={t('topbar.search_aria_label')}
             >
               <Search className="h-5 w-5" />
             </Button>
@@ -78,15 +80,15 @@ export const Topbar: React.FC<TopbarProps> = ({ onMenuToggle }) => {
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={() => setTheme('light')}>
                 <Sun className="mr-2 h-4 w-4" />
-                Light
+                {t('topbar.theme.light')}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setTheme('dark')}>
                 <Moon className="mr-2 h-4 w-4" />
-                Dark
+                {t('topbar.theme.dark')}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setTheme('system')}>
                 <Monitor className="mr-2 h-4 w-4" />
-                System
+                {t('topbar.theme.system')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -149,11 +151,11 @@ export const Topbar: React.FC<TopbarProps> = ({ onMenuToggle }) => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => navigate('/profile')}>
                   <User className="mr-2 h-4 w-4" />
-                  <span>Profile</span>
+                  <span>{t('topbar.profile.profile')}</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => navigate('/settings')}>
                   <Settings className="mr-2 h-4 w-4" />
-                  <span>Settings</span>
+                  <span>{t('topbar.profile.settings')}</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
@@ -161,7 +163,7 @@ export const Topbar: React.FC<TopbarProps> = ({ onMenuToggle }) => {
                   className="text-red-600 dark:text-red-400"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>Sign Out</span>
+                  <span>{t('topbar.profile.sign_out')}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

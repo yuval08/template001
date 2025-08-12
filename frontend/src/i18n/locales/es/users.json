@@ -1,11 +1,36 @@
 {
-  "title": "Usuarios",
+  "title": "Gestión de Usuarios",
+  "description": "Gestionar usuarios, roles e invitaciones dentro del sistema.",
   "subtitle": "Gestionar cuentas de usuario y permisos",
+  "access_denied": {
+    "title": "Acceso Denegado",
+    "message": "No tienes permisos para acceder a la gestión de usuarios."
+  },
+  "tabs": {
+    "users": "Usuarios",
+    "users_with_count": "Usuarios ({{count}})",
+    "invitations": "Invitaciones",
+    "invitations_full": "Invitaciones Pendientes",
+    "invitations_with_count": "Invitaciones Pendientes ({{count}})"
+  },
+  "buttons": {
+    "add_user": "Agregar Usuario",
+    "add_user_short": "Agregar",
+    "send_invitation": "Enviar Invitación",
+    "invite": "Invitar",
+    "creating": "Creando...",
+    "sending": "Enviando...",
+    "deleting": "Eliminando...",
+    "updating": "Actualizando...",
+    "clear_filters": "Limpiar Filtros",
+    "show_inactive": "Mostrar Inactivos"
+  },
   "table": {
     "headers": {
       "name": "Nombre",
       "email": "Correo Electrónico",
       "role": "Rol",
+      "job_title": "Cargo",
       "status": "Estado",
       "created": "Creado",
       "last_login": "Último Acceso",
@@ -13,7 +38,20 @@
     },
     "search_placeholder": "Buscar usuarios...",
     "filter_all_roles": "Todos los Roles",
-    "no_results": "No se encontraron usuarios"
+    "show_inactive": "Mostrar Inactivos",
+    "no_results": "No se encontraron usuarios",
+    "error_loading": "Error al cargar usuarios: {{message}}",
+    "pagination": {
+      "showing": "Mostrando {{from}} a {{to}} de {{total}} usuarios",
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "page": "Página",
+      "of": "de",
+      "show": "Mostrar",
+      "per_page": "por página"
+    },
+    "no_results_search": "No se encontraron usuarios que coincidan con tu búsqueda.",
+    "joined": "Se unió"
   },
   "actions": {
     "edit_profile": "Editar Perfil",
@@ -34,43 +72,99 @@
   },
   "dialogs": {
     "create_user": {
-      "title": "Crear Nuevo Usuario",
+      "title": "Agregar Nuevo Usuario",
+      "description": "Crear una nueva cuenta de usuario. Recibirá una invitación por correo para completar su configuración.",
       "first_name": "Nombre",
       "last_name": "Apellido",
       "email": "Correo Electrónico",
+      "email_username": "Nombre de Usuario",
+      "email_placeholder": "usuario",
       "role": "Rol",
-      "role_placeholder": "Selecciona un rol"
+      "department": "Departamento",
+      "job_title": "Cargo",
+      "role_placeholder": "Selecciona un rol",
+      "department_placeholder": "ej., Ingeniería, Marketing, Ventas",
+      "job_title_placeholder": "ej., Desarrollador Senior, Gerente de Proyecto",
+      "email_available": "El correo está disponible",
+      "email_taken": "Este correo electrónico ya está en uso",
+      "validating_email": "Validando correo...",
+      "create_button": "Crear Usuario"
     },
     "edit_user": {
       "title": "Editar Perfil de Usuario",
+      "description": "Actualizar la información del perfil del usuario. El correo electrónico y el rol no se pueden cambiar aquí.",
+      "warning_self_deactivate": "Advertencia: No puedes desactivar tu propia cuenta.",
       "first_name": "Nombre",
       "last_name": "Apellido",
-      "email": "Correo Electrónico"
+      "email": "Correo Electrónico",
+      "email_readonly": "El correo electrónico no se puede cambiar",
+      "department": "Departamento",
+      "job_title": "Cargo",
+      "is_active": "El usuario está activo",
+      "cannot_deactivate_yourself": "No puedes desactivarte a ti mismo",
+      "update_button": "Guardar Cambios"
     },
     "invite_user": {
       "title": "Invitar Nuevo Usuario",
+      "description": "Enviar una invitación por correo a un nuevo usuario. Recibirá un enlace para completar la configuración de su cuenta.",
       "email": "Correo Electrónico",
-      "role": "Rol",
-      "role_placeholder": "Selecciona un rol para este usuario"
+      "role": "Rol Destinado",
+      "role_placeholder": "Selecciona un rol para este usuario",
+      "expiration_days": "La Invitación Expira En (Días)",
+      "expiration_help": "El usuario tendrá esta cantidad de días para aceptar la invitación.",
+      "email_instructions": "El usuario recibirá un correo electrónico con instrucciones para completar la configuración de su cuenta. Necesitará iniciar sesión a través de su proveedor de autenticación para activar su cuenta.",
+      "email_already_invited": "Este correo electrónico ya tiene una invitación pendiente o cuenta de usuario",
+      "send_button": "Enviar Invitación"
     },
     "change_role": {
       "title": "Cambiar Rol de Usuario",
+      "description": "Actualizar el rol de <strong>{{firstName}} {{lastName}}</strong>.",
+      "warning_self_demote": "Advertencia: No puedes degradarte del rol de administrador.",
       "current_role": "Rol Actual",
       "new_role": "Nuevo Rol",
-      "new_role_placeholder": "Selecciona un nuevo rol"
+      "new_role_placeholder": "Selecciona un nuevo rol",
+      "cannot_demote_yourself": "No puedes degradarte a ti mismo",
+      "role_change": "Cambio de Rol",
+      "update_button": "Actualizar Rol"
+    },
+    "delete_user": {
+      "title": "Eliminar Usuario",
+      "message": "¿Estás seguro de que quieres eliminar a <strong>{{firstName}} {{lastName}}</strong>? Esta acción no se puede deshacer y eliminará todos los datos asociados.",
+      "confirm_button": "Eliminar Usuario"
     }
   },
   "invitations": {
     "title": "Invitaciones Pendientes",
-    "email": "Correo Electrónico",
-    "role": "Rol",
-    "invited_by": "Invitado Por",
-    "sent": "Enviado",
-    "expires": "Expira",
-    "actions": "Acciones",
-    "resend": "Reenviar",
-    "cancel": "Cancelar",
-    "no_pending": "No hay invitaciones pendientes"
+    "description": "Gestionar invitaciones pendientes de usuarios y su estado de expiración.",
+    "table": {
+      "email": "Correo Electrónico",
+      "role": "Rol",
+      "invited_by": "Invitado Por",
+      "sent": "Enviado",
+      "expires": "Expira",
+      "status": "Estado",
+      "actions": "Acciones"
+    },
+    "actions": {
+      "resend": "Reenviar",
+      "cancel": "Cancelar"
+    },
+    "status": {
+      "pending": "Pendiente",
+      "expired": "Expirado"
+    },
+    "no_pending": "No hay invitaciones pendientes",
+    "get_started": "Invita usuarios para comenzar",
+    "error_loading": "Error al cargar invitaciones: {{message}}"
+  },
+  "validation": {
+    "email_required": "El nombre de usuario del correo es requerido",
+    "email_invalid_format": "Formato de nombre de usuario inválido",
+    "first_name_required": "El nombre es requerido",
+    "last_name_required": "El apellido es requerido",
+    "role_required": "El rol es requerido",
+    "expiration_min": "Debe ser al menos 1 día",
+    "expiration_max": "No puede exceder 90 días"
   },
   "messages": {
     "user_created": "Usuario creado exitosamente",
@@ -78,6 +172,7 @@
     "user_deleted": "Usuario eliminado exitosamente",
     "invitation_sent": "Invitación enviada exitosamente",
     "invitation_cancelled": "Invitación cancelada",
-    "role_updated": "Rol de usuario actualizado exitosamente"
+    "role_updated": "Rol de usuario actualizado exitosamente",
+    "error_generic": "Error al realizar la operación. Por favor intenta nuevamente."
   }
 }

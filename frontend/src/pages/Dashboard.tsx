@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   BarChart,
   Bar,
@@ -31,14 +32,15 @@ import { DashboardSkeleton } from '@/components/skeletons';
 import { PageLayout, MetricCard } from '@/components/common';
 
 const Dashboard: React.FC = () => {
+  const { t } = useTranslation('dashboard');
   const { data: summaryResponse, isLoading, error } = useProjectSummary();
   const summary = summaryResponse?.data;
 
   // Mock data for charts (in real app, this would come from API)
   const projectStatusData = [
-    { name: 'Active', value: summary?.activeProjects || 12, color: '#10b981' },
-    { name: 'Completed', value: summary?.completedProjects || 8, color: '#3b82f6' },
-    { name: 'Paused', value: summary?.pausedProjects || 3, color: '#f59e0b' },
+    { name: t('status_labels.active'), value: summary?.activeProjects || 12, color: '#10b981' },
+    { name: t('status_labels.completed'), value: summary?.completedProjects || 8, color: '#3b82f6' },
+    { name: t('status_labels.paused'), value: summary?.pausedProjects || 3, color: '#f59e0b' },
   ];
 
   const activityData = summary?.recentActivity || [
@@ -60,11 +62,11 @@ const Dashboard: React.FC = () => {
   ];
 
   const recentActivities = [
-    { id: 1, action: 'New project created', user: 'John Doe', time: '2 minutes ago', type: 'create' },
-    { id: 2, action: 'Project status updated', user: 'Jane Smith', time: '5 minutes ago', type: 'update' },
-    { id: 3, action: 'User added to project', user: 'Mike Johnson', time: '10 minutes ago', type: 'assign' },
-    { id: 4, action: 'Report generated', user: 'Sarah Wilson', time: '15 minutes ago', type: 'report' },
-    { id: 5, action: 'Project completed', user: 'David Brown', time: '30 minutes ago', type: 'complete' },
+    { id: 1, action: t('recent_activity.actions.new_project_created'), user: 'John Doe', time: t('recent_activity.time.minutes_ago', { count: 2 }), type: 'create' },
+    { id: 2, action: t('recent_activity.actions.project_status_updated'), user: 'Jane Smith', time: t('recent_activity.time.minutes_ago', { count: 5 }), type: 'update' },
+    { id: 3, action: t('recent_activity.actions.user_added_to_project'), user: 'Mike Johnson', time: t('recent_activity.time.minutes_ago', { count: 10 }), type: 'assign' },
+    { id: 4, action: t('recent_activity.actions.report_generated'), user: 'Sarah Wilson', time: t('recent_activity.time.minutes_ago', { count: 15 }), type: 'report' },
+    { id: 5, action: t('recent_activity.actions.project_completed'), user: 'David Brown', time: t('recent_activity.time.minutes_ago', { count: 30 }), type: 'complete' },
   ];
 
   if (error) {
@@ -81,18 +83,18 @@ const Dashboard: React.FC = () => {
 
   return (
     <PageLayout
-      title="Dashboard"
-      description="Overview of your projects and activity with interactive charts and statistics."
+      title={t('title')}
+      description={t('subtitle')}
       maxWidth="6xl"
     >
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <MetricCard
-          title="Total Projects"
+          title={t('metrics.total_projects')}
           value={formatNumber(summary?.totalProjects || 23)}
           icon={ClipboardList}
           trend={{
-            value: "+12% from last month",
+            value: t('trends.from_last_month', { value: '+12%' }),
             type: "positive",
             icon: TrendingUp,
           }}
@@ -101,20 +103,20 @@ const Dashboard: React.FC = () => {
         />
 
         <MetricCard
-          title="Active Projects"
+          title={t('metrics.active_projects')}
           value={formatNumber(summary?.activeProjects || 12)}
           icon={Activity}
-          description={`${formatPercentage((summary?.activeProjects || 12) / (summary?.totalProjects || 23))} of total`}
+          description={`${formatPercentage((summary?.activeProjects || 12) / (summary?.totalProjects || 23))} ${t('metrics.of_total')}`}
           animationDelay="0.2s"
           loading={isLoading}
         />
 
         <MetricCard
-          title="Completed"
+          title={t('metrics.completed_projects')}
           value={formatNumber(summary?.completedProjects || 8)}
           icon={CheckCircle}
           trend={{
-            value: "+5% completion rate",
+            value: `+5% ${t('trends.completion_rate')}`,
             type: "positive",
             icon: TrendingUp,
           }}
@@ -123,11 +125,11 @@ const Dashboard: React.FC = () => {
         />
 
         <MetricCard
-          title="On Hold"
+          title={t('metrics.on_hold')}
           value={formatNumber(summary?.pausedProjects || 3)}
           icon={Clock}
           trend={{
-            value: "-2% from last month",
+            value: t('trends.from_last_month', { value: '-2%' }),
             type: "negative",
             icon: TrendingDown,
           }}
@@ -141,9 +143,9 @@ const Dashboard: React.FC = () => {
         {/* Project Status Distribution */}
         <Card className="animate-fadeIn" style={{ animationDelay: '0.5s' }}>
           <CardHeader>
-            <CardTitle>Project Status Distribution</CardTitle>
+            <CardTitle>{t('charts.project_status_distribution.title')}</CardTitle>
             <CardDescription>
-              Current breakdown of projects by status
+              {t('charts.project_status_distribution.description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -177,9 +179,9 @@ const Dashboard: React.FC = () => {
         {/* Monthly Activity */}
         <Card className="animate-fadeIn" style={{ animationDelay: '0.6s' }}>
           <CardHeader>
-            <CardTitle>Monthly Activity</CardTitle>
+            <CardTitle>{t('charts.monthly_activity.title')}</CardTitle>
             <CardDescription>
-              Project activity over the last 6 months
+              {t('charts.monthly_activity.description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -231,9 +233,9 @@ const Dashboard: React.FC = () => {
         {/* Monthly Comparison */}
         <Card className="lg:col-span-2 animate-fadeIn" style={{ animationDelay: '0.7s' }}>
           <CardHeader>
-            <CardTitle>Monthly Comparison</CardTitle>
+            <CardTitle>{t('charts.monthly_comparison.title')}</CardTitle>
             <CardDescription>
-              Comparison of projects created vs completed over time
+              {t('charts.monthly_comparison.description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -255,8 +257,8 @@ const Dashboard: React.FC = () => {
                       <stop offset="100%" stopColor="#10b981" stopOpacity={0.6}/>
                     </linearGradient>
                   </defs>
-                  <Bar dataKey="projects" fill="url(#projectsGradient)" name="Created" radius={[8, 8, 0, 0]} animationDuration={1000} />
-                  <Bar dataKey="completed" fill="url(#completedGradient)" name="Completed" radius={[8, 8, 0, 0]} animationDuration={1200} />
+                  <Bar dataKey="projects" fill="url(#projectsGradient)" name={t('charts.monthly_comparison.created')} radius={[8, 8, 0, 0]} animationDuration={1000} />
+                  <Bar dataKey="completed" fill="url(#completedGradient)" name={t('charts.monthly_comparison.completed')} radius={[8, 8, 0, 0]} animationDuration={1200} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -266,9 +268,9 @@ const Dashboard: React.FC = () => {
         {/* Recent Activity Feed */}
         <Card className="animate-fadeIn" style={{ animationDelay: '0.8s' }}>
           <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
+            <CardTitle>{t('recent_activity.title')}</CardTitle>
             <CardDescription>
-              Latest actions in your workspace
+              {t('recent_activity.description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -289,7 +291,7 @@ const Dashboard: React.FC = () => {
                       {activity.action}
                     </p>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      by {activity.user}
+                      {t('recent_activity.by')} {activity.user}
                     </p>
                     <p className="text-xs text-gray-400 dark:text-gray-500">
                       {activity.time}
@@ -305,9 +307,9 @@ const Dashboard: React.FC = () => {
       {/* User Growth Trend */}
       <Card>
         <CardHeader>
-          <CardTitle>User Growth Trend</CardTitle>
+          <CardTitle>{t('charts.user_growth.title')}</CardTitle>
           <CardDescription>
-            User registration and engagement over time
+            {t('charts.user_growth.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -325,7 +327,7 @@ const Dashboard: React.FC = () => {
                   stroke="#8b5cf6" 
                   strokeWidth={2}
                   dot={{ fill: '#8b5cf6', strokeWidth: 2, r: 4 }}
-                  name="Active Users"
+                  name={t('charts.user_growth.active_users')}
                 />
               </LineChart>
             </ResponsiveContainer>

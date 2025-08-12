@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ResponsiveProjectView } from '@/components/projects/ResponsiveProjectView';
 import { useProjects, Project } from '@/entities/project';
@@ -7,6 +8,7 @@ import { debounce } from 'lodash';
 import { PageLayout } from '@/components/common';
 
 const Tables: React.FC = () => {
+  const { t } = useTranslation('showcase');
   // Table state - default sort by name
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'name', desc: false }
@@ -111,8 +113,8 @@ const Tables: React.FC = () => {
 
   return (
     <PageLayout
-      title="Tables Showcase"
-      description="Advanced table functionality with responsive design, debounced search, sorting, filtering, and pagination."
+      title={t('tables.title')}
+      description={t('tables.description')}
     >
 
       <Card>

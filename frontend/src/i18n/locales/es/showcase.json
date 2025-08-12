@@ -1,0 +1,449 @@
+{
+  "ui": {
+    "title": "Showcase de Componentes UI",
+    "description": "Una exhibición completa de todos los componentes UI disponibles en el sistema",
+    "tabs": {
+      "buttons": "Botones",
+      "forms": "Formularios",
+      "feedback": "Retroalimentación",
+      "display": "Visualización",
+      "layout": "Diseño",
+      "navigation": "Navegación"
+    }
+  },
+  "buttons": {
+    "title": "Botones",
+    "description": "Varios estilos y estados de botones",
+    "variants": {
+      "title": "Variantes",
+      "default": "Predeterminado",
+      "secondary": "Secundario",
+      "destructive": "Destructivo",
+      "outline": "Contorno",
+      "ghost": "Fantasma",
+      "link": "Enlace"
+    },
+    "sizes": {
+      "title": "Tamaños",
+      "small": "Pequeño",
+      "default": "Predeterminado",
+      "large": "Grande"
+    },
+    "states": {
+      "title": "Estados",
+      "active": "Activo",
+      "disabled": "Deshabilitado",
+      "withIcon": "Con Ícono"
+    },
+    "showcase": {
+      "title": "Showcase de Botones",
+      "description": "Ejemplos completos de variantes de botones, tamaños, estados y patrones interactivos usando componentes Shadcn/ui.",
+      "interactive": {
+        "title": "Ejemplos Interactivos",
+        "description": "Patrones de uso de botones del mundo real con manejo de estado y retroalimentación del usuario."
+      },
+      "withIcons": {
+        "title": "Botones con Íconos",
+        "description": "Los íconos pueden posicionarse antes, después o como único contenido de los botones.",
+        "leftIcons": "Íconos Izquierda",
+        "rightIcons": "Íconos Derecha",
+        "iconOnly": "Solo Ícono"
+      },
+      "groups": {
+        "title": "Grupos de Botones",
+        "description": "Agrupa botones relacionados para mejor organización y jerarquía visual.",
+        "horizontal": "Grupo Horizontal",
+        "actions": "Grupo de Acciones",
+        "primarySecondary": "Acciones Primarias/Secundarias"
+      },
+      "asChild": {
+        "title": "Botón como Hijo (prop asChild)",
+        "description": "Usa la prop asChild para renderizar componentes personalizados con estilos de botón. La prop asChild requiere exactamente un elemento hijo."
+      },
+      "advanced": {
+        "title": "Patrones Avanzados y Pruebas",
+        "description": "Patrones complejos de botones incluyendo estados de carga, renderizado condicional y casos extremos.",
+        "loadingStates": "Estados de Carga Complejos",
+        "navigationPatterns": "Patrones de Navegación (asChild Corregido)",
+        "edgeCases": "Casos Extremos y Accesibilidad"
+      }
+    },
+    "actions": {
+      "download": "Descargar",
+      "sendEmail": "Enviar Correo",
+      "addItem": "Agregar Elemento",
+      "continue": "Continuar",
+      "search": "Buscar",
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "save": "Guardar",
+      "preview": "Vista Previa",
+      "cancel": "Cancelar",
+      "submit": "Enviar Formulario",
+      "saveAsDraft": "Guardar como Borrador",
+      "externalLink": "Enlace Externo",
+      "internalAnchor": "Ancla Interna",
+      "uploadFile": "Subir Archivo",
+      "customDiv": "Div Personalizado",
+      "reset": "Restablecer",
+      "saveDraft": "Guardar Borrador",
+      "edit": "Editar",
+      "duplicate": "Duplicar",
+      "delete": "Eliminar",
+      "uploadFiles": "Subir Archivos",
+      "downloadReport": "Descargar Reporte",
+      "dashboard": "Panel de Control",
+      "viewReports": "Ver Reportes",
+      "contactSupport": "Contactar Soporte",
+      "unavailableAction": "Acción No Disponible"
+    },
+    "loadingStates": {
+      "saving": "Guardando...",
+      "deleting": "Eliminando...",
+      "uploading": "Subiendo...",
+      "downloading": "Descargando..."
+    },
+    "toastMessages": {
+      "defaultClicked": "¡Botón predeterminado presionado!",
+      "destructiveAction": "¡Acción destructiva!",
+      "outlineClicked": "¡Botón contorno presionado!",
+      "secondaryClicked": "¡Botón secundario presionado!",
+      "ghostClicked": "¡Botón fantasma presionado!",
+      "linkClicked": "¡Botón enlace presionado!",
+      "smallClicked": "¡Botón pequeño presionado!",
+      "defaultSizeClicked": "¡Tamaño predeterminado presionado!",
+      "largeClicked": "¡Botón grande presionado!",
+      "iconClicked": "¡Botón ícono presionado!",
+      "activeClicked": "¡Botón activo presionado!",
+      "downloadStarted": "¡Descarga iniciada!",
+      "emailSent": "¡Correo enviado!",
+      "itemAdded": "¡Elemento agregado!",
+      "proceeding": "Procediendo...",
+      "searching": "Buscando...",
+      "settingsOpened": "¡Configuraciones abiertas!",
+      "liked": "¡Me gusta!",
+      "starred": "¡Marcado con estrella!",
+      "upvoted": "¡Voto positivo!",
+      "previousPage": "Página anterior",
+      "currentPage": "Actual: Página 2",
+      "nextPage": "Página siguiente",
+      "documentSaved": "¡Documento guardado!",
+      "previewOpened": "¡Vista previa abierta!",
+      "actionCancelled": "¡Acción cancelada!",
+      "formSubmitted": "¡Formulario enviado!",
+      "draftSaved": "¡Borrador guardado!",
+      "customDivClicked": "¡Div personalizado presionado!",
+      "formReset": "¡Formulario restablecido!",
+      "editModeActivated": "¡Modo edición activado!",
+      "itemDuplicated": "¡Elemento duplicado!",
+      "itemDeleted": "¡Elemento eliminado!",
+      "wouldNavigate": "Navegaría a",
+      "veryLongText": "Texto de botón muy largo que podría envolver a múltiples líneas en contenedores pequeños",
+      "addedToFavorites": "¡Agregado a favoritos!",
+      "fileSelected": "Archivo seleccionado:",
+      "saveOperationCompleted": "¡Operación de guardado completada!",
+      "deleteOperationCompleted": "¡Operación de eliminación completada!",
+      "uploadCompleted": "¡Subida completada!",
+      "downloadCompleted": "¡Descarga completada!",
+      "refreshCompleted": "¡Actualización completada!"
+    },
+    "ariaLabels": {
+      "favoriteItem": "Marcar como favorito este elemento",
+      "actionUnavailable": "Esta acción no está disponible actualmente"
+    },
+    "longButtonText": "Texto de Botón Muy Largo Que Demuestra el Ajuste"
+  },
+  "badges": {
+    "title": "Insignias",
+    "description": "Etiquetas e indicadores de estado",
+    "variants": {
+      "default": "Predeterminado",
+      "secondary": "Secundario",
+      "destructive": "Destructivo",
+      "outline": "Contorno",
+      "success": "Éxito",
+      "warning": "Advertencia",
+      "info": "Información",
+      "purple": "Morado"
+    },
+    "statuses": {
+      "active": "Activo",
+      "statusIndicator": "Indicador de estado"
+    }
+  },
+  "forms": {
+    "title": "Controles de Formulario",
+    "description": "Campos de entrada y elementos de formulario",
+    "showcase": {
+      "title": "Showcase de Formularios",
+      "description": "Ejemplos completos de formularios con validación, subida de archivos y controles avanzados usando React Hook Form y Zod."
+    },
+    "textInputs": {
+      "textInput": "Campo de Texto",
+      "textPlaceholder": "Ingresa texto...",
+      "emailInput": "Campo de Correo",
+      "emailPlaceholder": "correo@ejemplo.com",
+      "passwordInput": "Campo de Contraseña",
+      "passwordPlaceholder": "Ingresa contraseña...",
+      "disabledInput": "Campo Deshabilitado",
+      "disabledPlaceholder": "Deshabilitado",
+      "textarea": "Área de Texto",
+      "textareaPlaceholder": "Ingresa tu mensaje..."
+    },
+    "select": {
+      "title": "Selector",
+      "placeholder": "Selecciona una opción",
+      "fruits": "Frutas",
+      "vegetables": "Vegetales",
+      "options": {
+        "apple": "Manzana",
+        "banana": "Plátano",
+        "orange": "Naranja",
+        "carrot": "Zanahoria",
+        "potato": "Papa",
+        "tomato": "Tomate"
+      }
+    },
+    "checkboxes": {
+      "title": "Casillas de Verificación",
+      "acceptTerms": "Acepto términos y condiciones",
+      "promotional": "Enviarme correos promocionales",
+      "disabled": "Casilla deshabilitada"
+    },
+    "radioGroup": {
+      "title": "Grupo de Radio",
+      "option1": "Opción 1",
+      "option2": "Opción 2",
+      "option3": "Opción 3"
+    },
+    "switches": {
+      "title": "Interruptores",
+      "notifications": "Habilitar notificaciones",
+      "darkMode": "Modo oscuro",
+      "disabled": "Interruptor deshabilitado"
+    },
+    "contactForm": {
+      "title": "Contáctanos",
+      "description": "Ponte en contacto con nosotros usando el formulario a continuación.",
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "email": "Correo Electrónico",
+      "phone": "Número de Teléfono",
+      "company": "Nombre de la Empresa",
+      "category": "Categoría del Proyecto",
+      "industry": "Industria",
+      "message": "Mensaje",
+      "messagePlaceholder": "Cuéntanos sobre los requisitos de tu proyecto...",
+      "contactMethod": "Método de Contacto Preferido",
+      "budget": "Presupuesto del Proyecto",
+      "timeline": "Cronograma",
+      "priority": "Nivel de Prioridad",
+      "newsletter": "Suscribirse a nuestro boletín",
+      "fileUpload": "Adjuntar Archivos",
+      "fileUploadDescription": "Sube documentos relevantes (PDF, DOC, imágenes)",
+      "submit": "Enviar Mensaje",
+      "submitting": "Enviando...",
+      "success": "¡Formulario enviado exitosamente!",
+      "successDescription": "Gracias por tu envío.",
+      "error": "Error en el envío",
+      "errorDescription": "Por favor intenta de nuevo.",
+      "fileTooLarge": "Archivo muy grande",
+      "fileTooLargeDescription": "Por favor selecciona un archivo menor a 5MB.",
+      "fileUploaded": "¡Archivo subido exitosamente!",
+      "fileUploadError": "Error al subir archivo",
+      "removeFile": "Eliminar archivo"
+    },
+    "categories": {
+      "webDevelopment": "Desarrollo Web",
+      "mobileDevelopment": "Desarrollo Móvil",
+      "design": "Diseño",
+      "consulting": "Consultoría",
+      "other": "Otro"
+    },
+    "industries": {
+      "technology": "Tecnología",
+      "healthcare": "Salud",
+      "finance": "Finanzas",
+      "retail": "Comercio",
+      "education": "Educación",
+      "manufacturing": "Manufactura",
+      "other": "Otro"
+    },
+    "contactMethods": {
+      "email": "Correo",
+      "phone": "Teléfono",
+      "both": "Ambos"
+    },
+    "budgets": {
+      "under10k": "Menos de $10,000",
+      "10k-50k": "$10,000 - $50,000",
+      "50k-100k": "$50,000 - $100,000",
+      "over100k": "Más de $100,000"
+    },
+    "timelines": {
+      "asap": "Lo antes posible",
+      "1month": "Dentro de 1 mes",
+      "3months": "Dentro de 3 meses",
+      "flexible": "Flexible"
+    },
+    "priorities": {
+      "low": "Baja",
+      "medium": "Media",
+      "high": "Alta",
+      "urgent": "Urgente"
+    }
+  },
+  "alerts": {
+    "title": "Alertas",
+    "description": "Diferentes estilos de alertas para varios propósitos",
+    "defaultAlert": "Alerta Predeterminada",
+    "defaultDescription": "Esta es una alerta predeterminada con un ícono y descripción.",
+    "success": "¡Éxito!",
+    "successDescription": "Tu operación se completó exitosamente.",
+    "warning": "Advertencia",
+    "warningDescription": "Por favor revisa esta información importante.",
+    "error": "Error",
+    "errorDescription": "Algo salió mal. Por favor intenta de nuevo más tarde.",
+    "information": "Información",
+    "informationDescription": "Aquí tienes información útil para ti."
+  },
+  "progress": {
+    "title": "Indicadores de Progreso",
+    "description": "Estados de carga y progreso",
+    "progressBar": "Barra de Progreso",
+    "differentValues": "Diferentes Valores de Progreso",
+    "decrease": "-10%",
+    "increase": "+10%"
+  },
+  "toasts": {
+    "title": "Toasts",
+    "description": "Mensajes de notificación temporales",
+    "showSuccess": "Mostrar Toast de Éxito",
+    "showInfo": "Mostrar Toast de Información",
+    "showWarning": "Mostrar Toast de Advertencia",
+    "showError": "Mostrar Toast de Error",
+    "successMessage": "¡Mensaje de éxito!",
+    "infoMessage": "¡Mensaje informativo!",
+    "warningMessage": "¡Mensaje de advertencia!",
+    "errorMessage": "¡Mensaje de error!"
+  },
+  "avatars": {
+    "title": "Avatares",
+    "description": "Imágenes de perfil de usuario y respaldos"
+  },
+  "skeleton": {
+    "title": "Carga Esqueleto",
+    "description": "Marcadores de posición de carga para contenido"
+  },
+  "dialogs": {
+    "title": "Diálogos",
+    "description": "Diálogos modales para interacciones del usuario",
+    "openDialog": "Abrir Diálogo",
+    "confirmTitle": "¿Estás seguro?",
+    "confirmDescription": "Esta acción no se puede deshacer. Esto eliminará permanentemente tu cuenta y removerá tus datos de nuestros servidores.",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "actionConfirmed": "¡Acción confirmada!"
+  },
+  "cards": {
+    "title": "Tarjetas",
+    "description": "Componentes contenedores para agrupar contenido",
+    "basicCard": "Tarjeta Básica",
+    "basicDescription": "Una tarjeta simple con encabezado y contenido",
+    "basicContent": "Esta es el área de contenido de la tarjeta donde puedes colocar cualquier contenido.",
+    "withFooter": "Tarjeta con Pie",
+    "footerDescription": "Incluye botones de acción",
+    "footerContent": "Las tarjetas también pueden tener pies de página para acciones.",
+    "withIcon": "Con Ícono",
+    "iconDescription": "Tarjeta con ícono en el título",
+    "highlighted": "Tarjeta Resaltada",
+    "highlightedDescription": "Con color de borde primario",
+    "highlightedContent": "Esta tarjeta tiene un borde coloreado para énfasis."
+  },
+  "tabs": {
+    "title": "Pestañas",
+    "description": "Navegación con pestañas para organizar contenido",
+    "tab1": "Pestaña 1",
+    "tab2": "Pestaña 2",
+    "tab3": "Pestaña 3",
+    "tab1Content": "Contenido Pestaña 1",
+    "tab2Content": "Contenido Pestaña 2",
+    "tab3Content": "Contenido Pestaña 3",
+    "content1": "Este es el contenido para la primera pestaña.",
+    "content2": "Este es el contenido para la segunda pestaña.",
+    "content3": "Este es el contenido para la tercera pestaña."
+  },
+  "tables": {
+    "title": "Showcase de Tablas",
+    "description": "Tablas de datos con ordenamiento, filtrado, paginación y características avanzadas usando TanStack Table.",
+    "basicTable": {
+      "title": "Tabla de Datos Básica",
+      "description": "Tabla simple con ordenamiento y funcionalidad básica."
+    },
+    "advancedTable": {
+      "title": "Tabla de Datos Avanzada",
+      "description": "Tabla rica en características con filtrado, paginación, selección de filas y personalización de columnas."
+    },
+    "columns": {
+      "id": "ID",
+      "name": "Nombre",
+      "email": "Correo",
+      "role": "Rol",
+      "department": "Departamento",
+      "status": "Estado",
+      "joinDate": "Fecha de Ingreso",
+      "salary": "Salario",
+      "actions": "Acciones"
+    },
+    "statuses": {
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "pending": "Pendiente"
+    },
+    "roles": {
+      "admin": "Administrador",
+      "manager": "Gerente",
+      "employee": "Empleado",
+      "contractor": "Contratista"
+    },
+    "departments": {
+      "engineering": "Ingeniería",
+      "design": "Diseño",
+      "marketing": "Marketing",
+      "sales": "Ventas",
+      "hr": "Recursos Humanos"
+    },
+    "actions": {
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "view": "Ver Detalles"
+    },
+    "pagination": {
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "page": "Página",
+      "of": "de",
+      "rows": "filas"
+    },
+    "search": "Buscar empleados...",
+    "noResults": "No se encontraron resultados.",
+    "loading": "Cargando...",
+    "error": "Error al cargar datos"
+  },
+  "inputs": {
+    "title": "Showcase de Campos",
+    "description": "Componentes completos de entrada y controles de formulario con ejemplos de validación.",
+    "basicInputs": {
+      "title": "Controles de Entrada Básicos",
+      "description": "Componentes esenciales de entrada de formulario para recolección de datos."
+    },
+    "advancedInputs": {
+      "title": "Componentes de Entrada Avanzados",
+      "description": "Controles de entrada especializados con funcionalidad mejorada."
+    },
+    "validation": {
+      "title": "Ejemplos de Validación de Entrada",
+      "description": "Patrones de validación de formularios con retroalimentación en tiempo real."
+    }
+  }
+}

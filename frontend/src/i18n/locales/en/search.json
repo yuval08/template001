@@ -1,0 +1,68 @@
+{
+  "placeholder": "Search everything...",
+  "placeholder_command": "Search for anything or type a command...",
+  "searching": "Searching...",
+  "no_results": "No results found",
+  "no_results_description": "Try adjusting your search or browse recent searches",
+  "start_typing": "Start typing to search",
+  "start_typing_description": "Search across projects, users, documents, and tasks",
+  "start_typing_command": "Start typing to search or browse commands",
+  "clear_search": "Clear search",
+  "recent_searches": "Recent Searches",
+  "clear": "Clear",
+  "results_count": "{{count}} result",
+  "results_count_plural": "{{count}} results",
+  "showing_results": "Showing {{count}} result for \"{{term}}\"",
+  "showing_results_plural": "Showing {{count}} results for \"{{term}}\"",
+  "categories": {
+    "all": "All",
+    "pages": "Pages",
+    "search": "Search Results",
+    "recent": "Recent"
+  },
+  "entity_types": {
+    "project": "Project", 
+    "projects": "Projects",
+    "user": "User",
+    "users": "Users", 
+    "document": "Document",
+    "documents": "Documents",
+    "task": "Task",
+    "tasks": "Tasks"
+  },
+  "commands": {
+    "navigate": "Navigate",
+    "select": "Select", 
+    "filter": "Filter",
+    "close": "Close",
+    "view_details": "View details",
+    "command_palette": "Command Palette"
+  },
+  "navigation": {
+    "dashboard": {
+      "title": "Dashboard",
+      "description": "Go to main dashboard",
+      "keywords": ["home", "main", "overview"]
+    },
+    "projects": {
+      "title": "Projects",
+      "description": "View and manage projects",
+      "keywords": ["project", "work", "tasks"]
+    },
+    "users": {
+      "title": "Users",
+      "description": "Manage team members and users",
+      "keywords": ["team", "members", "people"]
+    },
+    "reports": {
+      "title": "Reports",
+      "description": "View analytics and reports",
+      "keywords": ["analytics", "data", "statistics"]
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Check your notifications",
+      "keywords": ["alerts", "messages", "updates"]
+    }
+  }
+}

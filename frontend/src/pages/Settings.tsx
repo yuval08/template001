@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
   Settings as SettingsIcon, 
   Bell, 
@@ -22,6 +23,7 @@ import { useTheme } from '@/hooks/useTheme';
 import { PageLayout } from '@/components/common';
 
 const Settings: React.FC = () => {
+  const { t } = useTranslation('dashboard');
   const { theme, setTheme } = useTheme();
   const [notifications, setNotifications] = useState({
     email: true,
@@ -53,10 +55,10 @@ const Settings: React.FC = () => {
 
   return (
     <PageLayout
-      title="Settings"
-      description="Manage your account preferences and application settings"
+      title={t('settings.title')}
+      description={t('settings.subtitle')}
       maxWidth="4xl"
-      actions={<Badge variant="secondary">Mock Implementation</Badge>}
+      actions={<Badge variant="secondary">{t('settings.mock_badge')}</Badge>}
     >
 
         {/* Appearance Settings */}
@@ -64,23 +66,23 @@ const Settings: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Palette className="h-5 w-5" />
-              Appearance
+              {t('settings.appearance.title')}
             </CardTitle>
             <CardDescription>
-              Customize how the application looks and feels
+              {t('settings.appearance.description')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="theme">Theme</Label>
+              <Label htmlFor="theme">{t('settings.appearance.theme')}</Label>
               <Select value={theme} onValueChange={setTheme}>
                 <SelectTrigger className="w-full md:w-[200px]">
-                  <SelectValue placeholder="Select theme" />
+                  <SelectValue placeholder={t('settings.appearance.theme_placeholder')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="light">Light</SelectItem>
-                  <SelectItem value="dark">Dark</SelectItem>
-                  <SelectItem value="system">System</SelectItem>
+                  <SelectItem value="light">{t('settings.appearance.light')}</SelectItem>
+                  <SelectItem value="dark">{t('settings.appearance.dark')}</SelectItem>
+                  <SelectItem value="system">{t('settings.appearance.system')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -92,18 +94,18 @@ const Settings: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Bell className="h-5 w-5" />
-              Notifications
+              {t('settings.notifications.title')}
             </CardTitle>
             <CardDescription>
-              Configure when and how you receive notifications
+              {t('settings.notifications.description')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="email-notifications">Email Notifications</Label>
+                <Label htmlFor="email-notifications">{t('settings.notifications.email.title')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Receive notifications via email
+                  {t('settings.notifications.email.description')}
                 </p>
               </div>
               <Switch
@@ -117,9 +119,9 @@ const Settings: React.FC = () => {
             <Separator />
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="push-notifications">Push Notifications</Label>
+                <Label htmlFor="push-notifications">{t('settings.notifications.push.title')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Receive push notifications in your browser
+                  {t('settings.notifications.push.description')}
                 </p>
               </div>
               <Switch
@@ -133,9 +135,9 @@ const Settings: React.FC = () => {
             <Separator />
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="desktop-notifications">Desktop Notifications</Label>
+                <Label htmlFor="desktop-notifications">{t('settings.notifications.desktop.title')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Show notifications on your desktop
+                  {t('settings.notifications.desktop.description')}
                 </p>
               </div>
               <Switch
@@ -149,9 +151,9 @@ const Settings: React.FC = () => {
             <Separator />
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="marketing-notifications">Marketing Communications</Label>
+                <Label htmlFor="marketing-notifications">{t('settings.notifications.marketing.title')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Receive updates about new features and announcements
+                  {t('settings.notifications.marketing.description')}
                 </p>
               </div>
               <Switch
@@ -170,18 +172,18 @@ const Settings: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5" />
-              Privacy & Security
+              {t('settings.privacy.title')}
             </CardTitle>
             <CardDescription>
-              Control your privacy and security preferences
+              {t('settings.privacy.description')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="profile-visible">Profile Visibility</Label>
+                <Label htmlFor="profile-visible">{t('settings.privacy.profile_visibility.title')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Make your profile visible to other users
+                  {t('settings.privacy.profile_visibility.description')}
                 </p>
               </div>
               <Switch
@@ -195,9 +197,9 @@ const Settings: React.FC = () => {
             <Separator />
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="activity-visible">Activity Status</Label>
+                <Label htmlFor="activity-visible">{t('settings.privacy.activity_status.title')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Show when you're online and active
+                  {t('settings.privacy.activity_status.description')}
                 </p>
               </div>
               <Switch
@@ -211,9 +213,9 @@ const Settings: React.FC = () => {
             <Separator />
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="show-email">Show Email Address</Label>
+                <Label htmlFor="show-email">{t('settings.privacy.show_email.title')}</Label>
                 <p className="text-sm text-muted-foreground">
-                  Display your email address on your profile
+                  {t('settings.privacy.show_email.description')}
                 </p>
               </div>
               <Switch
@@ -232,41 +234,41 @@ const Settings: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Globe className="h-5 w-5" />
-              Language & Region
+              {t('settings.localization.title')}
             </CardTitle>
             <CardDescription>
-              Set your preferred language and regional settings
+              {t('settings.localization.description')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="language">Language</Label>
+                <Label htmlFor="language">{t('settings.localization.language')}</Label>
                 <Select value={language} onValueChange={setLanguage}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select language" />
+                    <SelectValue placeholder={t('settings.localization.language_placeholder')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="en">English</SelectItem>
-                    <SelectItem value="es">Español</SelectItem>
-                    <SelectItem value="fr">Français</SelectItem>
-                    <SelectItem value="de">Deutsch</SelectItem>
-                    <SelectItem value="it">Italiano</SelectItem>
+                    <SelectItem value="en">{t('settings.localization.languages.en')}</SelectItem>
+                    <SelectItem value="es">{t('settings.localization.languages.es')}</SelectItem>
+                    <SelectItem value="fr">{t('settings.localization.languages.fr')}</SelectItem>
+                    <SelectItem value="de">{t('settings.localization.languages.de')}</SelectItem>
+                    <SelectItem value="it">{t('settings.localization.languages.it')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="timezone">Timezone</Label>
+                <Label htmlFor="timezone">{t('settings.localization.timezone')}</Label>
                 <Select value={timezone} onValueChange={setTimezone}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select timezone" />
+                    <SelectValue placeholder={t('settings.localization.timezone_placeholder')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="UTC">UTC (Coordinated Universal Time)</SelectItem>
-                    <SelectItem value="EST">EST (Eastern Standard Time)</SelectItem>
-                    <SelectItem value="PST">PST (Pacific Standard Time)</SelectItem>
-                    <SelectItem value="GMT">GMT (Greenwich Mean Time)</SelectItem>
-                    <SelectItem value="CET">CET (Central European Time)</SelectItem>
+                    <SelectItem value="UTC">{t('settings.localization.timezones.utc')}</SelectItem>
+                    <SelectItem value="EST">{t('settings.localization.timezones.est')}</SelectItem>
+                    <SelectItem value="PST">{t('settings.localization.timezones.pst')}</SelectItem>
+                    <SelectItem value="GMT">{t('settings.localization.timezones.gmt')}</SelectItem>
+                    <SelectItem value="CET">{t('settings.localization.timezones.cet')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -279,25 +281,25 @@ const Settings: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Lock className="h-5 w-5" />
-              Account Security
+              {t('settings.security.title')}
             </CardTitle>
             <CardDescription>
-              Manage your account security and authentication
+              {t('settings.security.description')}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-4">
               <Button variant="outline" className="w-full justify-start">
                 <Lock className="mr-2 h-4 w-4" />
-                Change Password
+                {t('settings.security.change_password')}
               </Button>
               <Button variant="outline" className="w-full justify-start">
                 <Shield className="mr-2 h-4 w-4" />
-                Enable Two-Factor Authentication
+                {t('settings.security.enable_2fa')}
               </Button>
               <Button variant="outline" className="w-full justify-start">
                 <User className="mr-2 h-4 w-4" />
-                Active Sessions
+                {t('settings.security.active_sessions')}
               </Button>
             </div>
           </CardContent>
@@ -307,7 +309,7 @@ const Settings: React.FC = () => {
         <div className="flex justify-end pt-4">
           <Button onClick={handleSaveSettings} className="min-w-32">
             <Save className="mr-2 h-4 w-4" />
-            Save Settings
+            {t('settings.actions.save_settings')}
           </Button>
         </div>
     </PageLayout>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -10,11 +11,12 @@ import { User, UpdateUserRole, UserRoles, getUserRoleLabel, getUserRoleDescripti
 import type { UserId } from '@/shared/types/branded';
 import { Shield } from 'lucide-react';
 
-const updateUserRoleSchema = z.object({
-  newRole: z.string().min(1, 'Role is required'),
+// Schema factory to use translations
+const updateUserRoleSchemaFactory = (t: any) => z.object({
+  newRole: z.string().min(1, t('validation.role_required')),
 });
 
-type UpdateUserRoleFormData = z.infer<typeof updateUserRoleSchema>;
+type UpdateUserRoleFormData = z.infer<ReturnType<typeof updateUserRoleSchemaFactory>>;
 
 interface UserRoleSelectProps {
   user: User | null;
@@ -33,6 +35,8 @@ export const UserRoleSelect: React.FC<UserRoleSelectProps> = ({
   onSubmit,
   isSubmitting,
 }) => {
+  const { t } = useTranslation('users');
+  const updateUserRoleSchema = updateUserRoleSchemaFactory(t);
   const form = useForm<UpdateUserRoleFormData>({
     resolver: zodResolver(updateUserRoleSchema),
     defaultValues: {
@@ -75,13 +79,13 @@ export const UserRoleSelect: React.FC<UserRoleSelectProps> = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Shield className="h-5 w-5" />
-            Change User Role
+            {t('dialogs.change_role.title')}
           </DialogTitle>
           <DialogDescription>
-            Update the role for <strong>{user.firstName} {user.lastName}</strong>.
+            {t('dialogs.change_role.description', { firstName: user.firstName, lastName: user.lastName })}
             {isSelfEdit && isCurrentlyAdmin && (
               <span className="block text-yellow-600 dark:text-yellow-400 mt-1">
-                Warning: You cannot demote yourself from the admin role.
+                {t('dialogs.change_role.warning_self_demote')}
               </span>
             )}
           </DialogDescription>
@@ -89,20 +93,20 @@ export const UserRoleSelect: React.FC<UserRoleSelectProps> = ({
 
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <Label>Current Role</Label>
+            <Label>{t('dialogs.change_role.current_role')}</Label>
             <div className="p-2 bg-gray-50 dark:bg-gray-800 rounded-md text-sm">
               {getUserRoleLabel(user.role)}
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="newRole">New Role *</Label>
+            <Label htmlFor="newRole">{t('dialogs.change_role.new_role')} *</Label>
             <Select
               value={selectedRole}
               onValueChange={(value) => form.setValue('newRole', value, { shouldValidate: true })}
             >
               <SelectTrigger className={form.formState.errors.newRole ? 'border-red-500' : ''}>
-                <SelectValue placeholder="Select a new role" />
+                <SelectValue placeholder={t('dialogs.change_role.new_role_placeholder')} />
               </SelectTrigger>
               <SelectContent>
                 {Object.values(UserRoles).map((role) => {
@@ -117,7 +121,7 @@ export const UserRoleSelect: React.FC<UserRoleSelectProps> = ({
                         <span className="font-medium">{getUserRoleLabel(role)}</span>
                         <span className="text-xs text-gray-500">{getUserRoleDescription(role)}</span>
                         {isDisabled && (
-                          <span className="text-xs text-red-500">Cannot demote yourself</span>
+                          <span className="text-xs text-red-500">{t('dialogs.change_role.cannot_demote_yourself')}</span>
                         )}
                       </div>
                     </SelectItem>
@@ -135,7 +139,7 @@ export const UserRoleSelect: React.FC<UserRoleSelectProps> = ({
           {selectedRole && selectedRole !== user.role && (
             <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-md">
               <p className="text-sm text-blue-800 dark:text-blue-200">
-                <strong>Role Change:</strong> {getUserRoleLabel(user.role)} → {getUserRoleLabel(selectedRole)}
+                <strong>{t('dialogs.change_role.role_change')}:</strong> {getUserRoleLabel(user.role)} → {getUserRoleLabel(selectedRole)}
               </p>
               <p className="text-xs text-blue-600 dark:text-blue-300 mt-1">
                 {getUserRoleDescription(selectedRole)}
@@ -150,15 +154,15 @@ export const UserRoleSelect: React.FC<UserRoleSelectProps> = ({
               onClick={handleClose}
               disabled={isSubmitting}
             >
-              Cancel
+              {t('common:buttons.cancel')}
             </Button>
             <Button
               type="submit"
               disabled={selectedRole === user.role}
               loading={isSubmitting}
-              loadingText="Updating..."
+              loadingText={t('buttons.updating')}
             >
-              Update Role
+              {t('dialogs.change_role.update_button')}
             </Button>
           </DialogFooter>
         </form>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 import {
   Bell,
   Check,
@@ -35,6 +36,7 @@ type NotificationTypeFilter = 'all' | 'info' | 'success' | 'warning' | 'error';
 type NotificationReadFilter = 'all' | 'unread' | 'read';
 
 export default function Notifications() {
+  const { t } = useTranslation(['notifications', 'common']);
   const navigate = useNavigate();
   const [typeFilter, setTypeFilter] = useState<NotificationTypeFilter>('all');
   const [readFilter, setReadFilter] = useState<NotificationReadFilter>('all');
@@ -99,14 +101,14 @@ export default function Notifications() {
     
     switch (typeNum) {
       case 1: // Success
-        return <Badge className="bg-green-100 text-green-800">Success</Badge>;
+        return <Badge className="bg-green-100 text-green-800">{t('notifications:types.success')}</Badge>;
       case 3: // Error
-        return <Badge className="bg-red-100 text-red-800">Error</Badge>;
+        return <Badge className="bg-red-100 text-red-800">{t('notifications:types.error')}</Badge>;
       case 2: // Warning
-        return <Badge className="bg-yellow-100 text-yellow-800">Warning</Badge>;
+        return <Badge className="bg-yellow-100 text-yellow-800">{t('notifications:types.warning')}</Badge>;
       case 0: // Info
       default:
-        return <Badge className="bg-blue-100 text-blue-800">Info</Badge>;
+        return <Badge className="bg-blue-100 text-blue-800">{t('notifications:types.info')}</Badge>;
     }
   };
 
@@ -204,9 +206,12 @@ export default function Notifications() {
     <div className="container mx-auto py-6 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold">Notifications</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">{t('notifications:title')}</h1>
           <p className="text-sm sm:text-base text-muted-foreground">
-            {unreadCount > 0 ? `You have ${unreadCount} unread notification${unreadCount === 1 ? '' : 's'}` : 'All caught up!'}
+            {unreadCount > 0 
+              ? t('notifications:unread_status', { count: unreadCount }) 
+              : t('notifications:all_caught_up')
+            }
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -217,7 +222,7 @@ export default function Notifications() {
             disabled={isLoading}
           >
             <RefreshCw className={cn("h-4 w-4 mr-2", isLoading && "animate-spin")} />
-            Refresh
+            {t('notifications:refresh')}
           </Button>
         </div>
       </div>
@@ -229,25 +234,25 @@ export default function Notifications() {
               <Select value={typeFilter} onValueChange={(value: NotificationTypeFilter) => setTypeFilter(value)}>
                 <SelectTrigger className="w-full sm:w-[140px]">
                   <Filter className="h-4 w-4 mr-2" />
-                  <SelectValue placeholder="Filter by type" />
+                  <SelectValue placeholder={t('notifications:filter.by_type')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value="info">Info</SelectItem>
-                  <SelectItem value="success">Success</SelectItem>
-                  <SelectItem value="warning">Warning</SelectItem>
-                  <SelectItem value="error">Error</SelectItem>
+                  <SelectItem value="all">{t('notifications:filter.all_types')}</SelectItem>
+                  <SelectItem value="info">{t('notifications:types.info')}</SelectItem>
+                  <SelectItem value="success">{t('notifications:types.success')}</SelectItem>
+                  <SelectItem value="warning">{t('notifications:types.warning')}</SelectItem>
+                  <SelectItem value="error">{t('notifications:types.error')}</SelectItem>
                 </SelectContent>
               </Select>
               
               <Select value={readFilter} onValueChange={(value: NotificationReadFilter) => setReadFilter(value)}>
                 <SelectTrigger className="w-full sm:w-[140px]">
-                  <SelectValue placeholder="Filter by status" />
+                  <SelectValue placeholder={t('notifications:filter.by_status')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="unread">Unread</SelectItem>
-                  <SelectItem value="read">Read</SelectItem>
+                  <SelectItem value="all">{t('notifications:filter.all')}</SelectItem>
+                  <SelectItem value="unread">{t('notifications:filter.unread')}</SelectItem>
+                  <SelectItem value="read">{t('notifications:filter.read')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -263,8 +268,8 @@ export default function Notifications() {
                     className="text-xs sm:text-sm"
                   >
                     <Trash2 className="h-4 w-4 mr-1 sm:mr-2" />
-                    <span className="hidden sm:inline">Delete Selected</span>
-                    <span className="sm:hidden">Delete</span> ({selectedIds.size})
+                    <span className="hidden sm:inline">{t('notifications:delete_selected')}</span>
+                    <span className="sm:hidden">{t('notifications:delete')}</span> ({selectedIds.size})
                   </Button>
                   <Separator orientation="vertical" className="h-6" />
                 </>
@@ -279,8 +284,8 @@ export default function Notifications() {
                   className="text-xs sm:text-sm"
                 >
                   <CheckCheck className="h-4 w-4 mr-1 sm:mr-2" />
-                  <span className="hidden sm:inline">Mark All as Read</span>
-                  <span className="sm:hidden">Mark Read</span>
+                  <span className="hidden sm:inline">{t('notifications:mark_all_as_read')}</span>
+                  <span className="sm:hidden">{t('notifications:mark_as_read')}</span>
                 </Button>
               )}
             </div>
@@ -295,8 +300,8 @@ export default function Notifications() {
           ) : notifications.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-64 text-gray-500">
               <Inbox className="h-12 w-12 mb-4" />
-              <p className="text-lg font-medium">No notifications</p>
-              <p className="text-sm text-muted-foreground">You're all caught up!</p>
+              <p className="text-lg font-medium">{t('notifications:no_notifications')}</p>
+              <p className="text-sm text-muted-foreground">{t('notifications:all_caught_up_description')}</p>
             </div>
           ) : (
             <div className="divide-y">
@@ -307,7 +312,7 @@ export default function Notifications() {
                     onCheckedChange={handleSelectAll}
                   />
                   <span className="text-sm text-muted-foreground">
-                    Select all ({notifications.length})
+                    {t('notifications:select_all', { count: notifications.length })}
                   </span>
                 </div>
               )}
@@ -368,7 +373,7 @@ export default function Notifications() {
                               handleViewDetails(notification);
                             }}
                           >
-                            View details →
+                            {t('notifications:view_details')}
                           </Button>
                         )}
                       </div>
@@ -385,7 +390,7 @@ export default function Notifications() {
                           }}
                           disabled={isMarkingAsRead}
                           className="h-8 w-8 p-0"
-                          title="Mark as read"
+                          title={t('notifications:mark_as_read')}
                         >
                           <Check className="h-4 w-4" />
                         </Button>
@@ -400,7 +405,7 @@ export default function Notifications() {
                         }}
                         disabled={isDeleting}
                         className="h-8 w-8 p-0 text-gray-500 hover:text-red-500"
-                        title="Delete notification"
+                        title={t('notifications:delete_notification')}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -418,9 +423,9 @@ export default function Notifications() {
         onOpenChange={setDeleteDialogOpen}
         onConfirm={handleConfirmDelete}
         onCancel={() => setNotificationToDelete(null)}
-        title="Delete Notification"
-        description="Are you sure you want to delete this notification? This action cannot be undone."
-        confirmText="Delete"
+        title={t('notifications:dialogs.delete_notification.title')}
+        description={t('notifications:dialogs.delete_notification.description')}
+        confirmText={t('common:buttons.delete')}
         loading={isDeleting}
       />
 
@@ -428,9 +433,9 @@ export default function Notifications() {
         open={bulkDeleteDialogOpen}
         onOpenChange={setBulkDeleteDialogOpen}
         onConfirm={handleConfirmBulkDelete}
-        title="Delete Selected Notifications"
-        description={`Are you sure you want to delete ${selectedIds.size} selected notification${selectedIds.size === 1 ? '' : 's'}? This action cannot be undone.`}
-        confirmText={`Delete ${selectedIds.size} Notification${selectedIds.size === 1 ? '' : 's'}`}
+        title={t('notifications:dialogs.delete_selected.title')}
+        description={t('notifications:dialogs.delete_selected.description', { count: selectedIds.size })}
+        confirmText={t('notifications:dialogs.delete_selected.confirm', { count: selectedIds.size })}
         loading={isDeleting}
       />
     </div>

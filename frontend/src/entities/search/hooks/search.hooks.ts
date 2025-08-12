@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { SearchQueryParams, SearchSuggestionsParams, RecentSearch } from '../types';
 import { getSearchService } from '@/shared/services';
 import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Query Keys for search-related queries
@@ -149,51 +150,53 @@ export const useRecentSearches = () => {
  * Hook for navigation commands registry
  */
 export const useNavigationCommands = () => {
+  const { t } = useTranslation('search');
+  
   return useMemo(() => [
     {
       id: 'dashboard',
-      title: 'Dashboard',
-      description: 'Go to main dashboard',
+      title: t('navigation.dashboard.title'),
+      description: t('navigation.dashboard.description'),
       navigationUrl: '/',
       category: 'pages' as const,
-      keywords: ['home', 'main', 'overview'],
+      keywords: t('navigation.dashboard.keywords', { returnObjects: true }) as string[],
       icon: 'home'
     },
     {
       id: 'projects',
-      title: 'Projects',
-      description: 'View and manage projects',
+      title: t('navigation.projects.title'),
+      description: t('navigation.projects.description'),
       navigationUrl: '/projects',
       category: 'pages' as const,
-      keywords: ['project', 'work', 'tasks'],
+      keywords: t('navigation.projects.keywords', { returnObjects: true }) as string[],
       icon: 'folder'
     },
     {
       id: 'users',
-      title: 'Users',
-      description: 'Manage team members and users',
+      title: t('navigation.users.title'),
+      description: t('navigation.users.description'),
       navigationUrl: '/users',
       category: 'pages' as const,
-      keywords: ['team', 'members', 'people'],
+      keywords: t('navigation.users.keywords', { returnObjects: true }) as string[],
       icon: 'users'
     },
     {
       id: 'reports',
-      title: 'Reports',
-      description: 'View analytics and reports',
+      title: t('navigation.reports.title'),
+      description: t('navigation.reports.description'),
       navigationUrl: '/reports',
       category: 'pages' as const,
-      keywords: ['analytics', 'data', 'statistics'],
+      keywords: t('navigation.reports.keywords', { returnObjects: true }) as string[],
       icon: 'bar-chart'
     },
     {
       id: 'notifications',
-      title: 'Notifications',
-      description: 'Check your notifications',
+      title: t('navigation.notifications.title'),
+      description: t('navigation.notifications.description'),
       navigationUrl: '/notifications',
       category: 'pages' as const,
-      keywords: ['alerts', 'messages', 'updates'],
+      keywords: t('navigation.notifications.keywords', { returnObjects: true }) as string[],
       icon: 'bell'
     }
-  ], []);
+  ], [t]);
 };

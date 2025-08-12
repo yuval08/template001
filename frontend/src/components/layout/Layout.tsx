@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
 import { Breadcrumb } from '@/components/ui/breadcrumb';
@@ -12,6 +13,7 @@ import { useBreadcrumbs } from '@/hooks/useBreadcrumbs';
 export const Layout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const breadcrumbs = useBreadcrumbs();
+  const { t } = useTranslation('layout');
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -34,7 +36,7 @@ export const Layout: React.FC = () => {
         lockDelay={10000} // 10 seconds before showing lock screen
         allowOfflineMode={true}
         onRetryActions={handleRetryActions}
-        customMessage="You've been disconnected from the internet. Please check your connection to continue using all features."
+        customMessage={t('offline.disconnected_message')}
       />
       
       <div className="flex h-screen">

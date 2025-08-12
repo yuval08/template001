@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -15,18 +16,19 @@ import { useAuth } from '@/hooks/useAuth';
 import { getUserService } from '@/shared/services';
 import { debounce } from 'lodash';
 
-const createUserSchema = z.object({
+// Schema factory to use translations
+const createUserSchemaFactory = (t: any) => z.object({
   emailPrefix: z.string()
-    .min(1, 'Email username is required')
-    .regex(/^[a-zA-Z0-9._-]+$/, 'Invalid email username format'),
+    .min(1, t('validation.email_required'))
+    .regex(/^[a-zA-Z0-9._-]+$/, t('validation.email_invalid_format')),
   firstName: nameSchema,
   lastName: nameSchema,
-  role: z.string().min(1, 'Role is required'),
+  role: z.string().min(1, t('validation.role_required')),
   department: z.string().optional(),
   jobTitle: z.string().optional(),
 });
 
-type CreateUserFormData = z.infer<typeof createUserSchema>;
+type CreateUserFormData = z.infer<ReturnType<typeof createUserSchemaFactory>>;
 
 interface CreateUserDialogProps {
   isOpen: boolean;
@@ -41,11 +43,13 @@ export const CreateUserDialog: React.FC<CreateUserDialogProps> = ({
   onSubmit,
   isSubmitting,
 }) => {
+  const { t } = useTranslation('users');
   const { authConfig } = useAuth();
   const [serverError, setServerError] = useState<string | null>(null);
   const [isValidatingEmail, setIsValidatingEmail] = useState(false);
   const [emailValidation, setEmailValidation] = useState<{ isAvailable: boolean; message: string } | null>(null);
   
+  const createUserSchema = createUserSchemaFactory(t);
   const form = useForm<CreateUserFormData>({
     resolver: zodResolver(createUserSchema),
     defaultValues: {
@@ -153,7 +157,7 @@ export const CreateUserDialog: React.FC<CreateUserDialogProps> = ({
           errorMessage.toLowerCase().includes('duplicate')) {
         form.setError('emailPrefix', {
           type: 'manual',
-          message: 'This email is already in use'
+          message: t('dialogs.create_user.email_taken')
         });
       }
     }
@@ -188,9 +192,9 @@ export const CreateUserDialog: React.FC<CreateUserDialogProps> = ({
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Add New User</DialogTitle>
+          <DialogTitle>{t('dialogs.create_user.title')}</DialogTitle>
           <DialogDescription>
-            Create a new user account. They will receive an email invitation to complete their setup.
+            {t('dialogs.create_user.description')}
           </DialogDescription>
         </DialogHeader>
 
@@ -204,7 +208,7 @@ export const CreateUserDialog: React.FC<CreateUserDialogProps> = ({
           )}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="firstName">First Name *</Label>
+              <Label htmlFor="firstName">{t('dialogs.create_user.first_name')} *</Label>
               <Input
                 id="firstName"
                 {...form.register('firstName')}
@@ -218,7 +222,7 @@ export const CreateUserDialog: React.FC<CreateUserDialogProps> = ({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="lastName">Last Name *</Label>
+              <Label htmlFor="lastName">{t('dialogs.create_user.last_name')} *</Label>
               <Input
                 id="lastName"
                 {...form.register('lastName')}
@@ -233,13 +237,13 @@ export const CreateUserDialog: React.FC<CreateUserDialogProps> = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="emailPrefix">Email *</Label>
+            <Label htmlFor="emailPrefix">{t('dialogs.create_user.email')} *</Label>
             <div className="flex items-center gap-1">
               <div className="relative flex-1">
                 <Input
                   id="emailPrefix"
                   {...form.register('emailPrefix')}
-                  placeholder="username"
+                  placeholder={t('dialogs.create_user.email_placeholder')}
                   className={`pr-8 ${
                     form.formState.errors.emailPrefix 
                       ? 'border-red-500' 
@@ -281,13 +285,13 @@ export const CreateUserDialog: React.FC<CreateUserDialogProps> = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="role">Role *</Label>
+            <Label htmlFor="role">{t('dialogs.create_user.role')} *</Label>
             <Select
               value={form.watch('role') || ''}
               onValueChange={(value) => form.setValue('role', value, { shouldValidate: true })}
             >
               <SelectTrigger className={form.formState.errors.role ? 'border-red-500' : ''}>
-                <SelectValue placeholder="Select a role" />
+                <SelectValue placeholder={t('dialogs.create_user.role_placeholder')} />
               </SelectTrigger>
               <SelectContent>
                 {Object.values(UserRoles).map((role) => (
@@ -308,20 +312,20 @@ export const CreateUserDialog: React.FC<CreateUserDialogProps> = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="department">Department</Label>
+            <Label htmlFor="department">{t('dialogs.create_user.department')}</Label>
             <Input
               id="department"
               {...form.register('department')}
-              placeholder="e.g., Engineering, Marketing, Sales"
+              placeholder={t('dialogs.create_user.department_placeholder')}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="jobTitle">Job Title</Label>
+            <Label htmlFor="jobTitle">{t('dialogs.create_user.job_title')}</Label>
             <Input
               id="jobTitle"
               {...form.register('jobTitle')}
-              placeholder="e.g., Senior Developer, Project Manager"
+              placeholder={t('dialogs.create_user.job_title_placeholder')}
             />
           </div>
 
@@ -332,14 +336,14 @@ export const CreateUserDialog: React.FC<CreateUserDialogProps> = ({
               onClick={handleClose}
               disabled={isSubmitting}
             >
-              Cancel
+              {t('common:buttons.cancel')}
             </Button>
             <Button
               type="submit"
               loading={isSubmitting}
-              loadingText="Creating..."
+              loadingText={t('buttons.creating')}
             >
-              Create User
+              {t('dialogs.create_user.create_button')}
             </Button>
           </DialogFooter>
         </form>

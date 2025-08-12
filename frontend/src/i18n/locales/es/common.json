@@ -20,7 +20,8 @@
     "export": "Exportar",
     "import": "Importar",
     "download": "Descargar",
-    "upload": "Subir"
+    "upload": "Subir",
+    "saving": "Guardando..."
   },
   "navigation": {
     "dashboard": "Panel de Control",
@@ -79,11 +80,72 @@
   },
   "time": {
     "just_now": "Ahora mismo",
-    "minutes_ago": "Hace {{count}} minuto",
-    "minutes_ago_plural": "Hace {{count}} minutos",
-    "hours_ago": "Hace {{count}} hora",
-    "hours_ago_plural": "Hace {{count}} horas",
-    "days_ago": "Hace {{count}} día",
-    "days_ago_plural": "Hace {{count}} días"
+    "minutes_ago_one": "Hace {{count}} minuto",
+    "minutes_ago_other": "Hace {{count}} minutos",
+    "hours_ago_one": "Hace {{count}} hora",
+    "hours_ago_other": "Hace {{count}} horas",
+    "days_ago_one": "Hace {{count}} día",
+    "days_ago_other": "Hace {{count}} días",
+    "weeks_ago_one": "Hace {{count}} semana",
+    "weeks_ago_other": "Hace {{count}} semanas",
+    "months_ago_one": "Hace {{count}} mes",
+    "months_ago_other": "Hace {{count}} meses",
+    "years_ago_one": "Hace {{count}} año",
+    "years_ago_other": "Hace {{count}} años"
+  },
+  "counts": {
+    "items_one": "{{count}} elemento",
+    "items_other": "{{count}} elementos",
+    "results_one": "{{count}} resultado",
+    "results_other": "{{count}} resultados",
+    "records_one": "{{count}} registro",
+    "records_other": "{{count}} registros",
+    "entries_one": "{{count}} entrada",
+    "entries_other": "{{count}} entradas",
+    "selected_one": "{{count}} seleccionado",
+    "selected_other": "{{count}} seleccionados",
+    "filtered_one": "{{count}} filtrado",
+    "filtered_other": "{{count}} filtrados",
+    "total_one": "{{count}} total",
+    "total_other": "{{count}} totales"
+  },
+  "pagination": {
+    "showing": "Mostrando {{start}} a {{end}} de {{total}}",
+    "page_of": "Página {{current}} de {{total}}",
+    "per_page": "Por página",
+    "go_to_page": "Ir a la página",
+    "first": "Primera",
+    "last": "Última",
+    "previous": "Anterior",
+    "next": "Siguiente"
+  },
+  "dataTable": {
+    "noResults": "No se encontraron resultados.",
+    "errorLoading": "Error al cargar datos: {{message}}",
+    "showing": "Mostrando {{from}} a {{to}} de {{total}} resultados",
+    "rowsPerPage": "Filas por página:",
+    "page": "Página {{current}} de {{total}}"
+  },
+  "searchAndFilters": {
+    "searchPlaceholder": "Buscar...",
+    "clearFilters": "Limpiar Filtros"
+  },
+  "errors": {
+    "somethingWentWrong": "Algo salió mal",
+    "errorOccurred": "Ocurrió un error al cargar este contenido.",
+    "tryAgain": "Intentar de Nuevo",
+    "retry": "Reintentar",
+    "goHome": "Ir al Inicio",
+    "reportBug": "Reportar Error",
+    "errorId": "ID de Error:",
+    "errorIdDescription": "Por favor referencia este ID si necesitas contactar soporte.",
+    "unexpectedError": "Nos disculpamos por la inconveniencia. Ha ocurrido un error inesperado.",
+    "developmentError": "Modo Desarrollo - Detalles del Error:",
+    "errorLabel": "Error:",
+    "stackTrace": "Rastreo de Pila:",
+    "componentStack": "Pila de Componentes:",
+    "persistentProblem": "Si este problema persiste, por favor contacta a nuestro equipo de soporte.",
+    "reportingFailed": "Falló al reportar error al servicio",
+    "errorReportingFailed": "Falló el reporte de errores:"
   }
 }

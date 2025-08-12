@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/stores/toastStore';
@@ -20,6 +21,7 @@ import {
 } from 'lucide-react';
 
 const Buttons: React.FC = () => {
+  const { t } = useTranslation('showcase');
   const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
 
   const handleAsyncAction = async (buttonId: string, actionName: string) => {
@@ -29,7 +31,7 @@ const Buttons: React.FC = () => {
     await new Promise(resolve => setTimeout(resolve, 2000));
 
     setLoadingStates(prev => ({ ...prev, [buttonId]: false }));
-    toast.success({ title: `${actionName} completed!` });
+    toast.success({ title: `${actionName} ${t('buttons.toastMessages.saveOperationCompleted')}` });
   };
 
   const CodeBlock: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -40,38 +42,38 @@ const Buttons: React.FC = () => {
 
   return (
     <PageLayout
-      title="Buttons Showcase"
-      description="Comprehensive examples of button variants, sizes, states, and interactive patterns using Shadcn/ui components."
+      title={t('buttons.showcase.title')}
+      description={t('buttons.showcase.description')}
       maxWidth="6xl"
     >
 
       {/* Button Variants */}
       <Card>
         <CardHeader>
-          <CardTitle>Button Variants</CardTitle>
+          <CardTitle>{t('buttons.variants.title')}</CardTitle>
           <CardDescription>
-            Different visual styles for various use cases and hierarchies.
+            {t('buttons.showcase.description')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex flex-wrap gap-4">
-            <Button variant="default" onClick={() => toast.info({ title: 'Default button clicked!' })}>
-              Default
+            <Button variant="default" onClick={() => toast.info({ title: t('buttons.toastMessages.defaultClicked') })}>
+              {t('buttons.variants.default')}
             </Button>
-            <Button variant="destructive" onClick={() => toast.error({ title: 'Destructive action!' })}>
-              Destructive
+            <Button variant="destructive" onClick={() => toast.error({ title: t('buttons.toastMessages.destructiveAction') })}>
+              {t('buttons.variants.destructive')}
             </Button>
-            <Button variant="outline" onClick={() => toast.info({ title: 'Outline button clicked!' })}>
-              Outline
+            <Button variant="outline" onClick={() => toast.info({ title: t('buttons.toastMessages.outlineClicked') })}>
+              {t('buttons.variants.outline')}
             </Button>
-            <Button variant="secondary" onClick={() => toast.info({ title: 'Secondary button clicked!' })}>
-              Secondary
+            <Button variant="secondary" onClick={() => toast.info({ title: t('buttons.toastMessages.secondaryClicked') })}>
+              {t('buttons.variants.secondary')}
             </Button>
-            <Button variant="ghost" onClick={() => toast.info({ title: 'Ghost button clicked!' })}>
-              Ghost
+            <Button variant="ghost" onClick={() => toast.info({ title: t('buttons.toastMessages.ghostClicked') })}>
+              {t('buttons.variants.ghost')}
             </Button>
-            <Button variant="link" onClick={() => toast.info({ title: 'Link button clicked!' })}>
-              Link
+            <Button variant="link" onClick={() => toast.info({ title: t('buttons.toastMessages.linkClicked') })}>
+              {t('buttons.variants.link')}
             </Button>
           </div>
 
@@ -89,23 +91,23 @@ const Buttons: React.FC = () => {
       {/* Button Sizes */}
       <Card>
         <CardHeader>
-          <CardTitle>Button Sizes</CardTitle>
+          <CardTitle>{t('buttons.sizes.title')}</CardTitle>
           <CardDescription>
-            Different sizes to fit various layout requirements.
+            {t('buttons.showcase.description')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex items-center gap-4">
-            <Button size="sm" onClick={() => toast.info({ title: 'Small button clicked!' })}>
-              Small
+            <Button size="sm" onClick={() => toast.info({ title: t('buttons.toastMessages.smallClicked') })}>
+              {t('buttons.sizes.small')}
             </Button>
-            <Button size="default" onClick={() => toast.info({ title: 'Default size clicked!' })}>
-              Default
+            <Button size="default" onClick={() => toast.info({ title: t('buttons.toastMessages.defaultSizeClicked') })}>
+              {t('buttons.sizes.default')}
             </Button>
-            <Button size="lg" onClick={() => toast.info({ title: 'Large button clicked!' })}>
-              Large
+            <Button size="lg" onClick={() => toast.info({ title: t('buttons.toastMessages.largeClicked') })}>
+              {t('buttons.sizes.large')}
             </Button>
-            <Button size="icon" onClick={() => toast.info({ title: 'Icon button clicked!' })}>
+            <Button size="icon" onClick={() => toast.info({ title: t('buttons.toastMessages.iconClicked') })}>
               <Settings className="h-4 w-4" />
             </Button>
           </div>
@@ -124,18 +126,18 @@ const Buttons: React.FC = () => {
       {/* Button States */}
       <Card>
         <CardHeader>
-          <CardTitle>Button States</CardTitle>
+          <CardTitle>{t('buttons.states.title')}</CardTitle>
           <CardDescription>
-            Interactive states including loading and disabled states.
+            {t('buttons.states.description')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex flex-wrap gap-4">
-            <Button onClick={() => toast.success({ title: 'Active button clicked!' })}>
-              Active
+            <Button onClick={() => toast.success({ title: t('buttons.toastMessages.activeClicked') })}>
+              {t('buttons.states.active')}
             </Button>
             <Button disabled>
-              Disabled
+              {t('buttons.states.disabled')}
             </Button>
             <Button
               disabled={loadingStates.loading1}
@@ -144,12 +146,12 @@ const Buttons: React.FC = () => {
               {loadingStates.loading1 ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Saving...
+                  {t('buttons.loadingStates.saving')}
                 </>
               ) : (
                 <>
                   <Save className="mr-2 h-4 w-4" />
-                  Save
+                  {t('buttons.actions.save')}
                 </>
               )}
             </Button>
@@ -161,12 +163,12 @@ const Buttons: React.FC = () => {
               {loadingStates.loading2 ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Deleting...
+                  {t('buttons.loadingStates.deleting')}
                 </>
               ) : (
                 <>
                   <Trash2 className="mr-2 h-4 w-4" />
-                  Delete
+                  {t('buttons.actions.delete')}
                 </>
               )}
             </Button>

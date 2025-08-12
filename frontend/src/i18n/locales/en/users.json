@@ -1,11 +1,36 @@
 {
-  "title": "Users",
+  "title": "User Management",
+  "description": "Manage users, roles, and invitations within the system.",
   "subtitle": "Manage user accounts and permissions",
+  "access_denied": {
+    "title": "Access Denied",
+    "message": "You don't have permission to access user management."
+  },
+  "tabs": {
+    "users": "Users",
+    "users_with_count": "Users ({{count}})",
+    "invitations": "Invites",
+    "invitations_full": "Pending Invitations",
+    "invitations_with_count": "Pending Invitations ({{count}})"
+  },
+  "buttons": {
+    "add_user": "Add User",
+    "add_user_short": "Add",
+    "send_invitation": "Send Invitation",
+    "invite": "Invite",
+    "creating": "Creating...",
+    "sending": "Sending...",
+    "deleting": "Deleting...",
+    "updating": "Updating...",
+    "clear_filters": "Clear Filters",
+    "show_inactive": "Show Inactive"
+  },
   "table": {
     "headers": {
       "name": "Name",
       "email": "Email",
       "role": "Role",
+      "job_title": "Job Title",
       "status": "Status",
       "created": "Created",
       "last_login": "Last Login",
@@ -13,7 +38,19 @@
     },
     "search_placeholder": "Search users...",
     "filter_all_roles": "All Roles",
-    "no_results": "No users found"
+    "no_results": "No users found",
+    "error_loading": "Error loading users: {{message}}",
+    "pagination": {
+      "showing": "Showing {{from}} to {{to}} of {{total}} users",
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page",
+      "of": "of",
+      "show": "Show",
+      "per_page": "per page"
+    },
+    "no_results_search": "No users found matching your search.",
+    "joined": "Joined"
   },
   "actions": {
     "edit_profile": "Edit Profile",
@@ -34,43 +71,99 @@
   },
   "dialogs": {
     "create_user": {
-      "title": "Create New User",
+      "title": "Add New User",
+      "description": "Create a new user account. They will receive an email invitation to complete their setup.",
       "first_name": "First Name",
       "last_name": "Last Name",
-      "email": "Email Address",
+      "email": "Email",
+      "email_username": "Email Username",
+      "email_placeholder": "username",
       "role": "Role",
-      "role_placeholder": "Select a role"
+      "department": "Department",
+      "job_title": "Job Title",
+      "role_placeholder": "Select a role",
+      "department_placeholder": "e.g., Engineering, Marketing, Sales",
+      "job_title_placeholder": "e.g., Senior Developer, Project Manager",
+      "email_available": "Email is available",
+      "email_taken": "This email is already in use",
+      "validating_email": "Validating email...",
+      "create_button": "Create User"
     },
     "edit_user": {
       "title": "Edit User Profile",
+      "description": "Update the user's profile information. Email and role cannot be changed here.",
+      "warning_self_deactivate": "Warning: You cannot deactivate your own account.",
       "first_name": "First Name",
       "last_name": "Last Name",
-      "email": "Email Address"
+      "email": "Email",
+      "email_readonly": "Email cannot be changed",
+      "department": "Department",
+      "job_title": "Job Title",
+      "is_active": "User is active",
+      "cannot_deactivate_yourself": "Cannot deactivate yourself",
+      "update_button": "Save Changes"
     },
     "invite_user": {
       "title": "Invite New User",
+      "description": "Send an email invitation to a new user. They will receive a link to complete their account setup.",
       "email": "Email Address",
-      "role": "Role",
-      "role_placeholder": "Select a role for this user"
+      "role": "Intended Role",
+      "role_placeholder": "Select a role for this user",
+      "expiration_days": "Invitation Expires In (Days)",
+      "expiration_help": "The user will have this many days to accept the invitation.",
+      "email_instructions": "The user will receive an email with instructions to complete their account setup. They will need to sign in through your authentication provider to activate their account.",
+      "email_already_invited": "This email already has a pending invitation or user account",
+      "send_button": "Send Invitation"
     },
     "change_role": {
       "title": "Change User Role",
+      "description": "Update the role for <strong>{{firstName}} {{lastName}}</strong>.",
+      "warning_self_demote": "Warning: You cannot demote yourself from the admin role.",
       "current_role": "Current Role",
       "new_role": "New Role",
-      "new_role_placeholder": "Select a new role"
+      "new_role_placeholder": "Select a new role",
+      "cannot_demote_yourself": "Cannot demote yourself",
+      "role_change": "Role Change",
+      "update_button": "Update Role"
+    },
+    "delete_user": {
+      "title": "Delete User",
+      "message": "Are you sure you want to delete <strong>{{firstName}} {{lastName}}</strong>? This action cannot be undone and will remove all associated data.",
+      "confirm_button": "Delete User"
     }
   },
   "invitations": {
     "title": "Pending Invitations",
-    "email": "Email",
-    "role": "Role", 
-    "invited_by": "Invited By",
-    "sent": "Sent",
-    "expires": "Expires",
-    "actions": "Actions",
-    "resend": "Resend",
-    "cancel": "Cancel",
-    "no_pending": "No pending invitations"
+    "description": "Manage pending user invitations and their expiration status.",
+    "table": {
+      "email": "Email",
+      "role": "Role", 
+      "invited_by": "Invited By",
+      "sent": "Sent",
+      "expires": "Expires",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "actions": {
+      "resend": "Resend",
+      "cancel": "Cancel"
+    },
+    "status": {
+      "pending": "Pending",
+      "expired": "Expired"
+    },
+    "no_pending": "No pending invitations",
+    "get_started": "Invite users to get started",
+    "error_loading": "Error loading invitations: {{message}}"
+  },
+  "validation": {
+    "email_required": "Email username is required",
+    "email_invalid_format": "Invalid email username format",
+    "first_name_required": "First name is required",
+    "last_name_required": "Last name is required",
+    "role_required": "Role is required",
+    "expiration_min": "Must be at least 1 day",
+    "expiration_max": "Cannot exceed 90 days"
   },
   "messages": {
     "user_created": "User created successfully",
@@ -78,6 +171,7 @@
     "user_deleted": "User deleted successfully",
     "invitation_sent": "Invitation sent successfully",
     "invitation_cancelled": "Invitation cancelled",
-    "role_updated": "User role updated successfully"
+    "role_updated": "User role updated successfully",
+    "error_generic": "Failed to perform operation. Please try again."
   }
 }

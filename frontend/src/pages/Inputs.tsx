@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BasicInputs } from '@/components/showcase/inputs/BasicInputs';
 import { AdvancedInputs } from '@/components/showcase/inputs/AdvancedInputs';
 import { FormControls } from '@/components/showcase/inputs/FormControls';
@@ -6,8 +7,10 @@ import { InputValidation } from '@/components/showcase/inputs/InputValidation';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from '@/stores/toastStore';
+import { PageLayout } from '@/components/common';
 
 const Inputs: React.FC = () => {
+  const { t } = useTranslation('showcase');
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -43,22 +46,18 @@ const Inputs: React.FC = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Input Components Showcase
-        </h1>
-        <p className="mt-2 text-gray-600 dark:text-gray-400">
-          Comprehensive examples of input fields, form controls, and interactive elements using Shadcn/ui components.
-        </p>
-      </div>
+    <PageLayout
+      title={t('inputs.title')}
+      description={t('inputs.description')}
+      maxWidth="6xl"
+    >
 
       <Tabs defaultValue="basic" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="basic">Basic Inputs</TabsTrigger>
-          <TabsTrigger value="advanced">Advanced</TabsTrigger>
-          <TabsTrigger value="controls">Form Controls</TabsTrigger>
-          <TabsTrigger value="validation">Validation</TabsTrigger>
+          <TabsTrigger value="basic">{t('inputs.basicInputs.title')}</TabsTrigger>
+          <TabsTrigger value="advanced">{t('inputs.advancedInputs.title')}</TabsTrigger>
+          <TabsTrigger value="controls">{t('forms.title')}</TabsTrigger>
+          <TabsTrigger value="validation">{t('inputs.validation.title')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="basic" className="mt-6">
@@ -96,7 +95,7 @@ const Inputs: React.FC = () => {
           Test Form Submission
         </Button>
       </div>
-    </div>
+    </PageLayout>
   );
 };
 

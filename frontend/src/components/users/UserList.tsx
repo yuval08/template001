@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -57,6 +58,7 @@ const UserCard: React.FC<{
   canEditUsers: boolean;
   currentUserEmail?: string;
 }> = ({ user, onEditUser, onEditRole, onDeleteUser, canEditUsers, currentUserEmail }) => {
+  const { t } = useTranslation('users');
   const roleColor = getUserRoleBadgeColor(user.role);
   const isSelf = user.email === currentUserEmail;
   
@@ -95,7 +97,7 @@ const UserCard: React.FC<{
               {user.createdAt && (
               <div className="flex items-center gap-2 text-sm text-gray-500">
                 <Clock className="h-4 w-4 flex-shrink-0" />
-                <span>Joined {formatRelativeTime(new Date(user.createdAt))}</span>
+                <span>{t('table.joined')} {formatRelativeTime(new Date(user.createdAt))}</span>
               </div>
                 )}
             </div>
@@ -112,7 +114,7 @@ const UserCard: React.FC<{
                     size="sm"
                     onClick={() => onEditUser(user)}
                     className="h-8 w-8 p-0"
-                    title="Edit user"
+                    title={t('actions.edit_profile')}
                   >
                     <Edit className="h-4 w-4" />
                   </Button>
@@ -121,7 +123,7 @@ const UserCard: React.FC<{
                     size="sm"
                     onClick={() => onEditRole(user)}
                     className="h-8 w-8 p-0"
-                    title="Change role"
+                    title={t('actions.change_role')}
                   >
                     <Shield className="h-4 w-4" />
                   </Button>
@@ -131,7 +133,7 @@ const UserCard: React.FC<{
                     onClick={() => onDeleteUser(user)}
                     disabled={isSelf}
                     className={`h-8 w-8 p-0 ${isSelf ? 'text-gray-400' : 'text-red-500 hover:text-red-700'}`}
-                    title={isSelf ? "Cannot delete yourself" : "Delete user"}
+                    title={isSelf ? t('actions.cannot_delete_yourself') : t('actions.delete_user')}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -166,6 +168,7 @@ export const UserList: React.FC<UserListProps> = ({
   onDeleteUser,
   canEditUsers,
 }) => {
+  const { t } = useTranslation('users');
   const totalPages = Math.ceil(totalCount / pagination.pageSize);
   const startItem = pagination.pageIndex * pagination.pageSize + 1;
   const endItem = Math.min((pagination.pageIndex + 1) * pagination.pageSize, totalCount);
@@ -191,7 +194,7 @@ export const UserList: React.FC<UserListProps> = ({
   if (error) {
     return (
       <div className="flex items-center justify-center h-32">
-        <p className="text-red-500">Error loading users: {error.message}</p>
+        <p className="text-red-500">{t('table.error_loading', { message: error.message })}</p>
       </div>
     );
   }
@@ -207,7 +210,7 @@ export const UserList: React.FC<UserListProps> = ({
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input
-            placeholder="Search users..."
+            placeholder={t('table.search_placeholder')}
             value={globalFilter}
             onChange={(e) => onGlobalFilterChange(e.target.value)}
             className="pl-10"
@@ -221,7 +224,7 @@ export const UserList: React.FC<UserListProps> = ({
             className="px-3"
           >
             <X className="h-4 w-4 mr-1" />
-            Clear
+            {t('buttons.clear_filters')}
           </Button>
         )}
       </div>
@@ -235,10 +238,10 @@ export const UserList: React.FC<UserListProps> = ({
             onValueChange={(value) => onRoleFilterChange(value === 'all' ? undefined : value)}
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="All Roles" />
+              <SelectValue placeholder={t('table.filter_all_roles')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Roles</SelectItem>
+              <SelectItem value="all">{t('table.filter_all_roles')}</SelectItem>
               <SelectItem value={UserRoles.ADMIN}>{getUserRoleLabel(UserRoles.ADMIN)}</SelectItem>
               <SelectItem value={UserRoles.MANAGER}>{getUserRoleLabel(UserRoles.MANAGER)}</SelectItem>
               <SelectItem value={UserRoles.EMPLOYEE}>{getUserRoleLabel(UserRoles.EMPLOYEE)}</SelectItem>
@@ -255,7 +258,7 @@ export const UserList: React.FC<UserListProps> = ({
               onCheckedChange={(checked) => onShowInactiveChange(checked === true)}
             />
             <Label htmlFor="showInactive" className="text-sm font-medium">
-              Show Inactive Users
+              {t('buttons.show_inactive')}
             </Label>
           </div>
         )}
@@ -263,7 +266,7 @@ export const UserList: React.FC<UserListProps> = ({
 
       {users.length === 0 ? (
         <div className="text-center py-8 text-gray-500">
-          {globalFilter ? 'No users found matching your search.' : 'No users found.'}
+          {globalFilter ? t('table.no_results_search') : t('table.no_results')}
         </div>
       ) : (
         <>
@@ -286,7 +289,7 @@ export const UserList: React.FC<UserListProps> = ({
           {totalPages > 1 && (
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-4 border-t">
               <div className="text-xs sm:text-sm text-gray-600 text-center sm:text-left">
-                Showing {startItem}-{endItem} of {totalCount} users
+                {t('table.pagination.showing', { from: startItem, to: endItem, total: totalCount })}
               </div>
               
               <div className="flex items-center justify-center gap-2">
@@ -298,15 +301,15 @@ export const UserList: React.FC<UserListProps> = ({
                   className="px-3 py-2"
                 >
                   <ChevronLeft className="h-4 w-4 mr-1" />
-                  <span className="hidden xs:inline">Previous</span>
+                  <span className="hidden xs:inline">{t('table.pagination.previous')}</span>
                 </Button>
                 
                 <div className="flex items-center gap-1 px-3">
-                  <span className="text-xs sm:text-sm text-gray-600">Page</span>
+                  <span className="text-xs sm:text-sm text-gray-600">{t('table.pagination.page')}</span>
                   <span className="font-medium text-sm">
                     {pagination.pageIndex + 1}
                   </span>
-                  <span className="text-xs sm:text-sm text-gray-600">of {totalPages}</span>
+                  <span className="text-xs sm:text-sm text-gray-600">{t('table.pagination.of')} {totalPages}</span>
                 </div>
                 
                 <Button
@@ -316,14 +319,14 @@ export const UserList: React.FC<UserListProps> = ({
                   disabled={pagination.pageIndex >= totalPages - 1}
                   className="px-3 py-2"
                 >
-                  <span className="hidden xs:inline">Next</span>
+                  <span className="hidden xs:inline">{t('table.pagination.next')}</span>
                   <ChevronRight className="h-4 w-4 ml-1" />
                 </Button>
               </div>
               
               {/* Page size selector for mobile */}
               <div className="flex items-center justify-center gap-2 text-xs sm:text-sm">
-                <span className="text-gray-600">Show:</span>
+                <span className="text-gray-600">{t('table.pagination.show')}:</span>
                 <select
                   value={pagination.pageSize}
                   onChange={(e) => {
@@ -340,7 +343,7 @@ export const UserList: React.FC<UserListProps> = ({
                   <option value={20}>20</option>
                   <option value={50}>50</option>
                 </select>
-                <span className="text-gray-600">per page</span>
+                <span className="text-gray-600">{t('table.pagination.per_page')}</span>
               </div>
             </div>
           )}

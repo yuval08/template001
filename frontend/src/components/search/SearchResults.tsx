@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Search, AlertCircle, Loader2 } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { SearchResult, SearchEntityType, RecentSearch } from '@/entities/search';
@@ -38,6 +39,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
   showRecentSearches = true,
   className
 }) => {
+  const { t } = useTranslation(['search', 'common']);
   // Group results by entity type for better organization
   const groupedResults = useMemo(() => {
     const groups: Record<SearchEntityType, SearchResult[]> = {
@@ -90,7 +92,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
         className
       )}>
         <Loader2 className="h-4 w-4 animate-spin" />
-        <span className="text-sm">Searching...</span>
+        <span className="text-sm">{t('search:searching')}</span>
       </div>
     );
   }
@@ -114,7 +116,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
       <div className={cn('space-y-2', className)}>
         <div className="flex items-center justify-between px-3 py-2">
           <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-            Recent Searches
+            {t('search:recent_searches')}
           </h3>
           {recentSearches.length > 0 && (
             <Button
@@ -123,7 +125,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
               onClick={onClearRecent}
               className="text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 h-auto p-1"
             >
-              Clear
+              {t('search:clear')}
             </Button>
           )}
         </div>
@@ -150,7 +152,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
                 </span>
                 {search.resultsCount > 0 && (
                   <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">
-                    {search.resultsCount} results
+                    {t('search:results_count', { count: search.resultsCount })}
                   </span>
                 )}
               </div>
@@ -170,9 +172,9 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
       )}>
         <Search className="h-8 w-8 text-gray-300 dark:text-gray-600" />
         <div className="text-center">
-          <p className="text-sm font-medium">No results found</p>
+          <p className="text-sm font-medium">{t('search:no_results')}</p>
           <p className="text-xs text-gray-400 mt-1">
-            Try adjusting your search or browse recent searches
+            {t('search:no_results_description')}
           </p>
         </div>
       </div>
@@ -190,7 +192,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
             {/* Group Header */}
             <div className="flex items-center gap-2 px-3 py-1">
               <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                {type}
+                {t(`search:entity_types.${type.toLowerCase()}`, { count: items.length })}
               </h3>
               <Badge variant="outline" className="text-xs">
                 {items.length}
@@ -222,10 +224,10 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
         {/* Results summary */}
         {results.length > 0 && (
           <div className="px-3 py-2 text-xs text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700">
-            Showing {results.length} result{results.length !== 1 ? 's' : ''} 
-            {searchTerm && (
-              <span> for "{searchTerm}"</span>
-            )}
+            {searchTerm 
+              ? t('search:showing_results', { count: results.length, term: searchTerm })
+              : t('search:results_count', { count: results.length })
+            }
           </div>
         )}
       </div>
@@ -240,9 +242,9 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
     )}>
       <Search className="h-8 w-8 text-gray-300 dark:text-gray-600" />
       <div className="text-center">
-        <p className="text-sm">Start typing to search</p>
+        <p className="text-sm">{t('search:start_typing')}</p>
         <p className="text-xs text-gray-400 mt-1">
-          Search across projects, users, documents, and tasks
+          {t('search:start_typing_description')}
         </p>
       </div>
     </div>

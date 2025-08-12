@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { 
   FileText, 
   User, 
@@ -12,6 +13,7 @@ import {
 import { cn } from '@/utils/cn';
 import { SearchResult, SearchEntityType } from '@/entities/search';
 import { Badge } from '@/components/ui/badge';
+import { formatRelativeTime } from '@/utils/formatters';
 
 interface SearchItemProps {
   result: SearchResult;
@@ -45,6 +47,7 @@ export const SearchItem: React.FC<SearchItemProps> = ({
   className
 }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation(['search', 'common']);
 
   const Icon = entityIcons[result.entityType] || HelpCircle;
   const entityColor = entityColors[result.entityType] || 'bg-gray-50 text-gray-600 border-gray-200';
@@ -68,13 +71,11 @@ export const SearchItem: React.FC<SearchItemProps> = ({
     const now = new Date();
     const diffInHours = Math.abs(now.getTime() - date.getTime()) / (1000 * 60 * 60);
 
-    if (diffInHours < 24) {
-      return 'Today';
-    } else if (diffInHours < 48) {
-      return 'Yesterday';
-    } else if (diffInHours < 168) { // 7 days
-      return `${Math.floor(diffInHours / 24)} days ago`;
+    // For very recent items, show relative time using locale-aware formatting
+    if (diffInHours < 168) { // Within a week, use relative time
+      return formatRelativeTime(date);
     } else {
+      // For older items, show formatted date using user's locale
       return date.toLocaleDateString();
     }
   };
@@ -119,7 +120,7 @@ export const SearchItem: React.FC<SearchItemProps> = ({
             {/* Metadata */}
             <div className="flex items-center gap-2 mt-2">
               <Badge variant="secondary" className="text-xs">
-                {result.entityType}
+                {t(`search:entity_types.${result.entityType.toLowerCase()}`)}
               </Badge>
               
               {result.createdAt && (

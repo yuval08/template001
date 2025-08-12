@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -36,6 +37,7 @@ export const EditUserDialog: React.FC<EditUserDialogProps> = ({
   onSubmit,
   isSubmitting,
 }) => {
+  const { t } = useTranslation('users');
   const { user: currentUser } = useAuth();
   const form = useForm<UpdateUserProfileFormData>({
     resolver: zodResolver(updateUserProfileSchema),
@@ -83,12 +85,12 @@ export const EditUserDialog: React.FC<EditUserDialogProps> = ({
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Edit User Profile</DialogTitle>
+          <DialogTitle>{t('dialogs.edit_user.title')}</DialogTitle>
           <DialogDescription>
-            Update the user&apos;s profile information. Email and role cannot be changed here.
+            {t('dialogs.edit_user.description')}
             {isSelfEdit && isCurrentlyActive && (
               <span className="block text-yellow-600 dark:text-yellow-400 mt-1">
-                Warning: You cannot deactivate your own account.
+                {t('dialogs.edit_user.warning_self_deactivate')}
               </span>
             )}
           </DialogDescription>
@@ -96,14 +98,14 @@ export const EditUserDialog: React.FC<EditUserDialogProps> = ({
 
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <Label>Email</Label>
+            <Label>{t('dialogs.edit_user.email')}</Label>
             <Input value={user.email} disabled className="bg-gray-50 dark:bg-gray-800" />
-            <p className="text-xs text-gray-500">Email cannot be changed</p>
+            <p className="text-xs text-gray-500">{t('dialogs.edit_user.email_readonly')}</p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="firstName">First Name *</Label>
+              <Label htmlFor="firstName">{t('dialogs.edit_user.first_name')} *</Label>
               <Input
                 id="firstName"
                 {...form.register('firstName')}
@@ -117,7 +119,7 @@ export const EditUserDialog: React.FC<EditUserDialogProps> = ({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="lastName">Last Name *</Label>
+              <Label htmlFor="lastName">{t('dialogs.edit_user.last_name')} *</Label>
               <Input
                 id="lastName"
                 {...form.register('lastName')}
@@ -132,20 +134,20 @@ export const EditUserDialog: React.FC<EditUserDialogProps> = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="department">Department</Label>
+            <Label htmlFor="department">{t('dialogs.edit_user.department')}</Label>
             <Input
               id="department"
               {...form.register('department')}
-              placeholder="e.g., Engineering, Marketing, Sales"
+              placeholder={t('dialogs.create_user.department_placeholder')}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="jobTitle">Job Title</Label>
+            <Label htmlFor="jobTitle">{t('dialogs.edit_user.job_title')}</Label>
             <Input
               id="jobTitle"
               {...form.register('jobTitle')}
-              placeholder="e.g., Senior Developer, Project Manager"
+              placeholder={t('dialogs.create_user.job_title_placeholder')}
             />
           </div>
 
@@ -162,10 +164,10 @@ export const EditUserDialog: React.FC<EditUserDialogProps> = ({
               }}
               disabled={isSelfEdit && isCurrentlyActive && form.watch('isActive')}
             />
-            <Label htmlFor="isActive">User is active</Label>
+            <Label htmlFor="isActive">{t('dialogs.edit_user.is_active')}</Label>
             {isSelfEdit && isCurrentlyActive && (
               <span className="text-xs text-yellow-600 dark:text-yellow-400">
-                Cannot deactivate yourself
+                {t('dialogs.edit_user.cannot_deactivate_yourself')}
               </span>
             )}
           </div>
@@ -177,14 +179,14 @@ export const EditUserDialog: React.FC<EditUserDialogProps> = ({
               onClick={handleClose}
               disabled={isSubmitting}
             >
-              Cancel
+              {t('common:buttons.cancel')}
             </Button>
             <Button
               type="submit"
               loading={isSubmitting}
-              loadingText="Saving..."
+              loadingText={t('common:buttons.saving')}
             >
-              Save Changes
+              {t('dialogs.edit_user.update_button')}
             </Button>
           </DialogFooter>
         </form>

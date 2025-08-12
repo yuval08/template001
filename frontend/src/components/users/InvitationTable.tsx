@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { PendingInvitation, getUserRoleLabel, getUserRoleBadgeColor } from '@/types/user';
@@ -22,12 +23,13 @@ export const InvitationTable: React.FC<InvitationTableProps> = ({
   onLoadMore,
   hasMore,
 }) => {
+  const { t } = useTranslation('users');
   if (error) {
     return (
       <Card>
         <CardContent className="pt-6">
           <div className="flex items-center justify-center h-32">
-            <p className="text-red-500">Error loading invitations: {error.message}</p>
+            <p className="text-red-500">{t('invitations.error_loading', { message: error.message })}</p>
           </div>
         </CardContent>
       </Card>
@@ -39,10 +41,10 @@ export const InvitationTable: React.FC<InvitationTableProps> = ({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Mail className="h-5 w-5" />
-          Pending Invitations
+          {t('invitations.title')}
         </CardTitle>
         <CardDescription>
-          Users who have been invited but haven&apos;t completed their setup yet.
+          {t('invitations.description')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -50,15 +52,15 @@ export const InvitationTable: React.FC<InvitationTableProps> = ({
           <div className="flex items-center justify-center h-32">
             <div className="flex items-center">
               <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
-              <span className="ml-2">Loading invitations...</span>
+              <span className="ml-2">{t('common:messages.loading')}</span>
             </div>
           </div>
         ) : invitations.length === 0 ? (
           <div className="text-center py-8">
             <Mail className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-500 dark:text-gray-400">No pending invitations</p>
+            <p className="text-gray-500 dark:text-gray-400">{t('invitations.no_pending')}</p>
             <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
-              Invite users to get started
+              {t('invitations.get_started')}
             </p>
           </div>
         ) : (

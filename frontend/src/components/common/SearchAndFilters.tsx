@@ -6,6 +6,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Search, X } from 'lucide-react';
 import { cn } from '@/utils/cn';
+import { useTranslation } from 'react-i18next';
 
 interface FilterOption {
   value: string;
@@ -41,12 +42,13 @@ interface SearchAndFiltersProps {
 export const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
   searchValue,
   onSearchChange,
-  searchPlaceholder = "Search...",
+  searchPlaceholder,
   filters,
   hasActiveFilters = false,
   onClearFilters,
   className,
 }) => {
+  const { t } = useTranslation('common');
   return (
     <div className={cn("flex flex-col sm:flex-row gap-4 mb-4", className)}>
       {/* Search Input */}
@@ -54,7 +56,7 @@ export const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
         <Input
           type="text"
-          placeholder={searchPlaceholder}
+          placeholder={searchPlaceholder || t('searchAndFilters.searchPlaceholder')}
           value={searchValue}
           onChange={(e) => onSearchChange(e.target.value)}
           className="pl-9"
@@ -115,7 +117,7 @@ export const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
             className="whitespace-nowrap"
           >
             <X className="h-4 w-4 mr-1" />
-            Clear Filters
+            {t('searchAndFilters.clearFilters')}
           </Button>
         )}
       </div>

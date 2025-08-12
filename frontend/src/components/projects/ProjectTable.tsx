@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   useReactTable,
   getCoreRowModel,
@@ -46,6 +47,8 @@ export const ProjectTable: React.FC<ResponsiveProjectViewProps> = ({
   onEdit,
   onDelete,
 }) => {
+  const { t } = useTranslation('projects');
+  
   const columns = useMemo<ColumnDef<Project>[]>(
     () => [
       {
@@ -57,7 +60,7 @@ export const ProjectTable: React.FC<ResponsiveProjectViewProps> = ({
               onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
               className="h-auto p-0 font-semibold"
             >
-              Project Name
+              {t('table.headers.name')}
               {column.getIsSorted() === "asc" ? (
                 <ArrowUp className="ml-2 h-4 w-4" />
               ) : column.getIsSorted() === "desc" ? (
@@ -78,7 +81,7 @@ export const ProjectTable: React.FC<ResponsiveProjectViewProps> = ({
       },
       {
         accessorKey: 'description',
-        header: 'Description',
+        header: t('table.headers.description'),
         cell: ({ row }) => {
           const description = row.getValue('description') as string;
           return (
@@ -97,7 +100,7 @@ export const ProjectTable: React.FC<ResponsiveProjectViewProps> = ({
               onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
               className="h-auto p-0 font-semibold"
             >
-              Status
+              {t('table.headers.status')}
               {column.getIsSorted() === "asc" ? (
                 <ArrowUp className="ml-2 h-4 w-4" />
               ) : column.getIsSorted() === "desc" ? (
@@ -112,11 +115,11 @@ export const ProjectTable: React.FC<ResponsiveProjectViewProps> = ({
           const statusValue = row.getValue('status') as number;
           
           const statusMap: Record<number, string> = {
-            1: 'Planning',
-            2: 'In Progress',
-            3: 'On Hold',
-            4: 'Completed',
-            5: 'Cancelled'
+            1: 'planning',
+            2: 'in_progress',
+            3: 'on_hold',
+            4: 'completed',
+            5: 'cancelled'
           };
           
           const statusColors: Record<number, string> = {
@@ -127,12 +130,12 @@ export const ProjectTable: React.FC<ResponsiveProjectViewProps> = ({
             5: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
           };
           
-          const statusText = statusMap[statusValue] || 'Unknown';
+          const statusKey = statusMap[statusValue] || 'unknown';
           const statusColor = statusColors[statusValue] || 'bg-gray-100 text-gray-800';
           
           return (
             <span className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${statusColor}`}>
-              {statusText}
+              {t(`status.${statusKey}`)}
             </span>
           );
         },
@@ -147,7 +150,7 @@ export const ProjectTable: React.FC<ResponsiveProjectViewProps> = ({
               onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
               className="h-auto p-0 font-semibold"
             >
-              Start Date
+              {t('table.headers.start_date')}
               {column.getIsSorted() === "asc" ? (
                 <ArrowUp className="ml-2 h-4 w-4" />
               ) : column.getIsSorted() === "desc" ? (
@@ -164,7 +167,7 @@ export const ProjectTable: React.FC<ResponsiveProjectViewProps> = ({
       },
       {
         accessorKey: 'endDate',
-        header: 'End Date',
+        header: t('table.headers.end_date'),
         cell: ({ row }) => {
           const endDate = row.getValue('endDate') as string;
           return endDate ? formatDate(endDate) : '-';
@@ -179,7 +182,7 @@ export const ProjectTable: React.FC<ResponsiveProjectViewProps> = ({
               onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
               className="h-auto p-0 font-semibold"
             >
-              Created
+              {t('table.headers.created')}
               {column.getIsSorted() === "asc" ? (
                 <ArrowUp className="ml-2 h-4 w-4" />
               ) : column.getIsSorted() === "desc" ? (
@@ -196,7 +199,7 @@ export const ProjectTable: React.FC<ResponsiveProjectViewProps> = ({
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: t('table.headers.actions'),
         cell: ({ row }) => {
           return (
             <div className="flex gap-2">
@@ -221,7 +224,7 @@ export const ProjectTable: React.FC<ResponsiveProjectViewProps> = ({
         enableHiding: false,
       },
     ],
-    [onEdit, onDelete]
+    [onEdit, onDelete, t]
   );
 
   const table = useReactTable({
@@ -273,7 +276,7 @@ export const ProjectTable: React.FC<ResponsiveProjectViewProps> = ({
   if (error) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-red-500">Error loading projects: {error.message}</p>
+        <p className="text-red-500">{t('table.error_loading')}: {error.message}</p>
       </div>
     );
   }
@@ -287,7 +290,7 @@ export const ProjectTable: React.FC<ResponsiveProjectViewProps> = ({
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Input
-              placeholder="Search projects..."
+              placeholder={t('table.search_placeholder')}
               value={globalFilter}
               onChange={(e) => onGlobalFilterChange(e.target.value)}
               className="pl-10 w-full sm:w-80"
@@ -303,12 +306,12 @@ export const ProjectTable: React.FC<ResponsiveProjectViewProps> = ({
               }}
               className="px-3 py-2 border border-input rounded-md bg-background text-foreground w-full sm:w-auto text-sm"
             >
-              <option value="">All Statuses</option>
-              <option value="1">Planning</option>
-              <option value="2">In Progress</option>
-              <option value="3">On Hold</option>
-              <option value="4">Completed</option>
-              <option value="5">Cancelled</option>
+              <option value="">{t('filters.all_statuses')}</option>
+              <option value="1">{t('status.planning')}</option>
+              <option value="2">{t('status.in_progress')}</option>
+              <option value="3">{t('status.on_hold')}</option>
+              <option value="4">{t('status.completed')}</option>
+              <option value="5">{t('status.cancelled')}</option>
             </select>
           )}
 
@@ -316,7 +319,7 @@ export const ProjectTable: React.FC<ResponsiveProjectViewProps> = ({
           {hasActiveFilters && onClearFilters && (
             <Button variant="outline" size="sm" onClick={onClearFilters}>
               <X className="h-4 w-4 mr-1" />
-              Clear Filters
+              {t('actions.clear_filters')}
             </Button>
           )}
         </div>
@@ -324,7 +327,7 @@ export const ProjectTable: React.FC<ResponsiveProjectViewProps> = ({
         <div className="flex items-center gap-2">
           <Button variant="outline" onClick={exportData} className="text-sm">
             <Download className="mr-2 h-4 w-4" />
-            Export CSV
+            {t('actions.export_csv')}
           </Button>
         </div>
       </div>
@@ -355,14 +358,14 @@ export const ProjectTable: React.FC<ResponsiveProjectViewProps> = ({
                   <td colSpan={columns.length} className="px-4 py-8 text-center">
                     <div className="flex items-center justify-center">
                       <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
-                      <span className="ml-2">Loading projects...</span>
+                      <span className="ml-2">{t('table.loading')}</span>
                     </div>
                   </td>
                 </tr>
               ) : table.getRowModel().rows.length === 0 ? (
                 <tr>
                   <td colSpan={columns.length} className="px-4 py-8 text-center text-gray-500">
-                    No projects found
+                    {t('table.no_results')}
                   </td>
                 </tr>
               ) : (
@@ -388,12 +391,12 @@ export const ProjectTable: React.FC<ResponsiveProjectViewProps> = ({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Showing {pagination.pageIndex * pagination.pageSize + 1} to{' '}
+            {t('pagination.showing')} {pagination.pageIndex * pagination.pageSize + 1} {t('pagination.to')}{' '}
             {Math.min(
               (pagination.pageIndex + 1) * pagination.pageSize,
               totalCount
             )}{' '}
-            of {totalCount} results
+            {t('pagination.of')} {totalCount} {t('pagination.results')}
           </p>
         </div>
 
@@ -416,7 +419,7 @@ export const ProjectTable: React.FC<ResponsiveProjectViewProps> = ({
           </Button>
           
           <div className="flex items-center gap-1 mx-2">
-            <span className="text-sm">Page</span>
+            <span className="text-sm">{t('pagination.page')}</span>
             <input
               type="number"
               min="1"
@@ -426,9 +429,9 @@ export const ProjectTable: React.FC<ResponsiveProjectViewProps> = ({
                 const page = e.target.value ? Number(e.target.value) - 1 : 0;
                 table.setPageIndex(page);
               }}
-              className="w-16 px-2 py-1 text-sm border rounded-md text-center"
+              className="w-16 px-2 py-1 text-sm border rounded-md text-center bg-background text-foreground dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600"
             />
-            <span className="text-sm">of {table.getPageCount()}</span>
+            <span className="text-sm">{t('pagination.of')} {table.getPageCount()}</span>
           </div>
 
           <Button
@@ -450,7 +453,7 @@ export const ProjectTable: React.FC<ResponsiveProjectViewProps> = ({
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-600 dark:text-gray-400">Rows per page:</span>
+          <span className="text-sm text-gray-600 dark:text-gray-400">{t('pagination.rows_per_page')}</span>
           <select
             value={pagination.pageSize}
             onChange={(e) => {

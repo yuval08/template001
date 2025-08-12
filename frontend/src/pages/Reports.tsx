@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PDFViewer } from '@/components/showcase/reports/PDFViewer';
 import { ReportControls } from '@/components/showcase/reports/ReportControls';
 import { useSampleReport } from '@/entities/report';
@@ -6,6 +7,7 @@ import { toast } from '@/stores/toastStore';
 import { PageLayout } from '@/components/common';
 
 const Reports: React.FC = () => {
+  const { t } = useTranslation('dashboard');
   const [pdfData, setPdfData] = useState<Blob | null>(null);
   const [numPages, setNumPages] = useState<number>(0);
   const [pageNumber, setPageNumber] = useState<number>(1);
@@ -70,8 +72,8 @@ const Reports: React.FC = () => {
 
   return (
     <PageLayout
-      title="Reports & PDF Viewer"
-      description="Interactive PDF viewer with zoom, rotation, navigation, and download capabilities."
+      title={t('reports.title')}
+      description={t('reports.subtitle')}
       maxWidth="6xl"
     >
 

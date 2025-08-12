@@ -20,7 +20,8 @@
     "export": "Export",
     "import": "Import",
     "download": "Download",
-    "upload": "Upload"
+    "upload": "Upload",
+    "saving": "Saving..."
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -85,5 +86,34 @@
     "hours_ago_plural": "{{count}} hours ago",
     "days_ago": "{{count}} day ago",
     "days_ago_plural": "{{count}} days ago"
+  },
+  "dataTable": {
+    "noResults": "No results found.",
+    "errorLoading": "Error loading data: {{message}}",
+    "showing": "Showing {{from}} to {{to}} of {{total}} results",
+    "rowsPerPage": "Rows per page:",
+    "page": "Page {{current}} of {{total}}"
+  },
+  "searchAndFilters": {
+    "searchPlaceholder": "Search...",
+    "clearFilters": "Clear Filters"
+  },
+  "errors": {
+    "somethingWentWrong": "Something went wrong",
+    "errorOccurred": "An error occurred while loading this content.",
+    "tryAgain": "Try Again",
+    "retry": "Retry",
+    "goHome": "Go Home",
+    "reportBug": "Report Bug",
+    "errorId": "Error ID:",
+    "errorIdDescription": "Please reference this ID if you need to contact support.",
+    "unexpectedError": "We apologize for the inconvenience. An unexpected error has occurred.",
+    "developmentError": "Development Mode - Error Details:",
+    "errorLabel": "Error:",
+    "stackTrace": "Stack Trace:",
+    "componentStack": "Component Stack:",
+    "persistentProblem": "If this problem persists, please contact our support team.",
+    "reportingFailed": "Failed to report error to service",
+    "errorReportingFailed": "Error reporting failed:"
   }
 }

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -35,6 +36,7 @@ import {
 import { toast } from '@/stores/toastStore';
 
 const UIShowcase: React.FC = () => {
+  const { t } = useTranslation('showcase');
   const [switchState, setSwitchState] = useState(false);
   const [checkboxState, setCheckboxState] = useState(false);
   const [radioValue, setRadioValue] = useState('option1');
@@ -46,62 +48,62 @@ const UIShowcase: React.FC = () => {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          UI Components Showcase
+          {t('ui.title')}
         </h1>
         <p className="mt-2 text-gray-600 dark:text-gray-400">
-          A comprehensive display of all available UI components in the system
+          {t('ui.description')}
         </p>
       </div>
 
       <Tabs defaultValue="buttons" className="w-full">
         <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="buttons">Buttons</TabsTrigger>
-          <TabsTrigger value="forms">Forms</TabsTrigger>
-          <TabsTrigger value="feedback">Feedback</TabsTrigger>
-          <TabsTrigger value="display">Display</TabsTrigger>
-          <TabsTrigger value="layout">Layout</TabsTrigger>
-          <TabsTrigger value="navigation">Navigation</TabsTrigger>
+          <TabsTrigger value="buttons">{t('ui.tabs.buttons')}</TabsTrigger>
+          <TabsTrigger value="forms">{t('ui.tabs.forms')}</TabsTrigger>
+          <TabsTrigger value="feedback">{t('ui.tabs.feedback')}</TabsTrigger>
+          <TabsTrigger value="display">{t('ui.tabs.display')}</TabsTrigger>
+          <TabsTrigger value="layout">{t('ui.tabs.layout')}</TabsTrigger>
+          <TabsTrigger value="navigation">{t('ui.tabs.navigation')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="buttons" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Buttons</CardTitle>
-              <CardDescription>Various button styles and states</CardDescription>
+              <CardTitle>{t('buttons.title')}</CardTitle>
+              <CardDescription>{t('buttons.description')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Button Variants */}
               <div>
-                <h3 className="text-sm font-medium mb-3">Variants</h3>
+                <h3 className="text-sm font-medium mb-3">{t('buttons.variants.title')}</h3>
                 <div className="flex flex-wrap gap-3">
-                  <Button>Default</Button>
-                  <Button variant="secondary">Secondary</Button>
-                  <Button variant="destructive">Destructive</Button>
-                  <Button variant="outline">Outline</Button>
-                  <Button variant="ghost">Ghost</Button>
-                  <Button variant="link">Link</Button>
+                  <Button>{t('buttons.variants.default')}</Button>
+                  <Button variant="secondary">{t('buttons.variants.secondary')}</Button>
+                  <Button variant="destructive">{t('buttons.variants.destructive')}</Button>
+                  <Button variant="outline">{t('buttons.variants.outline')}</Button>
+                  <Button variant="ghost">{t('buttons.variants.ghost')}</Button>
+                  <Button variant="link">{t('buttons.variants.link')}</Button>
                 </div>
               </div>
 
               {/* Button Sizes */}
               <div>
-                <h3 className="text-sm font-medium mb-3">Sizes</h3>
+                <h3 className="text-sm font-medium mb-3">{t('buttons.sizes.title')}</h3>
                 <div className="flex flex-wrap items-center gap-3">
-                  <Button size="sm">Small</Button>
-                  <Button size="default">Default</Button>
-                  <Button size="lg">Large</Button>
+                  <Button size="sm">{t('buttons.sizes.small')}</Button>
+                  <Button size="default">{t('buttons.sizes.default')}</Button>
+                  <Button size="lg">{t('buttons.sizes.large')}</Button>
                 </div>
               </div>
 
               {/* Button States */}
               <div>
-                <h3 className="text-sm font-medium mb-3">States</h3>
+                <h3 className="text-sm font-medium mb-3">{t('buttons.states.title')}</h3>
                 <div className="flex flex-wrap gap-3">
-                  <Button>Active</Button>
-                  <Button disabled>Disabled</Button>
+                  <Button>{t('buttons.states.active')}</Button>
+                  <Button disabled>{t('buttons.states.disabled')}</Button>
                   <Button>
                     <Download className="mr-2 h-4 w-4" />
-                    With Icon
+                    {t('buttons.states.withIcon')}
                   </Button>
                 </div>
               </div>
@@ -110,21 +112,21 @@ const UIShowcase: React.FC = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Badges</CardTitle>
-              <CardDescription>Labels and status indicators</CardDescription>
+              <CardTitle>{t('badges.title')}</CardTitle>
+              <CardDescription>{t('badges.description')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex flex-wrap gap-3">
-                <Badge>Default</Badge>
-                <Badge variant="secondary">Secondary</Badge>
-                <Badge variant="destructive">Destructive</Badge>
-                <Badge variant="outline">Outline</Badge>
+                <Badge>{t('badges.variants.default')}</Badge>
+                <Badge variant="secondary">{t('badges.variants.secondary')}</Badge>
+                <Badge variant="destructive">{t('badges.variants.destructive')}</Badge>
+                <Badge variant="outline">{t('badges.variants.outline')}</Badge>
               </div>
               <div className="flex flex-wrap gap-3">
-                <Badge className="bg-green-500 hover:bg-green-600">Success</Badge>
-                <Badge className="bg-yellow-500 hover:bg-yellow-600">Warning</Badge>
-                <Badge className="bg-blue-500 hover:bg-blue-600">Info</Badge>
-                <Badge className="bg-purple-500 hover:bg-purple-600">Purple</Badge>
+                <Badge className="bg-green-500 hover:bg-green-600">{t('badges.variants.success')}</Badge>
+                <Badge className="bg-yellow-500 hover:bg-yellow-600">{t('badges.variants.warning')}</Badge>
+                <Badge className="bg-blue-500 hover:bg-blue-600">{t('badges.variants.info')}</Badge>
+                <Badge className="bg-purple-500 hover:bg-purple-600">{t('badges.variants.purple')}</Badge>
               </div>
             </CardContent>
           </Card>
@@ -133,57 +135,57 @@ const UIShowcase: React.FC = () => {
         <TabsContent value="forms" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Form Controls</CardTitle>
-              <CardDescription>Input fields and form elements</CardDescription>
+              <CardTitle>{t('forms.title')}</CardTitle>
+              <CardDescription>{t('forms.description')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Text Inputs */}
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="text-input">Text Input</Label>
-                  <Input id="text-input" placeholder="Enter text..." />
+                  <Label htmlFor="text-input">{t('forms.textInputs.textInput')}</Label>
+                  <Input id="text-input" placeholder={t('forms.textInputs.textPlaceholder')} />
                 </div>
                 
                 <div>
-                  <Label htmlFor="email-input">Email Input</Label>
-                  <Input id="email-input" type="email" placeholder="email@example.com" />
+                  <Label htmlFor="email-input">{t('forms.textInputs.emailInput')}</Label>
+                  <Input id="email-input" type="email" placeholder={t('forms.textInputs.emailPlaceholder')} />
                 </div>
 
                 <div>
-                  <Label htmlFor="password-input">Password Input</Label>
-                  <Input id="password-input" type="password" placeholder="Enter password..." />
+                  <Label htmlFor="password-input">{t('forms.textInputs.passwordInput')}</Label>
+                  <Input id="password-input" type="password" placeholder={t('forms.textInputs.passwordPlaceholder')} />
                 </div>
 
                 <div>
-                  <Label htmlFor="disabled-input">Disabled Input</Label>
-                  <Input id="disabled-input" placeholder="Disabled" disabled />
+                  <Label htmlFor="disabled-input">{t('forms.textInputs.disabledInput')}</Label>
+                  <Input id="disabled-input" placeholder={t('forms.textInputs.disabledPlaceholder')} disabled />
                 </div>
 
                 <div>
-                  <Label htmlFor="textarea">Textarea</Label>
-                  <Textarea id="textarea" placeholder="Enter your message..." rows={4} />
+                  <Label htmlFor="textarea">{t('forms.textInputs.textarea')}</Label>
+                  <Textarea id="textarea" placeholder={t('forms.textInputs.textareaPlaceholder')} rows={4} />
                 </div>
               </div>
 
               {/* Select */}
               <div>
-                <Label htmlFor="select">Select</Label>
+                <Label htmlFor="select">{t('forms.select.title')}</Label>
                 <Select value={selectedValue} onValueChange={setSelectedValue}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select an option" />
+                    <SelectValue placeholder={t('forms.select.placeholder')} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectLabel>Fruits</SelectLabel>
-                      <SelectItem value="apple">Apple</SelectItem>
-                      <SelectItem value="banana">Banana</SelectItem>
-                      <SelectItem value="orange">Orange</SelectItem>
+                      <SelectLabel>{t('forms.select.fruits')}</SelectLabel>
+                      <SelectItem value="apple">{t('forms.select.options.apple')}</SelectItem>
+                      <SelectItem value="banana">{t('forms.select.options.banana')}</SelectItem>
+                      <SelectItem value="orange">{t('forms.select.options.orange')}</SelectItem>
                     </SelectGroup>
                     <SelectGroup>
-                      <SelectLabel>Vegetables</SelectLabel>
-                      <SelectItem value="carrot">Carrot</SelectItem>
-                      <SelectItem value="potato">Potato</SelectItem>
-                      <SelectItem value="tomato">Tomato</SelectItem>
+                      <SelectLabel>{t('forms.select.vegetables')}</SelectLabel>
+                      <SelectItem value="carrot">{t('forms.select.options.carrot')}</SelectItem>
+                      <SelectItem value="potato">{t('forms.select.options.potato')}</SelectItem>
+                      <SelectItem value="tomato">{t('forms.select.options.tomato')}</SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>
@@ -191,62 +193,62 @@ const UIShowcase: React.FC = () => {
 
               {/* Checkbox */}
               <div className="space-y-3">
-                <Label>Checkboxes</Label>
+                <Label>{t('forms.checkboxes.title')}</Label>
                 <div className="flex items-center space-x-2">
                   <Checkbox 
                     id="checkbox1"
                     checked={checkboxState}
                     onCheckedChange={(checked) => setCheckboxState(checked === true)}
                   />
-                  <Label htmlFor="checkbox1">Accept terms and conditions</Label>
+                  <Label htmlFor="checkbox1">{t('forms.checkboxes.acceptTerms')}</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Checkbox id="checkbox2" />
-                  <Label htmlFor="checkbox2">Send me promotional emails</Label>
+                  <Label htmlFor="checkbox2">{t('forms.checkboxes.promotional')}</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Checkbox id="checkbox3" disabled />
-                  <Label htmlFor="checkbox3">Disabled checkbox</Label>
+                  <Label htmlFor="checkbox3">{t('forms.checkboxes.disabled')}</Label>
                 </div>
               </div>
 
               {/* Radio Group */}
               <div className="space-y-3">
-                <Label>Radio Group</Label>
+                <Label>{t('forms.radioGroup.title')}</Label>
                 <RadioGroup value={radioValue} onValueChange={setRadioValue}>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="option1" id="option1" />
-                    <Label htmlFor="option1">Option 1</Label>
+                    <Label htmlFor="option1">{t('forms.radioGroup.option1')}</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="option2" id="option2" />
-                    <Label htmlFor="option2">Option 2</Label>
+                    <Label htmlFor="option2">{t('forms.radioGroup.option2')}</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="option3" id="option3" />
-                    <Label htmlFor="option3">Option 3</Label>
+                    <Label htmlFor="option3">{t('forms.radioGroup.option3')}</Label>
                   </div>
                 </RadioGroup>
               </div>
 
               {/* Switch */}
               <div className="space-y-3">
-                <Label>Switches</Label>
+                <Label>{t('forms.switches.title')}</Label>
                 <div className="flex items-center space-x-2">
                   <Switch 
                     id="switch1"
                     checked={switchState}
                     onCheckedChange={setSwitchState}
                   />
-                  <Label htmlFor="switch1">Enable notifications</Label>
+                  <Label htmlFor="switch1">{t('forms.switches.notifications')}</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Switch id="switch2" />
-                  <Label htmlFor="switch2">Dark mode</Label>
+                  <Label htmlFor="switch2">{t('forms.switches.darkMode')}</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Switch id="switch3" disabled />
-                  <Label htmlFor="switch3">Disabled switch</Label>
+                  <Label htmlFor="switch3">{t('forms.switches.disabled')}</Label>
                 </div>
               </div>
             </CardContent>
@@ -256,47 +258,47 @@ const UIShowcase: React.FC = () => {
         <TabsContent value="feedback" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Alerts</CardTitle>
-              <CardDescription>Different alert styles for various purposes</CardDescription>
+              <CardTitle>{t('alerts.title')}</CardTitle>
+              <CardDescription>{t('alerts.description')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <Alert>
                 <Terminal className="h-4 w-4" />
-                <AlertTitle>Default Alert</AlertTitle>
+                <AlertTitle>{t('alerts.defaultAlert')}</AlertTitle>
                 <AlertDescription>
-                  This is a default alert with an icon and description.
+                  {t('alerts.defaultDescription')}
                 </AlertDescription>
               </Alert>
 
               <Alert className="border-green-500 bg-green-50 dark:bg-green-950">
                 <CheckCircle2 className="h-4 w-4 text-green-600" />
-                <AlertTitle className="text-green-800 dark:text-green-200">Success!</AlertTitle>
+                <AlertTitle className="text-green-800 dark:text-green-200">{t('alerts.success')}</AlertTitle>
                 <AlertDescription className="text-green-700 dark:text-green-300">
-                  Your operation completed successfully.
+                  {t('alerts.successDescription')}
                 </AlertDescription>
               </Alert>
 
               <Alert className="border-yellow-500 bg-yellow-50 dark:bg-yellow-950">
                 <AlertTriangle className="h-4 w-4 text-yellow-600" />
-                <AlertTitle className="text-yellow-800 dark:text-yellow-200">Warning</AlertTitle>
+                <AlertTitle className="text-yellow-800 dark:text-yellow-200">{t('alerts.warning')}</AlertTitle>
                 <AlertDescription className="text-yellow-700 dark:text-yellow-300">
-                  Please review this important information.
+                  {t('alerts.warningDescription')}
                 </AlertDescription>
               </Alert>
 
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Error</AlertTitle>
+                <AlertTitle>{t('alerts.error')}</AlertTitle>
                 <AlertDescription>
-                  Something went wrong. Please try again later.
+                  {t('alerts.errorDescription')}
                 </AlertDescription>
               </Alert>
 
               <Alert className="border-blue-500 bg-blue-50 dark:bg-blue-950">
                 <Info className="h-4 w-4 text-blue-600" />
-                <AlertTitle className="text-blue-800 dark:text-blue-200">Information</AlertTitle>
+                <AlertTitle className="text-blue-800 dark:text-blue-200">{t('alerts.information')}</AlertTitle>
                 <AlertDescription className="text-blue-700 dark:text-blue-300">
-                  Here's some helpful information for you.
+                  {t('alerts.informationDescription')}
                 </AlertDescription>
               </Alert>
             </CardContent>
@@ -304,25 +306,25 @@ const UIShowcase: React.FC = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Progress Indicators</CardTitle>
-              <CardDescription>Loading and progress states</CardDescription>
+              <CardTitle>{t('progress.title')}</CardTitle>
+              <CardDescription>{t('progress.description')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
-                <Label>Progress Bar ({progressValue}%)</Label>
+                <Label>{t('progress.progressBar')} ({progressValue}%)</Label>
                 <Progress value={progressValue} className="w-full" />
                 <div className="flex gap-2">
                   <Button size="sm" onClick={() => setProgressValue(Math.max(0, progressValue - 10))}>
-                    -10%
+                    {t('progress.decrease')}
                   </Button>
                   <Button size="sm" onClick={() => setProgressValue(Math.min(100, progressValue + 10))}>
-                    +10%
+                    {t('progress.increase')}
                   </Button>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label>Different Progress Values</Label>
+                <Label>{t('progress.differentValues')}</Label>
                 <Progress value={0} className="w-full" />
                 <Progress value={25} className="w-full" />
                 <Progress value={50} className="w-full" />
@@ -334,22 +336,22 @@ const UIShowcase: React.FC = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Toasts</CardTitle>
-              <CardDescription>Temporary notification messages</CardDescription>
+              <CardTitle>{t('toasts.title')}</CardTitle>
+              <CardDescription>{t('toasts.description')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex flex-wrap gap-3">
-                <Button onClick={() => toast.success({ title: 'Success message!' })}>
-                  Show Success Toast
+                <Button onClick={() => toast.success({ title: t('toasts.successMessage') })}>
+                  {t('toasts.showSuccess')}
                 </Button>
-                <Button variant="secondary" onClick={() => toast.info({ title: 'Info message!' })}>
-                  Show Info Toast
+                <Button variant="secondary" onClick={() => toast.info({ title: t('toasts.infoMessage') })}>
+                  {t('toasts.showInfo')}
                 </Button>
-                <Button variant="outline" onClick={() => toast.warning({ title: 'Warning message!' })}>
-                  Show Warning Toast
+                <Button variant="outline" onClick={() => toast.warning({ title: t('toasts.warningMessage') })}>
+                  {t('toasts.showWarning')}
                 </Button>
-                <Button variant="destructive" onClick={() => toast.error({ title: 'Error message!' })}>
-                  Show Error Toast
+                <Button variant="destructive" onClick={() => toast.error({ title: t('toasts.errorMessage') })}>
+                  {t('toasts.showError')}
                 </Button>
               </div>
             </CardContent>
@@ -359,8 +361,8 @@ const UIShowcase: React.FC = () => {
         <TabsContent value="display" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Avatars</CardTitle>
-              <CardDescription>User profile images and fallbacks</CardDescription>
+              <CardTitle>{t('avatars.title')}</CardTitle>
+              <CardDescription>{t('avatars.description')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center gap-4">
@@ -388,8 +390,8 @@ const UIShowcase: React.FC = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Skeleton Loading</CardTitle>
-              <CardDescription>Loading placeholders for content</CardDescription>
+              <CardTitle>{t('skeleton.title')}</CardTitle>
+              <CardDescription>{t('skeleton.description')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
@@ -419,31 +421,30 @@ const UIShowcase: React.FC = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Dialogs</CardTitle>
-              <CardDescription>Modal dialogs for user interactions</CardDescription>
+              <CardTitle>{t('dialogs.title')}</CardTitle>
+              <CardDescription>{t('dialogs.description')}</CardDescription>
             </CardHeader>
             <CardContent>
               <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button>Open Dialog</Button>
+                  <Button>{t('dialogs.openDialog')}</Button>
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Are you sure?</DialogTitle>
+                    <DialogTitle>{t('dialogs.confirmTitle')}</DialogTitle>
                     <DialogDescription>
-                      This action cannot be undone. This will permanently delete your account
-                      and remove your data from our servers.
+                      {t('dialogs.confirmDescription')}
                     </DialogDescription>
                   </DialogHeader>
                   <DialogFooter>
                     <Button variant="outline" onClick={() => setDialogOpen(false)}>
-                      Cancel
+                      {t('dialogs.cancel')}
                     </Button>
                     <Button onClick={() => {
                       setDialogOpen(false);
-                      toast.success({ title: 'Action confirmed!' });
+                      toast.success({ title: t('dialogs.actionConfirmed') });
                     }}>
-                      Confirm
+                      {t('dialogs.confirm')}
                     </Button>
                   </DialogFooter>
                 </DialogContent>
@@ -455,36 +456,36 @@ const UIShowcase: React.FC = () => {
         <TabsContent value="layout" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Cards</CardTitle>
-              <CardDescription>Container components for grouping content</CardDescription>
+              <CardTitle>{t('cards.title')}</CardTitle>
+              <CardDescription>{t('cards.description')}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Basic Card</CardTitle>
-                    <CardDescription>A simple card with header and content</CardDescription>
+                    <CardTitle>{t('cards.basicCard')}</CardTitle>
+                    <CardDescription>{t('cards.basicDescription')}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      This is the card content area where you can place any content.
+                      {t('cards.basicContent')}
                     </p>
                   </CardContent>
                 </Card>
 
                 <Card>
                   <CardHeader>
-                    <CardTitle>Card with Footer</CardTitle>
-                    <CardDescription>Includes action buttons</CardDescription>
+                    <CardTitle>{t('cards.withFooter')}</CardTitle>
+                    <CardDescription>{t('cards.footerDescription')}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Cards can also have footers for actions.
+                      {t('cards.footerContent')}
                     </p>
                   </CardContent>
                   <CardFooter className="flex justify-between">
-                    <Button variant="outline">Cancel</Button>
-                    <Button>Save</Button>
+                    <Button variant="outline">{t('dialogs.cancel')}</Button>
+                    <Button>{t('buttons.actions.save')}</Button>
                   </CardFooter>
                 </Card>
 
@@ -493,27 +494,27 @@ const UIShowcase: React.FC = () => {
                     <CardTitle>
                       <div className="flex items-center gap-2">
                         <Settings className="h-5 w-5" />
-                        With Icon
+                        {t('cards.withIcon')}
                       </div>
                     </CardTitle>
-                    <CardDescription>Card with icon in title</CardDescription>
+                    <CardDescription>{t('cards.iconDescription')}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center gap-4">
-                      <Badge>Active</Badge>
-                      <span className="text-sm">Status indicator</span>
+                      <Badge>{t('badges.statuses.active')}</Badge>
+                      <span className="text-sm">{t('badges.statuses.statusIndicator')}</span>
                     </div>
                   </CardContent>
                 </Card>
 
                 <Card className="border-primary">
                   <CardHeader>
-                    <CardTitle>Highlighted Card</CardTitle>
-                    <CardDescription>With primary border color</CardDescription>
+                    <CardTitle>{t('cards.highlighted')}</CardTitle>
+                    <CardDescription>{t('cards.highlightedDescription')}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      This card has a colored border for emphasis.
+                      {t('cards.highlightedContent')}
                     </p>
                   </CardContent>
                 </Card>
@@ -525,43 +526,43 @@ const UIShowcase: React.FC = () => {
         <TabsContent value="navigation" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Tabs</CardTitle>
-              <CardDescription>Tabbed navigation for organizing content</CardDescription>
+              <CardTitle>{t('tabs.title')}</CardTitle>
+              <CardDescription>{t('tabs.description')}</CardDescription>
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="tab1" className="w-full">
                 <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="tab1">Tab 1</TabsTrigger>
-                  <TabsTrigger value="tab2">Tab 2</TabsTrigger>
-                  <TabsTrigger value="tab3">Tab 3</TabsTrigger>
+                  <TabsTrigger value="tab1">{t('tabs.tab1')}</TabsTrigger>
+                  <TabsTrigger value="tab2">{t('tabs.tab2')}</TabsTrigger>
+                  <TabsTrigger value="tab3">{t('tabs.tab3')}</TabsTrigger>
                 </TabsList>
                 <TabsContent value="tab1">
                   <Card>
                     <CardHeader>
-                      <CardTitle>Tab 1 Content</CardTitle>
+                      <CardTitle>{t('tabs.tab1Content')}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p>This is the content for the first tab.</p>
+                      <p>{t('tabs.content1')}</p>
                     </CardContent>
                   </Card>
                 </TabsContent>
                 <TabsContent value="tab2">
                   <Card>
                     <CardHeader>
-                      <CardTitle>Tab 2 Content</CardTitle>
+                      <CardTitle>{t('tabs.tab2Content')}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p>This is the content for the second tab.</p>
+                      <p>{t('tabs.content2')}</p>
                     </CardContent>
                   </Card>
                 </TabsContent>
                 <TabsContent value="tab3">
                   <Card>
                     <CardHeader>
-                      <CardTitle>Tab 3 Content</CardTitle>
+                      <CardTitle>{t('tabs.tab3Content')}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p>This is the content for the third tab.</p>
+                      <p>{t('tabs.content3')}</p>
                     </CardContent>
                   </Card>
                 </TabsContent>

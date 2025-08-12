@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Search, X, Command } from 'lucide-react';
 import { cn } from '@/utils/cn';
 import { Input } from '@/components/ui/input';
@@ -25,12 +26,13 @@ interface GlobalSearchProps {
  * Integrates with the universal search API and manages recent searches
  */
 export const GlobalSearch: React.FC<GlobalSearchProps> = ({
-  placeholder = 'Search everything...',
+  placeholder,
   onResultSelect,
   className,
   size = 'md',
   showCommandHint = false,
 }) => {
+  const { t } = useTranslation(['search', 'common']);
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -235,14 +237,14 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({
               onFocus={handleFocus}
               onBlur={handleBlur}
               onKeyDown={handleKeyDown}
-              placeholder={placeholder}
+              placeholder={placeholder || t('search:placeholder')}
               className={cn(
                 'pl-10 pr-20 transition-all duration-200',
                 'focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
                 'dark:bg-gray-800 dark:border-gray-700',
                 sizeClasses[size]
               )}
-              aria-label="Search"
+              aria-label={t('common:buttons.search')}
               aria-expanded={isOpen}
               aria-haspopup="listbox"
               aria-autocomplete="list"
@@ -257,7 +259,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({
                   size="sm"
                   onClick={handleClear}
                   className="h-auto p-1 text-gray-400 hover:text-gray-600"
-                  aria-label="Clear search"
+                  aria-label={t('search:clear_search')}
                 >
                   <X className="h-3 w-3" />
                 </Button>

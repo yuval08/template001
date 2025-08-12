@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -36,6 +37,7 @@ type SortingState = Array<{
 }>;
 
 const Users: React.FC = () => {
+  const { t } = useTranslation('users');
   const { user: currentUser, hasAnyRole } = useAuth();
   const isAdmin = hasAnyRole(['Admin']);
   
@@ -274,10 +276,10 @@ const Users: React.FC = () => {
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
-            Access Denied
+            {t('access_denied.title')}
           </h2>
           <p className="text-gray-600 dark:text-gray-400">
-            You don't have permission to access user management.
+            {t('access_denied.message')}
           </p>
         </div>
       </div>
@@ -286,29 +288,29 @@ const Users: React.FC = () => {
 
   return (
     <PageLayout
-      title="User Management"
-      description="Manage users, roles, and invitations within the system."
+      title={t('title')}
+      description={t('description')}
       actions={
         <>
           <Button 
             onClick={() => setIsInviteModalOpen(true)} 
             className="text-sm"
             loading={createInvitationMutation.isPending}
-            loadingText="Sending..."
+            loadingText={t('buttons.sending')}
           >
             <Mail className="mr-2 h-4 w-4" />
-            <span className="hidden sm:inline">Send Invitation</span>
-            <span className="sm:hidden">Invite</span>
+            <span className="hidden sm:inline">{t('buttons.send_invitation')}</span>
+            <span className="sm:hidden">{t('buttons.invite')}</span>
           </Button>
           <Button 
             onClick={() => setIsCreateModalOpen(true)} 
             className="text-sm"
             loading={createUserMutation.isPending}
-            loadingText="Creating..."
+            loadingText={t('buttons.creating')}
           >
             <UserPlus className="mr-2 h-4 w-4" />
-            <span className="hidden sm:inline">Add User</span>
-            <span className="sm:hidden">Add</span>
+            <span className="hidden sm:inline">{t('buttons.add_user')}</span>
+            <span className="sm:hidden">{t('buttons.add_user_short')}</span>
           </Button>
         </>
       }
@@ -317,21 +319,21 @@ const Users: React.FC = () => {
       <Tabs value={currentTab} onValueChange={setCurrentTab}>
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="users" className="text-xs sm:text-sm">
-            <span className="hidden sm:inline">Users ({totalUsersCount})</span>
-            <span className="sm:hidden">Users</span>
+            <span className="hidden sm:inline">{t('tabs.users_with_count', { count: totalUsersCount })}</span>
+            <span className="sm:hidden">{t('tabs.users')}</span>
           </TabsTrigger>
           <TabsTrigger value="invitations" className="text-xs sm:text-sm">
-            <span className="hidden sm:inline">Pending Invitations ({totalInvitationsCount})</span>
-            <span className="sm:hidden">Invites</span>
+            <span className="hidden sm:inline">{t('tabs.invitations_with_count', { count: totalInvitationsCount })}</span>
+            <span className="sm:hidden">{t('tabs.invitations')}</span>
           </TabsTrigger>
         </TabsList>
         
         <TabsContent value="users" className="space-y-4">
           <Card>
             <CardHeader className="p-4 sm:p-6">
-              <CardTitle className="text-lg sm:text-xl">Users</CardTitle>
+              <CardTitle className="text-lg sm:text-xl">{t('tabs.users')}</CardTitle>
               <CardDescription className="text-sm">
-                Manage all users in the system, their roles, and profile information.
+                {t('subtitle')}
               </CardDescription>
             </CardHeader>
             <CardContent className="p-4 sm:p-6">
@@ -414,24 +416,23 @@ const Users: React.FC = () => {
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2">
               <Trash2 className="h-5 w-5 text-red-600" />
-              Delete User
+              {t('dialogs.delete_user.title')}
             </AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete{' '}
-              <strong>
-                {userToDelete?.firstName} {userToDelete?.lastName}
-              </strong>
-              ? This action cannot be undone and will remove all associated data.
-            </AlertDialogDescription>
+            <AlertDialogDescription dangerouslySetInnerHTML={{
+              __html: t('dialogs.delete_user.message', {
+                firstName: userToDelete?.firstName || '',
+                lastName: userToDelete?.lastName || ''
+              })
+            }} />
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('common:buttons.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmDeleteUser}
               disabled={deleteUserMutation.isPending}
               className="bg-red-600 hover:bg-red-700"
             >
-              {deleteUserMutation.isPending ? 'Deleting...' : 'Delete User'}
+              {deleteUserMutation.isPending ? t('buttons.deleting') : t('dialogs.delete_user.confirm_button')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

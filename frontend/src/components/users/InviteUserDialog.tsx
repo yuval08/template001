@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -15,15 +16,16 @@ import { useAuth } from '@/hooks/useAuth';
 import { getUserService } from '@/shared/services';
 import { debounce } from 'lodash';
 
-const inviteUserSchema = z.object({
+// Schema factory to use translations
+const inviteUserSchemaFactory = (t: any) => z.object({
   emailPrefix: z.string()
-    .min(1, 'Email username is required')
-    .regex(/^[a-zA-Z0-9._-]+$/, 'Invalid email username format'),
-  intendedRole: z.string().min(1, 'Role is required'),
-  expirationDays: z.number().min(1, 'Must be at least 1 day').max(90, 'Cannot exceed 90 days'),
+    .min(1, t('validation.email_required'))
+    .regex(/^[a-zA-Z0-9._-]+$/, t('validation.email_invalid_format')),
+  intendedRole: z.string().min(1, t('validation.role_required')),
+  expirationDays: z.number().min(1, t('validation.expiration_min')).max(90, t('validation.expiration_max')),
 });
 
-type InviteUserFormData = z.infer<typeof inviteUserSchema>;
+type InviteUserFormData = z.infer<ReturnType<typeof inviteUserSchemaFactory>>;
 
 interface InviteUserDialogProps {
   currentUserId: UserId;
@@ -40,11 +42,13 @@ export const InviteUserDialog: React.FC<InviteUserDialogProps> = ({
   onSubmit,
   isSubmitting,
 }) => {
+  const { t } = useTranslation('users');
   const { authConfig } = useAuth();
   const [serverError, setServerError] = useState<string | null>(null);
   const [isValidatingEmail, setIsValidatingEmail] = useState(false);
   const [emailValidation, setEmailValidation] = useState<{ isAvailable: boolean; message: string } | null>(null);
   
+  const inviteUserSchema = inviteUserSchemaFactory(t);
   const form = useForm<InviteUserFormData>({
     resolver: zodResolver(inviteUserSchema),
     defaultValues: {
@@ -145,7 +149,7 @@ export const InviteUserDialog: React.FC<InviteUserDialogProps> = ({
           errorMessage.toLowerCase().includes('pending invitation')) {
         form.setError('emailPrefix', {
           type: 'manual',
-          message: 'This email already has a pending invitation or user account'
+          message: t('dialogs.invite_user.email_already_invited')
         });
       }
     }
@@ -179,10 +183,10 @@ export const InviteUserDialog: React.FC<InviteUserDialogProps> = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Mail className="h-5 w-5" />
-            Invite New User
+            {t('dialogs.invite_user.title')}
           </DialogTitle>
           <DialogDescription>
-            Send an email invitation to a new user. They will receive a link to complete their account setup.
+            {t('dialogs.invite_user.description')}
           </DialogDescription>
         </DialogHeader>
 
@@ -196,13 +200,13 @@ export const InviteUserDialog: React.FC<InviteUserDialogProps> = ({
           )}
           
           <div className="space-y-2">
-            <Label htmlFor="emailPrefix">Email Address *</Label>
+            <Label htmlFor="emailPrefix">{t('dialogs.invite_user.email')} *</Label>
             <div className="flex items-center gap-1">
               <div className="relative flex-1">
                 <Input
                   id="emailPrefix"
                   {...form.register('emailPrefix')}
-                  placeholder="username"
+                  placeholder={t('dialogs.create_user.email_placeholder')}
                   className={`pr-8 ${
                     form.formState.errors.emailPrefix 
                       ? 'border-red-500' 
@@ -244,13 +248,13 @@ export const InviteUserDialog: React.FC<InviteUserDialogProps> = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="intendedRole">Intended Role *</Label>
+            <Label htmlFor="intendedRole">{t('dialogs.invite_user.role')} *</Label>
             <Select
               value={form.watch('intendedRole')}
               onValueChange={(value) => form.setValue('intendedRole', value, { shouldValidate: true })}
             >
               <SelectTrigger className={form.formState.errors.intendedRole ? 'border-red-500' : ''}>
-                <SelectValue placeholder="Select a role for this user" />
+                <SelectValue placeholder={t('dialogs.invite_user.role_placeholder')} />
               </SelectTrigger>
               <SelectContent>
                 {Object.values(UserRoles).map((role) => (
@@ -271,7 +275,7 @@ export const InviteUserDialog: React.FC<InviteUserDialogProps> = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="expirationDays">Invitation Expires In (Days)</Label>
+            <Label htmlFor="expirationDays">{t('dialogs.invite_user.expiration_days')}</Label>
             <Input
               id="expirationDays"
               type="number"
@@ -286,14 +290,13 @@ export const InviteUserDialog: React.FC<InviteUserDialogProps> = ({
               </p>
             )}
             <p className="text-xs text-gray-500">
-              The user will have this many days to accept the invitation.
+              {t('dialogs.invite_user.expiration_help')}
             </p>
           </div>
 
           <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-md">
             <p className="text-sm text-blue-800 dark:text-blue-200">
-              The user will receive an email with instructions to complete their account setup.
-              They will need to sign in through your authentication provider to activate their account.
+              {t('dialogs.invite_user.email_instructions')}
             </p>
           </div>
 
@@ -304,14 +307,14 @@ export const InviteUserDialog: React.FC<InviteUserDialogProps> = ({
               onClick={handleClose}
               disabled={isSubmitting}
             >
-              Cancel
+              {t('common:buttons.cancel')}
             </Button>
             <Button
               type="submit"
               loading={isSubmitting}
-              loadingText="Sending..."
+              loadingText={t('buttons.sending')}
             >
-              Send Invitation
+              {t('dialogs.invite_user.send_button')}
             </Button>
           </DialogFooter>
         </form>

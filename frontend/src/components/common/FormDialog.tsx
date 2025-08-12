@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Button } from '@/components/ui/button';
 import { cn } from '@/utils/cn';
 import { LucideIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface FormDialogProps {
   isOpen: boolean;
@@ -38,8 +39,8 @@ export const FormDialog: React.FC<FormDialogProps> = ({
   description,
   children,
   onSubmit,
-  submitText = 'Save',
-  cancelText = 'Cancel',
+  submitText,
+  cancelText,
   isSubmitting = false,
   submitDisabled = false,
   submitVariant = 'default',
@@ -49,6 +50,7 @@ export const FormDialog: React.FC<FormDialogProps> = ({
   hideFooter = false,
   customFooter,
 }) => {
+  const { t } = useTranslation('common');
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit?.(e);
@@ -84,7 +86,7 @@ export const FormDialog: React.FC<FormDialogProps> = ({
                     onClick={onClose}
                     disabled={isSubmitting}
                   >
-                    {cancelText}
+                    {cancelText || t('buttons.cancel')}
                   </Button>
                   <Button
                     type="submit"
@@ -92,7 +94,7 @@ export const FormDialog: React.FC<FormDialogProps> = ({
                     disabled={submitDisabled || isSubmitting}
                     loading={isSubmitting}
                   >
-                    {submitText}
+                    {submitText || t('buttons.save')}
                   </Button>
                 </>
               )}

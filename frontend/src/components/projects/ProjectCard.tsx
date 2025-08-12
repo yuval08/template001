@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -24,13 +25,39 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
   onEdit,
   onDelete,
 }) => {
-  const getStatusConfig = (status: string) => {
+  const { t } = useTranslation('projects');
+  
+  const getStatusConfig = (status: string | number) => {
+    // Handle both string and numeric status values
+    let statusKey = '';
+    if (typeof status === 'number') {
+      const statusMap: Record<number, string> = {
+        1: 'planning',
+        2: 'in_progress',
+        3: 'on_hold',
+        4: 'completed',
+        5: 'cancelled'
+      };
+      statusKey = statusMap[status] || 'unknown';
+    } else {
+      statusKey = status.toLowerCase();
+    }
+
     const configs = {
-      active: { text: 'Active', color: 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' },
-      completed: { text: 'Completed', color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400' },
-      paused: { text: 'Paused', color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400' }
+      planning: { color: 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400' },
+      in_progress: { color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400' },
+      on_hold: { color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400' },
+      completed: { color: 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' },
+      cancelled: { color: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400' },
+      active: { color: 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400' },
+      paused: { color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400' }
     };
-    return configs[status as keyof typeof configs] || { text: 'Unknown', color: 'bg-gray-100 text-gray-800' };
+    
+    const config = configs[statusKey as keyof typeof configs] || configs.planning;
+    return {
+      text: t(`status.${statusKey}`),
+      color: config.color
+    };
   };
 
   const statusConfig = getStatusConfig(project.status);
@@ -83,7 +110,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm">
               <Calendar className="h-4 w-4 text-gray-400" />
-              <span className="text-gray-500 dark:text-gray-400">Start:</span>
+              <span className="text-gray-500 dark:text-gray-400">{t('labels.start')}</span>
               <span className="text-gray-900 dark:text-white">
                 {formatDate(project.startDate)}
               </span>
@@ -92,7 +119,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
             {project.endDate && (
               <div className="flex items-center gap-2 text-sm">
                 <CalendarX className="h-4 w-4 text-gray-400" />
-                <span className="text-gray-500 dark:text-gray-400">End:</span>
+                <span className="text-gray-500 dark:text-gray-400">{t('labels.end')}</span>
                 <span className="text-gray-900 dark:text-white">
                   {formatDate(project.endDate)}
                 </span>
@@ -101,7 +128,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
 
             <div className="flex items-center gap-2 text-sm">
               <Clock className="h-4 w-4 text-gray-400" />
-              <span className="text-gray-500 dark:text-gray-400">Created:</span>
+              <span className="text-gray-500 dark:text-gray-400">{t('labels.created')}</span>
               <span className="text-gray-900 dark:text-white">
                 {formatDate(project.createdAt)}
               </span>

@@ -1,12 +1,37 @@
 {
   "title": "Notificaciones",
+  "test_title": "Probar Notificaciones",
+  "test_description": "Herramientas de desarrollo para probar el sistema de notificaciones",
   "mark_as_read": "Marcar como leído",
   "mark_all_as_read": "Marcar todas como leídas",
   "delete_notification": "Eliminar notificación",
   "delete_all": "Eliminar todas",
+  "delete_selected": "Eliminar Seleccionadas",
+  "delete": "Eliminar",
   "no_notifications": "No hay notificaciones",
-  "unread_count": "{{count}} notificación sin leer",
-  "unread_count_plural": "{{count}} notificaciones sin leer",
+  "all_caught_up": "¡Todo al día!",
+  "all_caught_up_description": "¡Estás al día con todo!",
+  "refresh": "Actualizar",
+  "unread_count_one": "{{count}} notificación sin leer",
+  "unread_count_other": "{{count}} notificaciones sin leer",
+  "unread_status_one": "Tienes {{count}} notificación sin leer",
+  "unread_status_other": "Tienes {{count}} notificaciones sin leer",
+  "select_all": "Seleccionar todas ({{count}})",
+  "view_details": "Ver detalles →",
+  "filter": {
+    "by_type": "Filtrar por tipo",
+    "by_status": "Filtrar por estado",
+    "all_types": "Todos los Tipos",
+    "all": "Todas",
+    "unread": "Sin leer",
+    "read": "Leídas"
+  },
+  "types": {
+    "info": "Información",
+    "success": "Éxito",
+    "warning": "Advertencia",
+    "error": "Error"
+  },
   "dialogs": {
     "delete_notification": {
       "title": "Eliminar Notificación",
@@ -15,12 +40,107 @@
     "delete_all": {
       "title": "Eliminar Todas las Notificaciones",
       "description": "¿Estás seguro de que quieres eliminar todas las notificaciones? Esta acción no se puede deshacer."
+    },
+    "delete_selected": {
+      "title": "Eliminar Notificaciones Seleccionadas",
+      "description_one": "¿Estás seguro de que quieres eliminar {{count}} notificación seleccionada? Esta acción no se puede deshacer.",
+      "description_other": "¿Estás seguro de que quieres eliminar {{count}} notificaciones seleccionadas? Esta acción no se puede deshacer.",
+      "confirm_one": "Eliminar {{count}} Notificación",
+      "confirm_other": "Eliminar {{count}} Notificaciones"
     }
   },
   "messages": {
     "marked_as_read": "Notificación marcada como leída",
+    "notifications_marked_as_read_one": "{{count}} notificación marcada como leída",
+    "notifications_marked_as_read_other": "{{count}} notificaciones marcadas como leídas",
     "all_marked_as_read": "Todas las notificaciones marcadas como leídas",
     "notification_deleted": "Notificación eliminada",
-    "all_deleted": "Todas las notificaciones eliminadas"
+    "notifications_deleted_one": "{{count}} notificación eliminada",
+    "notifications_deleted_other": "{{count}} notificaciones eliminadas",
+    "all_deleted": "Todas las notificaciones eliminadas",
+    "notification_created_one": "{{count}} notificación creada",
+    "notification_created_other": "{{count}} notificaciones creadas"
+  },
+  "counts": {
+    "total_notifications_one": "{{count}} notificación total",
+    "total_notifications_other": "{{count}} notificaciones totales",
+    "unread_notifications_one": "{{count}} notificación sin leer",
+    "unread_notifications_other": "{{count}} notificaciones sin leer",
+    "read_notifications_one": "{{count}} notificación leída",
+    "read_notifications_other": "{{count}} notificaciones leídas",
+    "selected_notifications_one": "{{count}} notificación seleccionada",
+    "selected_notifications_other": "{{count}} notificaciones seleccionadas"
+  },
+  "test": {
+    "tabs": {
+      "quick": "Pruebas Rápidas",
+      "custom": "Personalizada",
+      "advanced": "Avanzado",
+      "stats": "Estadísticas"
+    },
+    "quick": {
+      "title": "Notificaciones de Prueba Rápida",
+      "description": "Crear notificaciones de prueba de diferentes tipos",
+      "info": "Notificación de Información",
+      "success": "Notificación de Éxito",
+      "warning": "Notificación de Advertencia",
+      "error": "Notificación de Error",
+      "realtime": "Probar Tiempo Real",
+      "simulate_job": "Simular Trabajo Largo"
+    },
+    "custom": {
+      "title": "Notificación Personalizada",
+      "description": "Crear una notificación con título y mensaje personalizados",
+      "title_label": "Título",
+      "title_placeholder": "Ingresa el título de la notificación",
+      "message_label": "Mensaje",
+      "message_placeholder": "Ingresa el mensaje de la notificación",
+      "create": "Crear Notificación Personalizada"
+    },
+    "advanced": {
+      "title": "Pruebas Avanzadas",
+      "description": "Operaciones masivas y pruebas del sistema",
+      "bulk_count": "Cantidad Masiva",
+      "create_bulk": "Crear {{count}} Notificaciones",
+      "bulk_limit": "Máximo 20 notificaciones a la vez",
+      "clear_all": "Eliminar Todas las Notificaciones",
+      "clear_warning": "Esto eliminará todas tus notificaciones permanentemente"
+    },
+    "stats": {
+      "title": "Estadísticas de Notificaciones",
+      "description": "Ver las estadísticas de tus notificaciones",
+      "refresh": "Actualizar Estadísticas",
+      "total": "Total de Notificaciones",
+      "unread": "Sin leer",
+      "by_type": "Por Tipo"
+    },
+    "guide": {
+      "title": "Guía de Pruebas",
+      "step1": "Usa Pruebas Rápidas para crear notificaciones de diferentes tipos",
+      "step2": "Revisa el ícono de campana en el encabezado para ver notificaciones en la bandeja",
+      "step3": "Navega a la página de Notificaciones para ver todas las notificaciones",
+      "step4": "Prueba actualizaciones en tiempo real con el botón de Tiempo Real",
+      "step5": "Simula un trabajo de larga duración para ver notificaciones de progreso",
+      "step6": "Usa operaciones masivas para probar el rendimiento con muchas notificaciones",
+      "step7": "Prueba marcar como leído, eliminar y acciones masivas",
+      "step8": "Elimina todas las notificaciones cuando termines de probar"
+    },
+    "toasts": {
+      "created": "Notificación creada",
+      "custom_created": "Notificación personalizada creada",
+      "bulk_created": "Notificaciones masivas creadas",
+      "realtime_test": "Prueba de tiempo real",
+      "job_started": "Simulación de trabajo iniciada",
+      "cleared": "Notificaciones eliminadas",
+      "stats_retrieved": "Estadísticas obtenidas",
+      "stats_updated": "Estadísticas actualizadas",
+      "create_failed": "Error al crear notificación",
+      "bulk_failed": "Error al crear notificaciones masivas",
+      "realtime_failed": "Error al probar tiempo real",
+      "job_failed": "Error al simular trabajo",
+      "clear_failed": "Error al eliminar notificaciones",
+      "stats_failed": "Error al obtener estadísticas",
+      "enter_title_or_message": "Por favor ingresa un título o mensaje"
+    }
   }
 }

@@ -2,6 +2,7 @@ import React from 'react';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useTranslation } from 'react-i18next';
 
 interface ErrorFallbackProps {
   error?: Error;
@@ -18,25 +19,26 @@ interface ErrorFallbackProps {
 export function ErrorFallback({
   error,
   resetError,
-  title = 'Something went wrong',
-  description = 'An error occurred while loading this content.',
+  title,
+  description,
   showRetry = true,
   className,
 }: ErrorFallbackProps) {
+  const { t } = useTranslation('common');
   return (
     <Card className={className}>
       <CardHeader className="text-center">
         <div className="mx-auto mb-2 w-8 h-8 rounded-full bg-destructive/10 flex items-center justify-center">
           <AlertTriangle className="w-4 h-4 text-destructive" />
         </div>
-        <CardTitle className="text-lg">{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <CardTitle className="text-lg">{title || t('errors.somethingWentWrong')}</CardTitle>
+        <CardDescription>{description || t('errors.errorOccurred')}</CardDescription>
       </CardHeader>
       
       <CardContent>
         {process.env.NODE_ENV === 'development' && error && (
           <div className="mb-4 p-3 bg-destructive/5 border border-destructive/20 rounded text-sm">
-            <strong>Error:</strong> {error.message}
+            <strong>{t('errors.errorLabel')}</strong> {error.message}
           </div>
         )}
         
@@ -44,7 +46,7 @@ export function ErrorFallback({
           <div className="flex justify-center">
             <Button onClick={resetError} size="sm" className="flex items-center gap-2">
               <RefreshCw className="w-3 h-3" />
-              Try Again
+              {t('errors.tryAgain')}
             </Button>
           </div>
         )}
@@ -65,6 +67,7 @@ export function InlineError({
   onRetry?: () => void; 
   className?: string; 
 }) {
+  const { t } = useTranslation('common');
   return (
     <div className={`flex items-center gap-3 p-3 bg-destructive/5 border border-destructive/20 rounded-lg ${className}`}>
       <AlertTriangle className="w-4 h-4 text-destructive flex-shrink-0" />
@@ -72,7 +75,7 @@ export function InlineError({
       {onRetry && (
         <Button variant="outline" size="sm" onClick={onRetry} className="flex items-center gap-1">
           <RefreshCw className="w-3 h-3" />
-          Retry
+          {t('errors.retry')}
         </Button>
       )}
     </div>

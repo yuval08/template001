@@ -3,27 +3,90 @@
   "subtitle": "Gestionar y seguir tus proyectos",
   "table": {
     "headers": {
-      "name": "Nombre",
+      "name": "Nombre del Proyecto",
       "description": "Descripción",
       "status": "Estado",
+      "start_date": "Fecha de Inicio",
+      "end_date": "Fecha de Fin",
       "created": "Creado",
       "updated": "Actualizado",
       "actions": "Acciones"
     },
     "search_placeholder": "Buscar proyectos...",
-    "no_results": "No se encontraron proyectos"
+    "no_results": "No se encontraron proyectos",
+    "loading": "Cargando proyectos...",
+    "error_loading": "Error al cargar proyectos",
+    "showing": "Mostrando {{start}} a {{end}} de {{total}}",
+    "pagination_info_one": "Mostrando {{start}} a {{end}} de {{total}} proyecto",
+    "pagination_info_other": "Mostrando {{start}} a {{end}} de {{total}} proyectos",
+    "projects_found_one": "{{count}} proyecto encontrado",
+    "projects_found_other": "{{count}} proyectos encontrados",
+    "projects_selected_one": "{{count}} proyecto seleccionado",
+    "projects_selected_other": "{{count}} proyectos seleccionados",
+    "projects_filtered_one": "{{count}} proyecto filtrado",
+    "projects_filtered_other": "{{count}} proyectos filtrados"
   },
   "actions": {
     "create_project": "Crear Proyecto",
     "edit_project": "Editar Proyecto",
     "delete_project": "Eliminar Proyecto",
-    "view_details": "Ver Detalles"
+    "view_details": "Ver Detalles",
+    "export_csv": "Exportar CSV",
+    "clear_filters": "Limpiar Filtros"
   },
   "status": {
-    "active": "Activo",
+    "planning": "Planificación",
+    "in_progress": "En Progreso",
+    "on_hold": "En Espera",
     "completed": "Completado",
+    "cancelled": "Cancelado",
+    "active": "Activo",
     "paused": "Pausado",
-    "cancelled": "Cancelado"
+    "unknown": "Desconocido"
+  },
+  "filters": {
+    "all_statuses": "Todos los Estados",
+    "filter_by_status": "Filtrar por Estado"
+  },
+  "pagination": {
+    "showing": "Mostrando",
+    "to": "a",
+    "of": "de",
+    "results": "resultados",
+    "projects": "proyectos",
+    "page": "Página",
+    "rows_per_page": "Filas por página:",
+    "previous": "Anterior",
+    "next": "Siguiente"
+  },
+  "labels": {
+    "start": "Inicio:",
+    "end": "Fin:",
+    "created": "Creado:"
+  },
+  "messages": {
+    "no_projects_match_filters": "No hay proyectos que coincidan con tus filtros",
+    "project_created": "Proyecto creado exitosamente",
+    "project_updated": "Proyecto actualizado exitosamente",
+    "project_deleted": "Proyecto eliminado exitosamente",
+    "projects_created_one": "{{count}} proyecto creado exitosamente",
+    "projects_created_other": "{{count}} proyectos creados exitosamente",
+    "projects_updated_one": "{{count}} proyecto actualizado exitosamente",
+    "projects_updated_other": "{{count}} proyectos actualizados exitosamente",
+    "projects_deleted_one": "{{count}} proyecto eliminado exitosamente",
+    "projects_deleted_other": "{{count}} proyectos eliminados exitosamente"
+  },
+  "counts": {
+    "active_projects_one": "{{count}} proyecto activo",
+    "active_projects_other": "{{count}} proyectos activos",
+    "completed_projects_one": "{{count}} proyecto completado",
+    "completed_projects_other": "{{count}} proyectos completados",
+    "paused_projects_one": "{{count}} proyecto pausado",
+    "paused_projects_other": "{{count}} proyectos pausados",
+    "cancelled_projects_one": "{{count}} proyecto cancelado",
+    "cancelled_projects_other": "{{count}} proyectos cancelados",
+    "total_projects_one": "{{count}} proyecto en total",
+    "total_projects_other": "{{count}} proyectos en total"
   },
   "dialogs": {
     "create_project": {
@@ -38,10 +101,5 @@
       "description": "Descripción",
       "status": "Estado"
     }
-  },
-  "messages": {
-    "project_created": "Proyecto creado exitosamente",
-    "project_updated": "Proyecto actualizado exitosamente",
-    "project_deleted": "Proyecto eliminado exitosamente"
   }
 }

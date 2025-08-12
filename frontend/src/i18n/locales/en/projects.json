@@ -3,27 +3,63 @@
   "subtitle": "Manage and track your projects",
   "table": {
     "headers": {
-      "name": "Name",
+      "name": "Project Name",
       "description": "Description",
       "status": "Status",
+      "start_date": "Start Date",
+      "end_date": "End Date",
       "created": "Created",
       "updated": "Updated",
       "actions": "Actions"
     },
     "search_placeholder": "Search projects...",
-    "no_results": "No projects found"
+    "no_results": "No projects found",
+    "loading": "Loading projects...",
+    "error_loading": "Error loading projects"
   },
   "actions": {
     "create_project": "Create Project",
     "edit_project": "Edit Project",
     "delete_project": "Delete Project",
-    "view_details": "View Details"
+    "view_details": "View Details",
+    "export_csv": "Export CSV",
+    "clear_filters": "Clear Filters"
   },
   "status": {
-    "active": "Active",
+    "planning": "Planning",
+    "in_progress": "In Progress",
+    "on_hold": "On Hold",
     "completed": "Completed",
+    "cancelled": "Cancelled",
+    "active": "Active",
     "paused": "Paused",
-    "cancelled": "Cancelled"
+    "unknown": "Unknown"
+  },
+  "filters": {
+    "all_statuses": "All Statuses",
+    "filter_by_status": "Filter by Status"
+  },
+  "pagination": {
+    "showing": "Showing",
+    "to": "to",
+    "of": "of",
+    "results": "results",
+    "projects": "projects",
+    "page": "Page",
+    "rows_per_page": "Rows per page:",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "labels": {
+    "start": "Start:",
+    "end": "End:",
+    "created": "Created:"
+  },
+  "messages": {
+    "no_projects_match_filters": "No projects match your filters",
+    "project_created": "Project created successfully",
+    "project_updated": "Project updated successfully",
+    "project_deleted": "Project deleted successfully"
   },
   "dialogs": {
     "create_project": {
@@ -38,10 +74,5 @@
       "description": "Description",
       "status": "Status"
     }
-  },
-  "messages": {
-    "project_created": "Project created successfully",
-    "project_updated": "Project updated successfully",
-    "project_deleted": "Project deleted successfully"
   }
 }

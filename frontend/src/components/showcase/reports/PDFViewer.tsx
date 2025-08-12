@@ -1,5 +1,6 @@
 import React from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -48,15 +49,16 @@ export const PDFViewer: React.FC<PDFViewerProps> = ({
   onToggleFullscreen,
   onDownload
 }) => {
+  const { t } = useTranslation('dashboard');
   if (!pdfData) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>PDF Viewer</CardTitle>
+          <CardTitle>{t('reports.pdf_viewer')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center h-64 border-2 border-dashed border-gray-300 rounded-lg">
-            <p className="text-gray-500">No PDF loaded. Click "Load Sample Report" to begin.</p>
+            <p className="text-gray-500">{t('reports.no_pdf_loaded')}</p>
           </div>
         </CardContent>
       </Card>
@@ -67,10 +69,10 @@ export const PDFViewer: React.FC<PDFViewerProps> = ({
     <Card className={isFullscreen ? "fixed inset-0 z-50 rounded-none" : ""}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle>PDF Viewer</CardTitle>
+          <CardTitle>{t('reports.pdf_viewer')}</CardTitle>
           <div className="flex items-center space-x-2">
             <Badge variant="outline">
-              Page {pageNumber} of {numPages}
+              {t('reports.page_of', { current: pageNumber, total: numPages })}
             </Badge>
             <Badge variant="outline">
               {Math.round(scale * 100)}%
@@ -93,7 +95,7 @@ export const PDFViewer: React.FC<PDFViewerProps> = ({
             </Button>
             
             <span className="text-sm">
-              Page {pageNumber} of {numPages}
+              {t('reports.page_of', { current: pageNumber, total: numPages })}
             </span>
             
             <Button
@@ -146,7 +148,7 @@ export const PDFViewer: React.FC<PDFViewerProps> = ({
               }
               error={
                 <div className="flex items-center justify-center h-64 text-red-500">
-                  Failed to load PDF
+                  {t('reports.failed_to_load_pdf')}
                 </div>
               }
             >

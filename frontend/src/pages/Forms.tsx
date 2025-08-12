@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,27 +14,32 @@ import { Upload, X } from 'lucide-react';
 import ReactSelect from 'react-select';
 import { PageLayout } from '@/components/common';
 
-const categoryOptions = [
-  { value: 'web-development', label: 'Web Development' },
-  { value: 'mobile-development', label: 'Mobile Development' },
-  { value: 'design', label: 'Design' },
-  { value: 'consulting', label: 'Consulting' },
-  { value: 'other', label: 'Other' },
-];
-
-const industryOptions = [
-  { value: 'technology', label: 'Technology' },
-  { value: 'healthcare', label: 'Healthcare' },
-  { value: 'finance', label: 'Finance' },
-  { value: 'retail', label: 'Retail' },
-  { value: 'education', label: 'Education' },
-  { value: 'manufacturing', label: 'Manufacturing' },
-  { value: 'other', label: 'Other' },
-];
+// These will be replaced with dynamic translations below
 
 const Forms: React.FC = () => {
+  const { t } = useTranslation('showcase');
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const fileUploadMutation = useFileUpload();
+
+  // Dynamic category options using translations
+  const categoryOptions = [
+    { value: 'web-development', label: t('forms.categories.webDevelopment') },
+    { value: 'mobile-development', label: t('forms.categories.mobileDevelopment') },
+    { value: 'design', label: t('forms.categories.design') },
+    { value: 'consulting', label: t('forms.categories.consulting') },
+    { value: 'other', label: t('forms.categories.other') },
+  ];
+
+  // Dynamic industry options using translations
+  const industryOptions = [
+    { value: 'technology', label: t('forms.industries.technology') },
+    { value: 'healthcare', label: t('forms.industries.healthcare') },
+    { value: 'finance', label: t('forms.industries.finance') },
+    { value: 'retail', label: t('forms.industries.retail') },
+    { value: 'education', label: t('forms.industries.education') },
+    { value: 'manufacturing', label: t('forms.industries.manufacturing') },
+    { value: 'other', label: t('forms.industries.other') },
+  ];
 
   const {
     register,
@@ -98,9 +104,9 @@ const Forms: React.FC = () => {
       });
 
       setUploadedFiles([...uploadedFiles, file]);
-      toast.success({ title: 'File uploaded successfully' });
+      toast.success({ title: t('forms.contactForm.fileUploaded') });
     } catch (error) {
-      toast.error({ title: 'File upload failed', description: 'Please try again.' });
+      toast.error({ title: t('forms.contactForm.fileUploadError'), description: t('forms.contactForm.errorDescription') });
     }
   };
 
@@ -111,16 +117,16 @@ const Forms: React.FC = () => {
 
   return (
     <PageLayout
-      title="Forms Showcase"
-      description="Comprehensive form examples using React Hook Form, Zod validation, and various input types."
+      title={t('forms.showcase.title')}
+      description={t('forms.showcase.description')}
       maxWidth="4xl"
     >
 
       <Card>
         <CardHeader>
-          <CardTitle>Contact Form</CardTitle>
+          <CardTitle>{t('forms.contactForm.title')}</CardTitle>
           <CardDescription>
-            A comprehensive form showcasing all HTML input types, validation, and file upload functionality.
+            {t('forms.contactForm.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -128,7 +134,7 @@ const Forms: React.FC = () => {
             {/* Basic Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="firstName">First Name *</Label>
+                <Label htmlFor="firstName">{t('forms.contactForm.firstName')} *</Label>
                 <Input
                   id="firstName"
                   {...register('firstName')}

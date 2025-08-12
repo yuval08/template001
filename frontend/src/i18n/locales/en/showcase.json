@@ -1,0 +1,449 @@
+{
+  "ui": {
+    "title": "UI Components Showcase",
+    "description": "A comprehensive display of all available UI components in the system",
+    "tabs": {
+      "buttons": "Buttons",
+      "forms": "Forms",
+      "feedback": "Feedback",
+      "display": "Display",
+      "layout": "Layout",
+      "navigation": "Navigation"
+    }
+  },
+  "buttons": {
+    "title": "Buttons",
+    "description": "Various button styles and states",
+    "variants": {
+      "title": "Variants",
+      "default": "Default",
+      "secondary": "Secondary",
+      "destructive": "Destructive",
+      "outline": "Outline",
+      "ghost": "Ghost",
+      "link": "Link"
+    },
+    "sizes": {
+      "title": "Sizes",
+      "small": "Small",
+      "default": "Default",
+      "large": "Large"
+    },
+    "states": {
+      "title": "States",
+      "active": "Active",
+      "disabled": "Disabled",
+      "withIcon": "With Icon"
+    },
+    "showcase": {
+      "title": "Buttons Showcase",
+      "description": "Comprehensive examples of button variants, sizes, states, and interactive patterns using Shadcn/ui components.",
+      "interactive": {
+        "title": "Interactive Examples",
+        "description": "Real-world button usage patterns with state management and user feedback."
+      },
+      "withIcons": {
+        "title": "Buttons with Icons",
+        "description": "Icons can be positioned before, after, or as the sole content of buttons.",
+        "leftIcons": "Left Icons",
+        "rightIcons": "Right Icons",
+        "iconOnly": "Icon Only"
+      },
+      "groups": {
+        "title": "Button Groups",
+        "description": "Group related buttons together for better organization and visual hierarchy.",
+        "horizontal": "Horizontal Group",
+        "actions": "Action Group",
+        "primarySecondary": "Primary/Secondary Actions"
+      },
+      "asChild": {
+        "title": "Button as Child (asChild prop)",
+        "description": "Use the asChild prop to render custom components with button styling. The asChild prop requires exactly one child element."
+      },
+      "advanced": {
+        "title": "Advanced Patterns & Testing",
+        "description": "Complex button patterns including loading states, conditional rendering, and edge cases.",
+        "loadingStates": "Complex Loading States",
+        "navigationPatterns": "Navigation Patterns (Fixed asChild)",
+        "edgeCases": "Edge Cases & Accessibility"
+      }
+    },
+    "actions": {
+      "download": "Download",
+      "sendEmail": "Send Email",
+      "addItem": "Add Item",
+      "continue": "Continue",
+      "search": "Search",
+      "previous": "Previous",
+      "next": "Next",
+      "save": "Save",
+      "preview": "Preview",
+      "cancel": "Cancel",
+      "submit": "Submit Form",
+      "saveAsDraft": "Save as Draft",
+      "externalLink": "External Link",
+      "internalAnchor": "Internal Anchor",
+      "uploadFile": "Upload File",
+      "customDiv": "Custom Div",
+      "reset": "Reset",
+      "saveDraft": "Save Draft",
+      "edit": "Edit",
+      "duplicate": "Duplicate",
+      "delete": "Delete",
+      "uploadFiles": "Upload Files",
+      "downloadReport": "Download Report",
+      "dashboard": "Dashboard",
+      "viewReports": "View Reports",
+      "contactSupport": "Contact Support",
+      "unavailableAction": "Unavailable Action"
+    },
+    "loadingStates": {
+      "saving": "Saving...",
+      "deleting": "Deleting...",
+      "uploading": "Uploading...",
+      "downloading": "Downloading..."
+    },
+    "toastMessages": {
+      "defaultClicked": "Default button clicked!",
+      "destructiveAction": "Destructive action!",
+      "outlineClicked": "Outline button clicked!",
+      "secondaryClicked": "Secondary button clicked!",
+      "ghostClicked": "Ghost button clicked!",
+      "linkClicked": "Link button clicked!",
+      "smallClicked": "Small button clicked!",
+      "defaultSizeClicked": "Default size clicked!",
+      "largeClicked": "Large button clicked!",
+      "iconClicked": "Icon button clicked!",
+      "activeClicked": "Active button clicked!",
+      "downloadStarted": "Download started!",
+      "emailSent": "Email sent!",
+      "itemAdded": "Item added!",
+      "proceeding": "Proceeding...",
+      "searching": "Searching...",
+      "settingsOpened": "Settings opened!",
+      "liked": "Liked!",
+      "starred": "Starred!",
+      "upvoted": "Upvoted!",
+      "previousPage": "Previous page",
+      "currentPage": "Current: Page 2",
+      "nextPage": "Next page",
+      "documentSaved": "Document saved!",
+      "previewOpened": "Preview opened!",
+      "actionCancelled": "Action cancelled!",
+      "formSubmitted": "Form submitted!",
+      "draftSaved": "Draft saved!",
+      "customDivClicked": "Custom div button clicked!",
+      "formReset": "Form reset!",
+      "editModeActivated": "Edit mode activated!",
+      "itemDuplicated": "Item duplicated!",
+      "itemDeleted": "Item deleted!",
+      "wouldNavigate": "Would navigate to",
+      "veryLongText": "Very long button text that might wrap to multiple lines in small containers",
+      "addedToFavorites": "Added to favorites!",
+      "fileSelected": "File selected:",
+      "saveOperationCompleted": "Save operation completed!",
+      "deleteOperationCompleted": "Delete operation completed!",
+      "uploadCompleted": "Upload completed!",
+      "downloadCompleted": "Download completed!",
+      "refreshCompleted": "Refresh completed!"
+    },
+    "ariaLabels": {
+      "favoriteItem": "Favorite this item",
+      "actionUnavailable": "This action is currently unavailable"
+    },
+    "longButtonText": "Very Long Button Text That Demonstrates Wrapping"
+  },
+  "badges": {
+    "title": "Badges",
+    "description": "Labels and status indicators",
+    "variants": {
+      "default": "Default",
+      "secondary": "Secondary",
+      "destructive": "Destructive",
+      "outline": "Outline",
+      "success": "Success",
+      "warning": "Warning",
+      "info": "Info",
+      "purple": "Purple"
+    },
+    "statuses": {
+      "active": "Active",
+      "statusIndicator": "Status indicator"
+    }
+  },
+  "forms": {
+    "title": "Form Controls",
+    "description": "Input fields and form elements",
+    "showcase": {
+      "title": "Forms Showcase",
+      "description": "Comprehensive form examples with validation, file uploads, and advanced controls using React Hook Form and Zod."
+    },
+    "textInputs": {
+      "textInput": "Text Input",
+      "textPlaceholder": "Enter text...",
+      "emailInput": "Email Input",
+      "emailPlaceholder": "email@example.com",
+      "passwordInput": "Password Input",
+      "passwordPlaceholder": "Enter password...",
+      "disabledInput": "Disabled Input",
+      "disabledPlaceholder": "Disabled",
+      "textarea": "Textarea",
+      "textareaPlaceholder": "Enter your message..."
+    },
+    "select": {
+      "title": "Select",
+      "placeholder": "Select an option",
+      "fruits": "Fruits",
+      "vegetables": "Vegetables",
+      "options": {
+        "apple": "Apple",
+        "banana": "Banana",
+        "orange": "Orange",
+        "carrot": "Carrot",
+        "potato": "Potato",
+        "tomato": "Tomato"
+      }
+    },
+    "checkboxes": {
+      "title": "Checkboxes",
+      "acceptTerms": "Accept terms and conditions",
+      "promotional": "Send me promotional emails",
+      "disabled": "Disabled checkbox"
+    },
+    "radioGroup": {
+      "title": "Radio Group",
+      "option1": "Option 1",
+      "option2": "Option 2",
+      "option3": "Option 3"
+    },
+    "switches": {
+      "title": "Switches",
+      "notifications": "Enable notifications",
+      "darkMode": "Dark mode",
+      "disabled": "Disabled switch"
+    },
+    "contactForm": {
+      "title": "Contact Us",
+      "description": "Get in touch with us using the form below.",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "company": "Company Name",
+      "category": "Project Category",
+      "industry": "Industry",
+      "message": "Message",
+      "messagePlaceholder": "Tell us about your project requirements...",
+      "contactMethod": "Preferred Contact Method",
+      "budget": "Project Budget",
+      "timeline": "Timeline",
+      "priority": "Priority Level",
+      "newsletter": "Subscribe to our newsletter",
+      "fileUpload": "Attach Files",
+      "fileUploadDescription": "Upload relevant documents (PDF, DOC, images)",
+      "submit": "Send Message",
+      "submitting": "Sending...",
+      "success": "Form submitted successfully!",
+      "successDescription": "Thank you for your submission.",
+      "error": "Submission failed",
+      "errorDescription": "Please try again.",
+      "fileTooLarge": "File too large",
+      "fileTooLargeDescription": "Please select a file smaller than 5MB.",
+      "fileUploaded": "File uploaded successfully!",
+      "fileUploadError": "File upload failed",
+      "removeFile": "Remove file"
+    },
+    "categories": {
+      "webDevelopment": "Web Development",
+      "mobileDevelopment": "Mobile Development",
+      "design": "Design",
+      "consulting": "Consulting",
+      "other": "Other"
+    },
+    "industries": {
+      "technology": "Technology",
+      "healthcare": "Healthcare",
+      "finance": "Finance",
+      "retail": "Retail",
+      "education": "Education",
+      "manufacturing": "Manufacturing",
+      "other": "Other"
+    },
+    "contactMethods": {
+      "email": "Email",
+      "phone": "Phone",
+      "both": "Both"
+    },
+    "budgets": {
+      "under10k": "Under $10,000",
+      "10k-50k": "$10,000 - $50,000",
+      "50k-100k": "$50,000 - $100,000",
+      "over100k": "Over $100,000"
+    },
+    "timelines": {
+      "asap": "ASAP",
+      "1month": "Within 1 month",
+      "3months": "Within 3 months",
+      "flexible": "Flexible"
+    },
+    "priorities": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "urgent": "Urgent"
+    }
+  },
+  "alerts": {
+    "title": "Alerts",
+    "description": "Different alert styles for various purposes",
+    "defaultAlert": "Default Alert",
+    "defaultDescription": "This is a default alert with an icon and description.",
+    "success": "Success!",
+    "successDescription": "Your operation completed successfully.",
+    "warning": "Warning",
+    "warningDescription": "Please review this important information.",
+    "error": "Error",
+    "errorDescription": "Something went wrong. Please try again later.",
+    "information": "Information",
+    "informationDescription": "Here's some helpful information for you."
+  },
+  "progress": {
+    "title": "Progress Indicators",
+    "description": "Loading and progress states",
+    "progressBar": "Progress Bar",
+    "differentValues": "Different Progress Values",
+    "decrease": "-10%",
+    "increase": "+10%"
+  },
+  "toasts": {
+    "title": "Toasts",
+    "description": "Temporary notification messages",
+    "showSuccess": "Show Success Toast",
+    "showInfo": "Show Info Toast",
+    "showWarning": "Show Warning Toast",
+    "showError": "Show Error Toast",
+    "successMessage": "Success message!",
+    "infoMessage": "Info message!",
+    "warningMessage": "Warning message!",
+    "errorMessage": "Error message!"
+  },
+  "avatars": {
+    "title": "Avatars",
+    "description": "User profile images and fallbacks"
+  },
+  "skeleton": {
+    "title": "Skeleton Loading",
+    "description": "Loading placeholders for content"
+  },
+  "dialogs": {
+    "title": "Dialogs",
+    "description": "Modal dialogs for user interactions",
+    "openDialog": "Open Dialog",
+    "confirmTitle": "Are you sure?",
+    "confirmDescription": "This action cannot be undone. This will permanently delete your account and remove your data from our servers.",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "actionConfirmed": "Action confirmed!"
+  },
+  "cards": {
+    "title": "Cards",
+    "description": "Container components for grouping content",
+    "basicCard": "Basic Card",
+    "basicDescription": "A simple card with header and content",
+    "basicContent": "This is the card content area where you can place any content.",
+    "withFooter": "Card with Footer",
+    "footerDescription": "Includes action buttons",
+    "footerContent": "Cards can also have footers for actions.",
+    "withIcon": "With Icon",
+    "iconDescription": "Card with icon in title",
+    "highlighted": "Highlighted Card",
+    "highlightedDescription": "With primary border color",
+    "highlightedContent": "This card has a colored border for emphasis."
+  },
+  "tabs": {
+    "title": "Tabs",
+    "description": "Tabbed navigation for organizing content",
+    "tab1": "Tab 1",
+    "tab2": "Tab 2",
+    "tab3": "Tab 3",
+    "tab1Content": "Tab 1 Content",
+    "tab2Content": "Tab 2 Content",
+    "tab3Content": "Tab 3 Content",
+    "content1": "This is the content for the first tab.",
+    "content2": "This is the content for the second tab.",
+    "content3": "This is the content for the third tab."
+  },
+  "tables": {
+    "title": "Tables Showcase",
+    "description": "Data tables with sorting, filtering, pagination, and advanced features using TanStack Table.",
+    "basicTable": {
+      "title": "Basic Data Table",
+      "description": "Simple table with sorting and basic functionality."
+    },
+    "advancedTable": {
+      "title": "Advanced Data Table",
+      "description": "Feature-rich table with filtering, pagination, row selection, and column customization."
+    },
+    "columns": {
+      "id": "ID",
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "department": "Department",
+      "status": "Status",
+      "joinDate": "Join Date",
+      "salary": "Salary",
+      "actions": "Actions"
+    },
+    "statuses": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "pending": "Pending"
+    },
+    "roles": {
+      "admin": "Admin",
+      "manager": "Manager",
+      "employee": "Employee",
+      "contractor": "Contractor"
+    },
+    "departments": {
+      "engineering": "Engineering",
+      "design": "Design",
+      "marketing": "Marketing",
+      "sales": "Sales",
+      "hr": "Human Resources"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "view": "View Details"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page",
+      "of": "of",
+      "rows": "rows"
+    },
+    "search": "Search employees...",
+    "noResults": "No results found.",
+    "loading": "Loading...",
+    "error": "Failed to load data"
+  },
+  "inputs": {
+    "title": "Inputs Showcase",
+    "description": "Comprehensive input components and form controls with validation examples.",
+    "basicInputs": {
+      "title": "Basic Input Controls",
+      "description": "Essential form input components for data collection."
+    },
+    "advancedInputs": {
+      "title": "Advanced Input Components",
+      "description": "Specialized input controls with enhanced functionality."
+    },
+    "validation": {
+      "title": "Input Validation Examples",
+      "description": "Form validation patterns with real-time feedback."
+    }
+  }
+}
