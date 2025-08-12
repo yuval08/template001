@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name and a value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion by way of the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  
+  <!-- Common validation messages -->
+  <data name="Validation.Required" xml:space="preserve">
+    <value>This field is required.</value>
+  </data>
+  <data name="Validation.Email" xml:space="preserve">
+    <value>Please enter a valid email address.</value>
+  </data>
+  <data name="Validation.MinLength" xml:space="preserve">
+    <value>This field must be at least {0} characters long.</value>
+  </data>
+  <data name="Validation.MaxLength" xml:space="preserve">
+    <value>This field cannot exceed {0} characters.</value>
+  </data>
+  <data name="Validation.Range" xml:space="preserve">
+    <value>Value must be between {0} and {1}.</value>
+  </data>
+  
+  <!-- Authentication messages -->
+  <data name="Auth.LoginSuccess" xml:space="preserve">
+    <value>Successfully logged in.</value>
+  </data>
+  <data name="Auth.LogoutSuccess" xml:space="preserve">
+    <value>Successfully logged out.</value>
+  </data>
+  <data name="Auth.InvalidCredentials" xml:space="preserve">
+    <value>Invalid email or password.</value>
+  </data>
+  <data name="Auth.AccountLocked" xml:space="preserve">
+    <value>Account is locked. Please contact administrator.</value>
+  </data>
+  <data name="Auth.Unauthorized" xml:space="preserve">
+    <value>You are not authorized to perform this action.</value>
+  </data>
+  
+  <!-- General messages -->
+  <data name="General.Success" xml:space="preserve">
+    <value>Operation completed successfully.</value>
+  </data>
+  <data name="General.Error" xml:space="preserve">
+    <value>An error occurred while processing your request.</value>
+  </data>
+  <data name="General.NotFound" xml:space="preserve">
+    <value>The requested resource was not found.</value>
+  </data>
+  <data name="General.Loading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="General.Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="General.Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="General.Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="General.Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="General.Create" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="General.Update" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  
+  <!-- Entity-specific messages -->
+  <data name="User.Created" xml:space="preserve">
+    <value>User created successfully.</value>
+  </data>
+  <data name="User.Updated" xml:space="preserve">
+    <value>User updated successfully.</value>
+  </data>
+  <data name="User.Deleted" xml:space="preserve">
+    <value>User deleted successfully.</value>
+  </data>
+  <data name="User.NotFound" xml:space="preserve">
+    <value>User not found.</value>
+  </data>
+  
+  <data name="Project.Created" xml:space="preserve">
+    <value>Project created successfully.</value>
+  </data>
+  <data name="Project.Updated" xml:space="preserve">
+    <value>Project updated successfully.</value>
+  </data>
+  <data name="Project.Deleted" xml:space="preserve">
+    <value>Project deleted successfully.</value>
+  </data>
+  <data name="Project.NotFound" xml:space="preserve">
+    <value>Project not found.</value>
+  </data>
+  
+  <!-- Email messages -->
+  <data name="Email.InvitationSubject" xml:space="preserve">
+    <value>You're invited to join {0}</value>
+  </data>
+  <data name="Email.SendError" xml:space="preserve">
+    <value>Failed to send email. Please try again later.</value>
+  </data>
+  <data name="Email.SendSuccess" xml:space="preserve">
+    <value>Email sent successfully.</value>
+  </data>
+  
+  <!-- Specific validation messages -->
+  <data name="Validation.UserDataRequired" xml:space="preserve">
+    <value>User data is required.</value>
+  </data>
+  <data name="Validation.EmailRequired" xml:space="preserve">
+    <value>Email is required.</value>
+  </data>
+  <data name="Validation.InvalidEmailFormat" xml:space="preserve">
+    <value>Invalid email format.</value>
+  </data>
+  <data name="Validation.EmailMaxLength" xml:space="preserve">
+    <value>Email must not exceed {0} characters.</value>
+  </data>
+  <data name="Validation.FirstNameRequired" xml:space="preserve">
+    <value>First name is required.</value>
+  </data>
+  <data name="Validation.FirstNameMaxLength" xml:space="preserve">
+    <value>First name must not exceed {0} characters.</value>
+  </data>
+  <data name="Validation.FirstNameInvalidChars" xml:space="preserve">
+    <value>First name contains invalid characters.</value>
+  </data>
+  <data name="Validation.LastNameRequired" xml:space="preserve">
+    <value>Last name is required.</value>
+  </data>
+  <data name="Validation.LastNameMaxLength" xml:space="preserve">
+    <value>Last name must not exceed {0} characters.</value>
+  </data>
+  <data name="Validation.LastNameInvalidChars" xml:space="preserve">
+    <value>Last name contains invalid characters.</value>
+  </data>
+  <data name="Validation.RoleRequired" xml:space="preserve">
+    <value>Role is required.</value>
+  </data>
+  <data name="Validation.InvalidRole" xml:space="preserve">
+    <value>Invalid role. Must be one of: {0}.</value>
+  </data>
+  <data name="Validation.DepartmentMaxLength" xml:space="preserve">
+    <value>Department must not exceed {0} characters.</value>
+  </data>
+  <data name="Validation.JobTitleMaxLength" xml:space="preserve">
+    <value>Job title must not exceed {0} characters.</value>
+  </data>
+  <data name="Validation.UserIdRequired" xml:space="preserve">
+    <value>User ID is required.</value>
+  </data>
+  <data name="Validation.ProjectDataRequired" xml:space="preserve">
+    <value>Project data is required.</value>
+  </data>
+  <data name="Validation.ProjectNameRequired" xml:space="preserve">
+    <value>Project name is required.</value>
+  </data>
+  <data name="Validation.ProjectNameMaxLength" xml:space="preserve">
+    <value>Project name must not exceed {0} characters.</value>
+  </data>
+  <data name="Validation.ProjectDescriptionRequired" xml:space="preserve">
+    <value>Project description is required.</value>
+  </data>
+  <data name="Validation.ProjectDescriptionMaxLength" xml:space="preserve">
+    <value>Description must not exceed {0} characters.</value>
+  </data>
+  <data name="Validation.InvalidProjectStatus" xml:space="preserve">
+    <value>Invalid project status.</value>
+  </data>
+  <data name="Validation.BudgetMustBePositive" xml:space="preserve">
+    <value>Budget must be a positive value.</value>
+  </data>
+  <data name="Validation.PriorityRange" xml:space="preserve">
+    <value>Priority must be between {0} and {1}.</value>
+  </data>
+  <data name="Validation.StartDateAfterEndDate" xml:space="preserve">
+    <value>Start date must be before or equal to end date.</value>
+  </data>
+  <data name="Validation.ClientNameMaxLength" xml:space="preserve">
+    <value>Client name must not exceed {0} characters.</value>
+  </data>
+  <data name="Validation.TagsMaxLength" xml:space="preserve">
+    <value>Tags must not exceed {0} characters.</value>
+  </data>
+  <data name="Validation.TeamMemberIdsRequired" xml:space="preserve">
+    <value>Team member IDs list is required.</value>
+  </data>
+  <data name="Validation.AtLeastOneTeamMember" xml:space="preserve">
+    <value>At least one team member is required.</value>
+  </data>
+  <data name="Validation.InvalidTeamMemberId" xml:space="preserve">
+    <value>Invalid team member ID.</value>
+  </data>
+  <data name="Validation.ValidationFailed" xml:space="preserve">
+    <value>Validation failed.</value>
+  </data>
+
+  <!-- Additional User validation messages -->
+  <data name="Validation.UserRoleDataRequired" xml:space="preserve">
+    <value>User role data is required.</value>
+  </data>
+  <data name="Validation.UpdaterIdRequired" xml:space="preserve">
+    <value>Updater ID is required.</value>
+  </data>
+  <data name="Validation.NewRoleRequired" xml:space="preserve">
+    <value>New role is required.</value>
+  </data>
+  <data name="Validation.CannotRemoveOwnAdminRole" xml:space="preserve">
+    <value>Users cannot remove their own admin role.</value>
+  </data>
+  <data name="Validation.DeletedByRequired" xml:space="preserve">
+    <value>DeletedBy is required.</value>
+  </data>
+
+  <!-- Invitation validation messages -->
+  <data name="Validation.InvitationDataRequired" xml:space="preserve">
+    <value>Invitation data is required.</value>
+  </data>
+  <data name="Validation.IntendedRoleRequired" xml:space="preserve">
+    <value>Intended role is required.</value>
+  </data>
+  <data name="Validation.InviterIdRequired" xml:space="preserve">
+    <value>Inviter ID is required.</value>
+  </data>
+  <data name="Validation.ExpirationDaysRange" xml:space="preserve">
+    <value>Expiration days must be between {0} and {1}.</value>
+  </data>
+  <data name="Validation.TempEmailNotAllowed" xml:space="preserve">
+    <value>Temporary email addresses are not allowed.</value>
+  </data>
+
+  <!-- Notification validation messages -->
+  <data name="Validation.NotificationTitleRequired" xml:space="preserve">
+    <value>Notification title is required.</value>
+  </data>
+  <data name="Validation.TitleMaxLength" xml:space="preserve">
+    <value>Title must not exceed {0} characters.</value>
+  </data>
+  <data name="Validation.NotificationMessageRequired" xml:space="preserve">
+    <value>Notification message is required.</value>
+  </data>
+  <data name="Validation.MessageMaxLength" xml:space="preserve">
+    <value>Message must not exceed {0} characters.</value>
+  </data>
+  <data name="Validation.InvalidNotificationType" xml:space="preserve">
+    <value>Invalid notification type.</value>
+  </data>
+  <data name="Validation.ActionUrlMaxLength" xml:space="preserve">
+    <value>Action URL must not exceed {0} characters.</value>
+  </data>
+  <data name="Validation.InvalidActionUrl" xml:space="preserve">
+    <value>Action URL must be a valid URL.</value>
+  </data>
+  <data name="Validation.MetadataMaxLength" xml:space="preserve">
+    <value>Metadata must not exceed {0} characters.</value>
+  </data>
+  <data name="Validation.InvalidJsonMetadata" xml:space="preserve">
+    <value>Metadata must be valid JSON.</value>
+  </data>
+
+  <!-- Notification messages -->
+  <data name="Notification.NewUser" xml:space="preserve">
+    <value>New user {0} has joined the system.</value>
+  </data>
+  <data name="Notification.ProjectUpdate" xml:space="preserve">
+    <value>Project {0} has been updated.</value>
+  </data>
+  <data name="Notification.SystemMaintenance" xml:space="preserve">
+    <value>System maintenance is scheduled for {0}.</value>
+  </data>
+</root>

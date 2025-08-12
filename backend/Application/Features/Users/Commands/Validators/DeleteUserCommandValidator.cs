@@ -1,15 +1,19 @@
 using FluentValidation;
+using IntranetStarter.Application.Common.Validation;
+using IntranetStarter.Application.Interfaces;
 
 namespace IntranetStarter.Application.Features.Users.Commands.Validators;
 
 public class DeleteUserCommandValidator : AbstractValidator<DeleteUserCommand> {
-    public DeleteUserCommandValidator() {
+    public DeleteUserCommandValidator(ILocalizationService localizationService) {
         RuleFor(x => x.UserId)
-            .NotEmpty()
-            .WithMessage("User ID is required");
+        .NotEmpty()
+        .WithCode(ValidationErrorCodes.Required)
+        .WithMessage(localizationService.GetString("Validation.UserIdRequired"));
 
         RuleFor(x => x.DeletedBy)
-            .NotEmpty()
-            .WithMessage("DeletedBy is required");
+        .NotEmpty()
+        .WithCode(ValidationErrorCodes.Required)
+        .WithMessage(localizationService.GetString("Validation.DeletedByRequired"));
     }
 }

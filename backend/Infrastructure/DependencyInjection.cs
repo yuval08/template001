@@ -4,10 +4,12 @@ using IntranetStarter.Application.Interfaces;
 using IntranetStarter.Domain.Interfaces;
 using IntranetStarter.Infrastructure.BackgroundJobs;
 using IntranetStarter.Infrastructure.Data;
+using IntranetStarter.Infrastructure.Localization;
 using IntranetStarter.Infrastructure.Services;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
+using Microsoft.EntityFrameworkCore;
 
 namespace IntranetStarter.Infrastructure;
 
@@ -28,6 +30,9 @@ public static class DependencyInjection {
 
         // File Storage
         AddFileStorage(services, configuration);
+
+        // Localization
+        AddLocalization(services, configuration);
 
         // Services
         services.AddScoped<IPdfService, PdfService>();
@@ -76,5 +81,30 @@ public static class DependencyInjection {
             options.WorkerCount = Environment.ProcessorCount;
             options.Queues      = ["default", "reports", "emails", "cleanup"];
         });
+    }
+
+    private static void AddLocalization(IServiceCollection services, IConfiguration configuration)
+    {
+        // Configure localization options
+        services.Configure<Infrastructure.Localization.LocalizationOptions>(configuration.GetSection(Infrastructure.Localization.LocalizationOptions.SectionName));
+        
+        // Validate configuration
+        var localizationOptions = configuration.GetSection(Infrastructure.Localization.LocalizationOptions.SectionName).Get<Infrastructure.Localization.LocalizationOptions>();
+        if (localizationOptions != null)
+        {
+            localizationOptions.Validate();
+        }
+
+        // Add localization services
+        services.AddLocalization(options =>
+        {
+            options.ResourcesPath = "Resources";
+        });
+
+        // Add custom localization service
+        services.AddScoped<ILocalizationService, LocalizationService>();
+        
+        // Add string localizer for SharedResources
+        services.AddScoped<IStringLocalizer<SharedResources>, StringLocalizer<SharedResources>>();
     }
 }

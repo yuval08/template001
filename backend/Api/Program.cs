@@ -7,7 +7,9 @@ using IntranetStarter.Application;
 using IntranetStarter.Infrastructure;
 using IntranetStarter.Infrastructure.BackgroundJobs;
 using IntranetStarter.Infrastructure.Data;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Serilog;
 
 #if DEBUG
@@ -18,11 +20,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Configure Serilog
 Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(builder.Configuration)
-    .Enrich.FromLogContext()
-    .WriteTo.Console()
-    .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
-    .CreateLogger();
+.ReadFrom.Configuration(builder.Configuration)
+.Enrich.FromLogContext()
+.WriteTo.Console()
+.WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
+.CreateLogger();
 
 builder.Host.UseSerilog();
 
@@ -32,27 +34,23 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new() { Title = "Intranet Starter API", Version = "v1" });
-    
+
     // Add JWT authentication to Swagger
-    c.AddSecurityDefinition("Bearer", new()
-    {
-        In           = Microsoft.OpenApi.Models.ParameterLocation.Header,
-        Description  = "Please enter a valid token",
-        Name         = "Authorization",
-        Type         = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+    c.AddSecurityDefinition("Bearer", new() {
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Description = "Please enter a valid token",
+        Name = "Authorization",
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
         BearerFormat = "JWT",
-        Scheme       = "Bearer"
+        Scheme = "Bearer"
     });
-    
-    c.AddSecurityRequirement(new()
-    {
+
+    c.AddSecurityRequirement(new() {
         {
-            new ()
-            {
-                Reference = new ()
-                {
+            new() {
+                Reference = new() {
                     Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                    Id   = "Bearer"
+                    Id = "Bearer"
                 }
             },
             Array.Empty<string>()
@@ -66,12 +64,12 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy.WithOrigins(
-                builder.Configuration["CorsSettings:AllowedOrigins"]?.Split(',') ??
-                ["http://localhost:3000", "http://localhost:5173", "https://localhost:3000", "https://localhost:5173"]
-            )
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-            .AllowCredentials();
+            builder.Configuration["CorsSettings:AllowedOrigins"]?.Split(',') ??
+            ["http://localhost:3000", "http://localhost:5173", "https://localhost:3000", "https://localhost:5173"]
+        )
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials();
     });
 });
 
@@ -89,17 +87,47 @@ builder.Services.AddSignalR();
 
 // Add Health Checks
 builder.Services.AddHealthChecks()
-    .AddNpgSql(builder.Configuration.GetConnectionString("DefaultConnection")!)
-    .AddHangfire(options =>
-    {
-        options.MinimumAvailableServers = 1;
-    });
+.AddNpgSql(builder.Configuration.GetConnectionString("DefaultConnection")!)
+.AddHangfire(options => { options.MinimumAvailableServers = 1; });
 
 var app = builder.Build();
 
+// Configure localization
+using (var scope = app.Services.CreateScope()) {
+    var localizationOptions = scope.ServiceProvider.GetRequiredService<IOptions<IntranetStarter.Infrastructure.Localization.LocalizationOptions>>().Value;
+
+    app.UseRequestLocalization(options =>
+    {
+        var supportedCultures = localizationOptions.GetSupportedCultures();
+        var defaultCulture = localizationOptions.GetDefaultCulture();
+
+        options.DefaultRequestCulture = new RequestCulture(defaultCulture, defaultCulture);
+        options.SupportedCultures = supportedCultures;
+        options.SupportedUICultures = supportedCultures;
+
+        // Clear default providers and add our custom provider
+        options.RequestCultureProviders.Clear();
+        options.RequestCultureProviders.Add(new IntranetStarter.Infrastructure.Localization.CustomRequestCultureProvider(
+            scope.ServiceProvider.GetRequiredService<IOptions<IntranetStarter.Infrastructure.Localization.LocalizationOptions>>()));
+
+        // Add fallback providers if multi-language is enabled
+        if (localizationOptions.EnableMultiLanguage) {
+            // Add accept language header provider if enabled
+            if (localizationOptions.UseAcceptLanguageHeader) {
+                options.RequestCultureProviders.Add(new AcceptLanguageHeaderRequestCultureProvider());
+            }
+
+            // Add query string provider as fallback
+            options.RequestCultureProviders.Add(new QueryStringRequestCultureProvider());
+        }
+
+        // Always add cookie provider as final fallback
+        options.RequestCultureProviders.Add(new CookieRequestCultureProvider());
+    });
+}
+
 // Configure the HTTP request pipeline
-if (app.Environment.IsDevelopment())
-{
+if (app.Environment.IsDevelopment()) {
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
@@ -118,14 +146,11 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // Use Hangfire Dashboard (only in development or for admins)
-if (app.Environment.IsDevelopment())
-{
+if (app.Environment.IsDevelopment()) {
     app.UseHangfireDashboard();
 }
-else
-{
-    app.UseHangfireDashboard("/hangfire", new DashboardOptions
-    {
+else {
+    app.UseHangfireDashboard("/hangfire", new DashboardOptions {
         Authorization = [new HangfireAuthorizationFilter()]
     });
 }
@@ -138,27 +163,24 @@ app.MapHub<IntranetStarter.Infrastructure.Hubs.RealtimeHub>("/hubs/notifications
 app.MapHealthChecks("/health");
 
 // Seed initial data and start background jobs
-using (var scope = app.Services.CreateScope())
-{
-    try
-    {
+using (var scope = app.Services.CreateScope()) {
+    try {
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        
+
         // Apply migrations
         await context.Database.MigrateAsync();
-        
+
         // Seed data using the data seeding service
         var dataSeeder = scope.ServiceProvider.GetRequiredService<IDataSeeder>();
         await dataSeeder.SeedAsync();
-        
+
         // Schedule recurring jobs
         var recurringJobManager = scope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
         recurringJobManager.ScheduleProjectReportGeneration();
-        
+
         Log.Information("Application started successfully");
     }
-    catch (Exception ex)
-    {
+    catch (Exception ex) {
         Log.Fatal(ex, "Application failed to start");
         throw;
     }
@@ -168,15 +190,14 @@ app.Run();
 
 namespace IntranetStarter.Api {
     // Make Program class public for integration tests
-    public partial class Program { }
+    public partial class Program {
+    }
 
 // Custom Hangfire authorization filter for production
-    public class HangfireAuthorizationFilter : IDashboardAuthorizationFilter
-    {
-        public bool Authorize(DashboardContext context)
-        {
+    public class HangfireAuthorizationFilter : IDashboardAuthorizationFilter {
+        public bool Authorize(DashboardContext context) {
             var httpContext = context.GetHttpContext();
-        
+
             // Only allow authenticated admin users
             return httpContext.User.Identity?.IsAuthenticated == true &&
                    httpContext.User.IsInRole("Admin");
@@ -185,4 +206,5 @@ namespace IntranetStarter.Api {
 }
 
 // Make Program class accessible to integration tests
-public partial class Program { }
+public partial class Program {
+}

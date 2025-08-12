@@ -1,81 +1,83 @@
 using FluentValidation;
 using IntranetStarter.Application.Common.Validation;
+using IntranetStarter.Application.Interfaces;
 using IntranetStarter.Domain.Entities;
 
 namespace IntranetStarter.Application.Features.Projects.Commands.Validators;
 
 public class CreateProjectCommandValidator : AbstractValidator<CreateProjectCommand> {
-    public CreateProjectCommandValidator() {
+    public CreateProjectCommandValidator(ILocalizationService localizationService) {
         RuleFor(x => x.Project)
-            .NotNull()
-            .WithCode(ValidationErrorCodes.Required)
-            .WithMessage("Project data is required");
+        .NotNull()
+        .WithCode(ValidationErrorCodes.Required)
+        .WithMessage(localizationService.GetString("Validation.ProjectDataRequired"));
 
-        When(x => x.Project != null, () => {
+        When(x => x.Project != null, () =>
+        {
             RuleFor(x => x.Project.Name)
-                .NotEmpty()
-                .WithCode(ValidationErrorCodes.Required)
-                .WithMessage("Project name is required")
-                .MaximumLength(200)
-                .WithCode(ValidationErrorCodes.InvalidLength)
-                .WithMessage("Project name must not exceed 200 characters");
+            .NotEmpty()
+            .WithCode(ValidationErrorCodes.Required)
+            .WithMessage(localizationService.GetString("Validation.ProjectNameRequired"))
+            .MaximumLength(200)
+            .WithCode(ValidationErrorCodes.InvalidLength)
+            .WithMessage(localizationService.GetString("Validation.ProjectNameMaxLength", 200));
 
             RuleFor(x => x.Project.Description)
-                .NotEmpty()
-                .WithCode(ValidationErrorCodes.Required)
-                .WithMessage("Project description is required")
-                .MaximumLength(2000)
-                .WithCode(ValidationErrorCodes.InvalidLength)
-                .WithMessage("Description must not exceed 2000 characters");
+            .NotEmpty()
+            .WithCode(ValidationErrorCodes.Required)
+            .WithMessage(localizationService.GetString("Validation.ProjectDescriptionRequired"))
+            .MaximumLength(2000)
+            .WithCode(ValidationErrorCodes.InvalidLength)
+            .WithMessage(localizationService.GetString("Validation.ProjectDescriptionMaxLength", 2000));
 
             RuleFor(x => x.Project.Status)
-                .IsInEnum()
-                .WithCode(ValidationErrorCodes.InvalidFormat)
-                .WithMessage("Invalid project status");
+            .IsInEnum()
+            .WithCode(ValidationErrorCodes.InvalidFormat)
+            .WithMessage(localizationService.GetString("Validation.InvalidProjectStatus"));
 
             RuleFor(x => x.Project.Budget)
-                .GreaterThanOrEqualTo(0)
-                .WithCode(ValidationErrorCodes.InvalidRange)
-                .WithMessage("Budget must be a positive value");
+            .GreaterThanOrEqualTo(0)
+            .WithCode(ValidationErrorCodes.InvalidRange)
+            .WithMessage(localizationService.GetString("Validation.BudgetMustBePositive"));
 
             RuleFor(x => x.Project.Priority)
-                .InclusiveBetween(1, 5)
-                .WithCode(ValidationErrorCodes.InvalidRange)
-                .WithMessage("Priority must be between 1 and 5");
+            .InclusiveBetween(1, 5)
+            .WithCode(ValidationErrorCodes.InvalidRange)
+            .WithMessage(localizationService.GetString("Validation.PriorityRange", 1, 5));
 
             RuleFor(x => x.Project.StartDate)
-                .LessThanOrEqualTo(x => x.Project.EndDate)
-                .WithCode(ValidationErrorCodes.InvalidRange)
-                .WithMessage("Start date must be before or equal to end date")
-                .When(x => x.Project.StartDate.HasValue && x.Project.EndDate.HasValue);
+            .LessThanOrEqualTo(x => x.Project.EndDate)
+            .WithCode(ValidationErrorCodes.InvalidRange)
+            .WithMessage(localizationService.GetString("Validation.StartDateAfterEndDate"))
+            .When(x => x.Project.StartDate.HasValue && x.Project.EndDate.HasValue);
 
             RuleFor(x => x.Project.ClientName)
-                .MaximumLength(200)
-                .WithCode(ValidationErrorCodes.InvalidLength)
-                .WithMessage("Client name must not exceed 200 characters")
-                .When(x => !string.IsNullOrEmpty(x.Project.ClientName));
+            .MaximumLength(200)
+            .WithCode(ValidationErrorCodes.InvalidLength)
+            .WithMessage(localizationService.GetString("Validation.ClientNameMaxLength", 200))
+            .When(x => !string.IsNullOrEmpty(x.Project.ClientName));
 
             RuleFor(x => x.Project.Tags)
-                .MaximumLength(500)
-                .WithCode(ValidationErrorCodes.InvalidLength)
-                .WithMessage("Tags must not exceed 500 characters")
-                .When(x => !string.IsNullOrEmpty(x.Project.Tags));
+            .MaximumLength(500)
+            .WithCode(ValidationErrorCodes.InvalidLength)
+            .WithMessage(localizationService.GetString("Validation.TagsMaxLength", 500))
+            .When(x => !string.IsNullOrEmpty(x.Project.Tags));
 
             RuleFor(x => x.Project.TeamMemberIds)
-                .NotNull()
-                .WithCode(ValidationErrorCodes.Required)
-                .WithMessage("Team member IDs list is required");
+            .NotNull()
+            .WithCode(ValidationErrorCodes.Required)
+            .WithMessage(localizationService.GetString("Validation.TeamMemberIdsRequired"));
 
             RuleFor(x => x.Project.TeamMemberIds)
-                .Must(ids => ids.Count > 0)
-                .WithCode(ValidationErrorCodes.BusinessRule)
-                .WithMessage("At least one team member is required")
-                .When(x => x.Project.TeamMemberIds != null);
+            .Must(ids => ids.Count > 0)
+            .WithCode(ValidationErrorCodes.BusinessRule)
+            .WithMessage(localizationService.GetString("Validation.AtLeastOneTeamMember"))
+            .When(x => x.Project.TeamMemberIds != null);
 
             RuleForEach(x => x.Project.TeamMemberIds)
-                .NotEqual(Guid.Empty)
-                .WithCode(ValidationErrorCodes.InvalidFormat)
-                .WithMessage("Invalid team member ID");
+            .NotEqual(Guid.Empty)
+            .WithCode(ValidationErrorCodes.InvalidFormat)
+            .WithMessage(localizationService.GetString("Validation.InvalidTeamMemberId"));
         });
     }
 }

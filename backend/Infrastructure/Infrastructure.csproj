@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <AssemblyName>IntranetStarter.Infrastructure</AssemblyName>
     <RootNamespace>IntranetStarter.Infrastructure</RootNamespace>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
 
   <ItemGroup>
