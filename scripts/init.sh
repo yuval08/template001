@@ -81,9 +81,21 @@ to_pascal_case() {
     echo "$input" | sed 's/[-_]/ /g' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) tolower(substr($i,2))}1' | tr -d ' '
 }
 
+# Convert snake_case/kebab-case to Title Case for display name
+# Examples: apolo_portal -> Apolo Portal, my-project -> My Project
+to_title_case() {
+    local input="$1"
+    # Replace underscores and hyphens with spaces, then capitalize each word
+    echo "$input" | sed 's/[-_]/ /g' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) tolower(substr($i,2))}1'
+}
+
 # Generate PascalCase namespace from solution name
 NAMESPACE_NAME=$(to_pascal_case "$SOLUTION_NAME")
 print_info "C# Namespace will be: $NAMESPACE_NAME"
+
+# Generate Title Case display name from solution name
+DISPLAY_NAME=$(to_title_case "$SOLUTION_NAME")
+print_info "Display name will be: $DISPLAY_NAME"
 echo
 
 # Function to generate random port in a safe range (10000-30000)
@@ -250,6 +262,81 @@ else
     print_warning "No files found containing 'IntranetStarter' namespace"
 fi
 
+# Replace display name "Intranet Starter" with new Title Case display name
+print_info "Replacing display name 'Intranet Starter' with '$DISPLAY_NAME'..."
+
+# Find all files containing "Intranet Starter" (exclude this init script)
+# Note: --include="*.env*" doesn't work with grep, so we'll handle .env files separately
+DISPLAY_FILES=$(grep -rl "Intranet Starter" . \
+    --include="*.cs" \
+    --include="*.csproj" \
+    --include="*.sln" \
+    --include="*.json" \
+    --include="*.yml" \
+    --include="*.yaml" \
+    --include="*.xml" \
+    --include="*.config" \
+    --include="*.md" \
+    --include="*.txt" \
+    --include="*.tsx" \
+    --include="*.ts" \
+    --include="*.jsx" \
+    --include="*.js" \
+    --include="*.html" \
+    --include="*.css" \
+    --include="Dockerfile*" \
+    --include="docker-compose*" \
+    --exclude-dir=node_modules \
+    --exclude-dir=.git \
+    --exclude-dir=bin \
+    --exclude-dir=obj \
+    --exclude-dir=dist \
+    --exclude-dir=build \
+    --exclude-dir=.vs \
+    --exclude-dir=.vscode \
+    2>/dev/null | grep -v "scripts/init.sh" || true)
+
+# Also find .env files containing "Intranet Starter"
+ENV_FILES=$(find . -name ".env*" -type f -exec grep -l "Intranet Starter" {} \; 2>/dev/null || true)
+
+# Combine both file lists
+if [ -n "$ENV_FILES" ]; then
+    if [ -n "$DISPLAY_FILES" ]; then
+        DISPLAY_FILES="$DISPLAY_FILES"$'\n'"$ENV_FILES"
+    else
+        DISPLAY_FILES="$ENV_FILES"
+    fi
+fi
+
+if [ -n "$DISPLAY_FILES" ]; then
+    DISPLAY_FILE_COUNT=$(echo "$DISPLAY_FILES" | wc -l)
+    print_info "Found $DISPLAY_FILE_COUNT files containing 'Intranet Starter'"
+    
+    # Replace "Intranet Starter" with new display name in all files
+    echo "$DISPLAY_FILES" | while IFS= read -r file; do
+        print_info "Updating display name in: $file"
+        
+        # Use sed to replace display name
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            # macOS
+            sed -i '' "s/Intranet Starter/$DISPLAY_NAME/g" "$file"
+        else
+            # Linux/WSL
+            sed -i "s/Intranet Starter/$DISPLAY_NAME/g" "$file"
+        fi
+        
+        if [ $? -eq 0 ]; then
+            print_success "✓ Updated display name in $file"
+        else
+            print_error "✗ Failed to update display name in $file"
+        fi
+    done
+    
+    print_success "Display name replacement complete"
+else
+    print_warning "No files found containing 'Intranet Starter'"
+fi
+
 # Rename solution file if it exists
 if [ -f "backend/IntranetStarter.sln" ]; then
     # Keep the solution name exactly as entered (lowercase with underscores)
@@ -293,10 +380,14 @@ if [ -f "docker-compose.override.yml" ]; then
         # macOS
         sed -i '' "s/\"[0-9]*:5432\"/\"$POSTGRES_PORT:5432\"/" "docker-compose.override.yml"
         sed -i '' "s/\"[0-9]*:6379\"/\"$REDIS_PORT:6379\"/" "docker-compose.override.yml"
+        sed -i '' "s/\"[0-9]*:80\"/\"$SMTP_WEB_PORT:80\"/" "docker-compose.override.yml"
+        sed -i '' "s/\"[0-9]*:25\"/\"$SMTP_PORT:25\"/" "docker-compose.override.yml"
     else
         # Linux/WSL
         sed -i "s/\"[0-9]*:5432\"/\"$POSTGRES_PORT:5432\"/" "docker-compose.override.yml"
         sed -i "s/\"[0-9]*:6379\"/\"$REDIS_PORT:6379\"/" "docker-compose.override.yml"
+        sed -i "s/\"[0-9]*:80\"/\"$SMTP_WEB_PORT:80\"/" "docker-compose.override.yml"
+        sed -i "s/\"[0-9]*:25\"/\"$SMTP_PORT:25\"/" "docker-compose.override.yml"
     fi
     
     print_success "Updated service ports in docker-compose.override.yml"
@@ -307,6 +398,7 @@ print_success "======================================"
 print_success "  Initialization Complete!"
 print_success "======================================"
 print_info "Solution name changed to: $SOLUTION_NAME"
+print_info "Display name changed to: $DISPLAY_NAME"
 print_info "C# Namespace changed to: $NAMESPACE_NAME"
 print_info ""
 print_success "Service ports configured:"
