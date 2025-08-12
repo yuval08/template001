@@ -72,6 +72,18 @@ while true; do
 done
 
 print_info "New solution name: $SOLUTION_NAME"
+
+# Convert snake_case/kebab-case to PascalCase for C# namespace
+# Examples: apolo_portal -> ApoloPortal, my-project -> MyProject
+to_pascal_case() {
+    local input="$1"
+    # Replace underscores and hyphens with spaces, then capitalize each word
+    echo "$input" | sed 's/[-_]/ /g' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) tolower(substr($i,2))}1' | tr -d ' '
+}
+
+# Generate PascalCase namespace from solution name
+NAMESPACE_NAME=$(to_pascal_case "$SOLUTION_NAME")
+print_info "C# Namespace will be: $NAMESPACE_NAME"
 echo
 
 # Function to generate random port in a safe range (10000-30000)
@@ -194,6 +206,50 @@ else
     done
 fi
 
+# Replace C# namespace IntranetStarter with new PascalCase namespace
+print_info "Replacing C# namespace 'IntranetStarter' with '$NAMESPACE_NAME'..."
+
+# Find all C# and project files containing IntranetStarter namespace
+NAMESPACE_FILES=$(grep -rl "IntranetStarter" backend/ \
+    --include="*.cs" \
+    --include="*.csproj" \
+    --include="*.sln" \
+    --include="*.json" \
+    --include="*.xml" \
+    --exclude-dir=bin \
+    --exclude-dir=obj \
+    --exclude-dir=.vs \
+    2>/dev/null || true)
+
+if [ -n "$NAMESPACE_FILES" ]; then
+    NAMESPACE_FILE_COUNT=$(echo "$NAMESPACE_FILES" | wc -l)
+    print_info "Found $NAMESPACE_FILE_COUNT files containing 'IntranetStarter' namespace"
+    
+    # Replace IntranetStarter with new namespace in all files
+    echo "$NAMESPACE_FILES" | while IFS= read -r file; do
+        print_info "Updating namespace in: $file"
+        
+        # Use sed to replace namespace
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            # macOS
+            sed -i '' "s/IntranetStarter/$NAMESPACE_NAME/g" "$file"
+        else
+            # Linux/WSL
+            sed -i "s/IntranetStarter/$NAMESPACE_NAME/g" "$file"
+        fi
+        
+        if [ $? -eq 0 ]; then
+            print_success "✓ Updated namespace in $file"
+        else
+            print_error "✗ Failed to update namespace in $file"
+        fi
+    done
+    
+    print_success "Namespace replacement complete"
+else
+    print_warning "No files found containing 'IntranetStarter' namespace"
+fi
+
 # Rename solution file if it exists
 if [ -f "backend/IntranetStarter.sln" ]; then
     # Keep the solution name exactly as entered (lowercase with underscores)
@@ -251,6 +307,7 @@ print_success "======================================"
 print_success "  Initialization Complete!"
 print_success "======================================"
 print_info "Solution name changed to: $SOLUTION_NAME"
+print_info "C# Namespace changed to: $NAMESPACE_NAME"
 print_info ""
 print_success "Service ports configured:"
 print_info "  PostgreSQL: localhost:$POSTGRES_PORT"
