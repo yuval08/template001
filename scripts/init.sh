@@ -218,6 +218,39 @@ else
     done
 fi
 
+# Replace container names in docker-compose files (intranet-postgres, intranet-redis, etc.)
+print_info "Replacing Docker container names with '$SOLUTION_NAME' prefix..."
+
+# Find docker-compose files
+DOCKER_FILES=$(find . -name "docker-compose*.yml" -o -name "docker-compose*.yaml" | grep -v node_modules || true)
+
+if [ -n "$DOCKER_FILES" ]; then
+    echo "$DOCKER_FILES" | while IFS= read -r file; do
+        print_info "Updating container names in: $file"
+        
+        # Replace container names (intranet-xyz -> solutionname-xyz)
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            # macOS
+            sed -i '' "s/container_name: intranet-/container_name: $SOLUTION_NAME-/g" "$file"
+            sed -i '' "s/intranet-network/$SOLUTION_NAME-network/g" "$file"
+        else
+            # Linux/WSL
+            sed -i "s/container_name: intranet-/container_name: $SOLUTION_NAME-/g" "$file"
+            sed -i "s/intranet-network/$SOLUTION_NAME-network/g" "$file"
+        fi
+        
+        if [ $? -eq 0 ]; then
+            print_success "✓ Updated container names in $file"
+        else
+            print_error "✗ Failed to update container names in $file"
+        fi
+    done
+    
+    print_success "Container name replacement complete"
+else
+    print_warning "No docker-compose files found"
+fi
+
 # Replace C# namespace IntranetStarter with new PascalCase namespace
 print_info "Replacing C# namespace 'IntranetStarter' with '$NAMESPACE_NAME'..."
 

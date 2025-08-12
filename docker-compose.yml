@@ -33,19 +33,6 @@ services:
       timeout: 10s
       retries: 5
 
-  smtp4dev:
-    image: rnwood/smtp4dev:v3
-    container_name: intranet-smtp
-    ports:
-      - "${SMTP_HOST_PORT:-5001}:80"
-      - "${SMTP_PORT:-25}:25"
-    networks:
-      - intranet-network
-    volumes:
-      - smtp4dev_data:/smtp4dev
-    environment:
-      - ServerOptions__HostName=smtp4dev
-
   api:
     build:
       context: ./backend
@@ -186,8 +173,6 @@ volumes:
   postgres_data:
     driver: local
   redis_data:
-    driver: local
-  smtp4dev_data:
     driver: local
   api_uploads:
     driver: local
