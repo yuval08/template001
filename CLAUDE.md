@@ -207,6 +207,7 @@ The application follows Clean Architecture with clear separation of concerns:
 - **State Management**: Zustand
 - **Tables**: TanStack Table
 - **Charts**: Recharts
+- **Internationalization**: i18next with React integration
 
 ## Service URLs
 
@@ -238,6 +239,38 @@ Required configuration:
 - `CORS_ALLOWED_ORIGINS` - CORS configuration
 - `ADMIN_EMAIL`, `ALLOWED_DOMAIN` - Admin and domain restrictions
 - `SMTP_*` - Email service configuration
+- `VITE_DEFAULT_LANGUAGE`, `VITE_MULTI_LANGUAGE_ENABLED` - i18n configuration
+
+## Internationalization (i18n)
+
+The application includes full internationalization support with the following features:
+
+### Supported Languages
+- **English** (en) - Complete translation coverage
+- **Spanish** (es) - Complete translation coverage
+- Additional languages can be easily added
+
+### Configuration
+```env
+# Set default language (en or es)
+VITE_DEFAULT_LANGUAGE=es
+
+# Enable/disable language switcher
+VITE_MULTI_LANGUAGE_ENABLED=true
+```
+
+### Key Features
+- **UI Translations**: All interface text is translatable
+- **Date/Number Formatting**: Respects user's system locale
+- **Email Localization**: Backend sends emails in user's preferred language
+- **Cookie Persistence**: Language preference saved across sessions
+- **Type-Safe**: Full TypeScript support for translation keys
+- **Performance Optimized**: Only ~61KB gzipped overhead
+
+### Documentation
+- **[Frontend i18n Guide](./frontend/docs/internationalization.md)** - Complete implementation guide
+- **[Customer Configuration](./docs/language-configuration-guide.md)** - Setup instructions for deployments
+- **[Performance Analysis](./docs/i18n-performance-report.md)** - Bundle size and performance metrics
 
 ## Database Management
 

@@ -10,6 +10,7 @@ This frontend follows an entity-based architecture with clear separation of conc
 - **[Forms](./docs/forms.md)** - Form handling with React Hook Form and Zod validation
 - **[Authentication](./docs/authentication.md)** - Cookie-based auth, protected routes, and role-based access
 - **[Common Patterns](./docs/common-patterns.md)** - Loading states, error handling, utilities, and reusable patterns
+- **[Internationalization](./docs/internationalization.md)** - Multi-language support, translations, and locale formatting
 
 ## Essential Commands
 
