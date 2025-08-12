@@ -32,13 +32,10 @@
 - [ ] Verify email localization works correctly
 - [ ] Test date/number formatting in different locales
 - [ ] Performance testing (bundle size impact)
-- [ ] Create documentation for customers on language configuration
+- [x] Create documentation for customers on language configuration
 
 ### Phase 5: Documentation & Finalization
 - [ ] Update CLAUDE.md with i18n usage instructions
-- [ ] Create customer configuration guide
-- [ ] Add environment variable documentation
+- [x] Create customer configuration guide
+- [x] Add environment variable documentation
 - [ ] Test template deployment with different language configurations
-
-
-### Other: Dark mode pagina [number] dosen't look good with input 
