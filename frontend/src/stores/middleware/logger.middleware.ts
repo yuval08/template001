@@ -18,8 +18,8 @@ export const logger = <T>(config: LoggerConfig = {}) =>
         
         groupMethod(`%c${groupName}`, 'color: #10b981; font-weight: bold');
         console.log('%cPrevious State', 'color: #6b7280; font-weight: bold', prevState);
-        console.log('%cNext State', 'color: #3b82f6; font-weight: bold', nextState);
-        console.log('%cAction', 'color: #8b5cf6; font-weight: bold', args[0]);
+        console.log('%cNext State', 'color: #2563eb; font-weight: bold', nextState);
+        console.log('%cAction', 'color: #f59e0b; font-weight: bold', args[0]);
         console.groupEnd();
       } else {
         set(...args);

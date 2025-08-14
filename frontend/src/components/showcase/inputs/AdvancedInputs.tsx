@@ -206,13 +206,13 @@ export const AdvancedInputs: React.FC = () => {
                 <Palette className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="color"
-                  placeholder="#3b82f6"
+                  placeholder="#2563eb"
                   className="pl-8"
                 />
               </div>
               <Input
                 type="color"
-                defaultValue="#3b82f6"
+                defaultValue="#2563eb"
                 className="w-12 h-10 p-1"
               />
             </div>
@@ -221,11 +221,11 @@ export const AdvancedInputs: React.FC = () => {
 {`<div className="flex gap-2">
   <div className="relative flex-1">
     <Palette className="absolute left-2 top-2.5 h-4 w-4" />
-    <Input placeholder="#3b82f6" className="pl-8" />
+    <Input placeholder="#2563eb" className="pl-8" />
   </div>
   <Input 
     type="color" 
-    defaultValue="#3b82f6" 
+    defaultValue="#2563eb" 
     className="w-12 h-10 p-1" 
   />
 </div>`}

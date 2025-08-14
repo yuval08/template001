@@ -39,7 +39,7 @@ const Dashboard: React.FC = () => {
   // Mock data for charts (in real app, this would come from API)
   const projectStatusData = [
     { name: t('status_labels.active'), value: summary?.activeProjects || 12, color: '#10b981' },
-    { name: t('status_labels.completed'), value: summary?.completedProjects || 8, color: '#3b82f6' },
+    { name: t('status_labels.completed'), value: summary?.completedProjects || 8, color: '#2563eb' },
     { name: t('status_labels.paused'), value: summary?.pausedProjects || 3, color: '#f59e0b' },
   ];
 
@@ -208,14 +208,14 @@ const Dashboard: React.FC = () => {
                   />
                   <defs>
                     <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1}/>
+                      <stop offset="5%" stopColor="#2563eb" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#2563eb" stopOpacity={0.1}/>
                     </linearGradient>
                   </defs>
                   <Area 
                     type="monotone" 
                     dataKey="count" 
-                    stroke="#3b82f6" 
+                    stroke="#2563eb" 
                     strokeWidth={2}
                     fill="url(#areaGradient)" 
                     animationDuration={1000}
@@ -249,8 +249,8 @@ const Dashboard: React.FC = () => {
                   <Legend />
                   <defs>
                     <linearGradient id="projectsGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#3b82f6" stopOpacity={1}/>
-                      <stop offset="100%" stopColor="#3b82f6" stopOpacity={0.6}/>
+                      <stop offset="0%" stopColor="#2563eb" stopOpacity={1}/>
+                      <stop offset="100%" stopColor="#2563eb" stopOpacity={0.6}/>
                     </linearGradient>
                     <linearGradient id="completedGradient" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0%" stopColor="#10b981" stopOpacity={1}/>
@@ -324,9 +324,9 @@ const Dashboard: React.FC = () => {
                 <Line 
                   type="monotone" 
                   dataKey="users" 
-                  stroke="#8b5cf6" 
+                  stroke="#f59e0b" 
                   strokeWidth={2}
-                  dot={{ fill: '#8b5cf6', strokeWidth: 2, r: 4 }}
+                  dot={{ fill: '#f59e0b', strokeWidth: 2, r: 4 }}
                   name={t('charts.user_growth.active_users')}
                 />
               </LineChart>
