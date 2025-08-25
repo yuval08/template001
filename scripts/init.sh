@@ -32,46 +32,8 @@ PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 
 cd "$PROJECT_ROOT"
 
-print_info "======================================"
-print_info "  Solution Initialization Script"
-print_info "======================================"
-echo
-
-# Check if solution file exists
-if [ ! -f "backend/IntranetStarter.sln" ]; then
-    print_warning "Solution file backend/IntranetStarter.sln not found."
-    print_warning "It may have already been renamed or doesn't exist yet."
-fi
-
-# Prompt for solution name
-while true; do
-    read -p "Enter the new solution name (lowercase, no spaces): " SOLUTION_NAME
-    
-    # Validate input
-    if [[ -z "$SOLUTION_NAME" ]]; then
-        print_error "Solution name cannot be empty"
-        continue
-    fi
-    
-    if [[ "$SOLUTION_NAME" =~ [A-Z] ]]; then
-        print_error "Solution name must be lowercase"
-        continue
-    fi
-    
-    if [[ "$SOLUTION_NAME" =~ [[:space:]] ]]; then
-        print_error "Solution name cannot contain spaces"
-        continue
-    fi
-    
-    if [[ ! "$SOLUTION_NAME" =~ ^[a-z][a-z0-9_]*$ ]]; then
-        print_error "Solution name must start with a letter and contain only lowercase letters, numbers, and underscores"
-        continue
-    fi
-    
-    break
-done
-
-print_info "New solution name: $SOLUTION_NAME"
+# Load project configuration system
+source "$SCRIPT_DIR/project-config.sh"
 
 # Convert snake_case/kebab-case to PascalCase for C# namespace
 # Examples: apolo_portal -> ApoloPortal, my-project -> MyProject
@@ -89,13 +51,96 @@ to_title_case() {
     echo "$input" | sed 's/[-_]/ /g' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) tolower(substr($i,2))}1'
 }
 
-# Generate PascalCase namespace from solution name
-NAMESPACE_NAME=$(to_pascal_case "$SOLUTION_NAME")
-print_info "C# Namespace will be: $NAMESPACE_NAME"
+print_info "======================================"
+print_info "  Solution Initialization Script"
+print_info "======================================"
+echo
 
-# Generate Title Case display name from solution name
-DISPLAY_NAME=$(to_title_case "$SOLUTION_NAME")
-print_info "Display name will be: $DISPLAY_NAME"
+# Check if project is already initialized
+if is_project_initialized; then
+    print_warning "Project appears to be already initialized!"
+    show_project_config
+    echo
+    read -p "Do you want to re-initialize? This will generate new ports but keep the same names. (y/N): " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        print_info "Initialization cancelled"
+        exit 0
+    fi
+    print_info "Re-initializing project..."
+    # Load current config for name reuse
+    load_project_config
+    EXISTING_SOLUTION_NAME="$SOLUTION_NAME"
+    EXISTING_NAMESPACE_NAME="$NAMESPACE_NAME"
+    EXISTING_DISPLAY_NAME="$DISPLAY_NAME"
+    REINIT_MODE=true
+fi
+
+# Check if solution file exists (try to find any .sln file)
+SLN_FILE=""
+if [ -d "backend" ]; then
+    SLN_FILE=$(find backend -name "*.sln" -type f | head -1)
+fi
+
+if [ -z "$SLN_FILE" ] && [ -f "backend/IntranetStarter.sln" ]; then
+    SLN_FILE="backend/IntranetStarter.sln"
+fi
+
+if [ -z "$SLN_FILE" ]; then
+    print_warning "No .sln file found in backend/ directory."
+    print_warning "The solution file may have been moved or doesn't exist yet."
+else
+    print_info "Found solution file: $SLN_FILE"
+fi
+
+# Prompt for solution name (unless re-initializing)
+if [ "$REINIT_MODE" = true ]; then
+    SOLUTION_NAME="$EXISTING_SOLUTION_NAME"
+    NAMESPACE_NAME="$EXISTING_NAMESPACE_NAME"
+    DISPLAY_NAME="$EXISTING_DISPLAY_NAME"
+    print_info "Re-using existing names:"
+    print_info "  Solution: $SOLUTION_NAME"
+    print_info "  Namespace: $NAMESPACE_NAME" 
+    print_info "  Display: $DISPLAY_NAME"
+else
+    while true; do
+        read -p "Enter the new solution name (lowercase, no spaces): " SOLUTION_NAME
+        
+        # Validate input
+        if [[ -z "$SOLUTION_NAME" ]]; then
+            print_error "Solution name cannot be empty"
+            continue
+        fi
+        
+        if [[ "$SOLUTION_NAME" =~ [A-Z] ]]; then
+            print_error "Solution name must be lowercase"
+            continue
+        fi
+        
+        if [[ "$SOLUTION_NAME" =~ [[:space:]] ]]; then
+            print_error "Solution name cannot contain spaces"
+            continue
+        fi
+        
+        if [[ ! "$SOLUTION_NAME" =~ ^[a-z][a-z0-9_]*$ ]]; then
+            print_error "Solution name must start with a letter and contain only lowercase letters, numbers, and underscores"
+            continue
+        fi
+        
+        break
+    done
+    
+    # Generate PascalCase namespace from solution name
+    NAMESPACE_NAME=$(to_pascal_case "$SOLUTION_NAME")
+    
+    # Generate Title Case display name from solution name
+    DISPLAY_NAME=$(to_title_case "$SOLUTION_NAME")
+fi
+
+print_info "Project configuration:"
+print_info "  Solution name: $SOLUTION_NAME"
+print_info "  C# Namespace: $NAMESPACE_NAME"
+print_info "  Display name: $DISPLAY_NAME"
 echo
 
 # Function to generate random port in a safe range (10000-30000)
@@ -426,6 +471,10 @@ if [ -f "docker-compose.override.yml" ]; then
     print_success "Updated service ports in docker-compose.override.yml"
 fi
 
+# Create project configuration file
+print_info "Creating project configuration..."
+create_project_config "$SOLUTION_NAME" "$NAMESPACE_NAME" "$DISPLAY_NAME" "$POSTGRES_PORT" "$REDIS_PORT" "$SMTP_WEB_PORT" "$SMTP_PORT"
+
 echo
 print_success "======================================"
 print_success "  Initialization Complete!"
@@ -440,7 +489,9 @@ print_info "  Redis: localhost:$REDIS_PORT"
 print_info "  SMTP4Dev Web UI: http://localhost:$SMTP_WEB_PORT"
 print_info "  SMTP4Dev SMTP: localhost:$SMTP_PORT"
 echo
+print_success "Project configuration saved to .project-config"
+echo
 print_info "Next steps:"
 print_info "1. Review the changes using 'git diff'"
-print_info "2. Run './scripts/dev-setup.sh' to set up the development environment"
+print_info "2. Run './scripts/setup.sh' to set up the development environment"
 print_info "3. Commit the changes when satisfied"

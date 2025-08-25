@@ -10,18 +10,31 @@ CYAN='\033[0;36m'
 MAGENTA='\033[0;35m'
 NC='\033[0m' # No Color
 
+# Get the script directory and load project configuration
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+cd "$PROJECT_ROOT"
+
+# Load project configuration system
+source "$SCRIPT_DIR/project-config.sh"
+
+# Try to load project configuration, detect if not available
+if ! load_project_config; then
+    detect_project_config
+fi
+
 # Show banner
 show_banner() {
     echo -e "${CYAN}"
     echo "╔═══════════════════════════════════════════════════════════════════════════════╗"
-    echo "║                      📊 INTRANET STARTER STATUS DASHBOARD 📊                ║"
+    echo "║                      📊 ${DISPLAY_NAME:-PROJECT} STATUS DASHBOARD 📊                ║"
     echo "╚═══════════════════════════════════════════════════════════════════════════════╝"
     echo -e "${NC}"
 }
 
 # Function to show help
 show_help() {
-    echo -e "${BLUE}Intranet Starter Status Dashboard${NC}"
+    echo -e "${BLUE}${DISPLAY_NAME:-Project} Status Dashboard${NC}"
     echo ""
     echo "Usage: $0 [OPTIONS]"
     echo ""
@@ -83,8 +96,9 @@ get_service_status() {
 
 # Show service URLs
 show_service_urls() {
-    local postgres_port=${POSTGRES_HOST_PORT:-5433}
-    local redis_port=${REDIS_HOST_PORT:-6380}
+    local postgres_port=${POSTGRES_PORT:-5433}
+    local redis_port=${REDIS_PORT:-6380}
+    local smtp_web_port=${SMTP_WEB_PORT:-5001}
     
     echo -e "${BLUE}🌐 Service URLs:${NC}"
     echo -e "  ${GREEN}┌─ Frontend (Dev):${NC}     http://localhost:5173"
@@ -104,8 +118,9 @@ show_port_config() {
         source .env 2>/dev/null || true
     fi
     
-    local postgres_port=${POSTGRES_HOST_PORT:-5433}
-    local redis_port=${REDIS_HOST_PORT:-6380}
+    local postgres_port=${POSTGRES_PORT:-5433}
+    local redis_port=${REDIS_PORT:-6380}
+    local smtp_web_port=${SMTP_WEB_PORT:-5001}
     
     # Function to check if port is in use
     check_port_status() {
@@ -118,7 +133,7 @@ show_port_config() {
     }
     
     echo -e "  Frontend (dev):  5173    $(check_port_status 5173)"
-    echo -e "  API:             5001    $(check_port_status 5001)"
+    echo -e "  SMTP Web:        $smtp_web_port    $(check_port_status $smtp_web_port)"
     echo -e "  Hangfire:        5002    $(check_port_status 5002)"
     echo -e "  PostgreSQL:      $postgres_port    $(check_port_status $postgres_port)"
     echo -e "  Redis:           $redis_port     $(check_port_status $redis_port)"

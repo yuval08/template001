@@ -4,6 +4,9 @@
 .env.local
 .env.*.local
 
+# Project configuration (KEEP TRACKED - created by init.sh)
+# .project-config
+
 # Dependencies
 node_modules/
 */node_modules/

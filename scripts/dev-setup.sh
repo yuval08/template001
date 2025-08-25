@@ -18,6 +18,23 @@ SKIP_HEALTH_CHECKS=false
 QUICK_MODE=false
 RESET_DATA=false
 
+# Get the script directory and load project configuration
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+cd "$PROJECT_ROOT"
+
+# Load project configuration system
+source "$SCRIPT_DIR/project-config.sh"
+
+# Try to load project configuration, detect if not available
+if ! load_project_config; then
+    echo -e "${YELLOW}⚠️  Project configuration not found. Attempting to auto-detect...${NC}"
+    detect_project_config
+    PROJECT_AUTO_DETECTED=true
+else
+    PROJECT_AUTO_DETECTED=false
+fi
+
 # Trap to handle script interruption
 cleanup() {
     echo -e "${YELLOW}\\n🛑 Setup interrupted. Cleaning up...${NC}"
@@ -30,10 +47,15 @@ trap cleanup INT TERM
 show_banner() {
     echo -e "${CYAN}"
     echo "╔═══════════════════════════════════════════════════════════════════════════════╗"
-    echo "║                       🚀 INTRANET STARTER DEV SETUP 🚀                      ║"
+    echo "║                       🚀 ${DISPLAY_NAME:-Project} DEV SETUP 🚀                      ║"
     echo "║                        Ultimate Single-Command Experience                    ║"
     echo "╚═══════════════════════════════════════════════════════════════════════════════╝"
     echo -e "${NC}"
+    
+    if [ "$PROJECT_AUTO_DETECTED" = true ]; then
+        echo -e "${YELLOW}⚠️  Using auto-detected project configuration. Run 'scripts/init.sh' to initialize properly.${NC}"
+        echo
+    fi
 }
 
 # Function to parse command line arguments
@@ -84,7 +106,7 @@ parse_arguments() {
 
 # Function to show help
 show_help() {
-    echo -e "${BLUE}Intranet Starter Development Setup${NC}"
+    echo -e "${BLUE}${DISPLAY_NAME:-Project} Development Setup${NC}"
     echo ""
     echo "Usage: $0 [OPTIONS]"
     echo ""
@@ -580,17 +602,19 @@ create_environment_file() {
 
 # Create .env.development file
 create_development_env_file() {
-    cat > .env.development <<'EOF'
+    local db_name="${SOLUTION_NAME:-intranet_starter}_dev"
+    
+    cat > .env.development <<EOF
 # Development Environment Configuration
 
 # Database Configuration
-POSTGRES_DB=intranet_starter_dev
+POSTGRES_DB=$db_name
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
-POSTGRES_HOST_PORT=5433
+POSTGRES_HOST_PORT=${POSTGRES_PORT:-5433}
 
 # Redis Configuration
-REDIS_HOST_PORT=6380
+REDIS_HOST_PORT=${REDIS_PORT:-6380}
 
 # Application Environment
 ASPNETCORE_ENVIRONMENT=Development
@@ -598,7 +622,7 @@ BUILD_TARGET=development
 
 # JWT Configuration (Development)
 JWT_AUTHORITY=http://localhost:5000
-JWT_AUDIENCE=intranet-api
+JWT_AUDIENCE=${SOLUTION_NAME:-intranet}-api
 JWT_REQUIRE_HTTPS=false
 
 # CORS Configuration (Development)
@@ -611,11 +635,11 @@ ALLOWED_DOMAIN=localhost.com
 # Email Configuration (Development - smtp4dev)
 SMTP_HOST=smtp4dev
 SMTP_PORT=25
-SMTP_HOST_PORT=5001
+SMTP_HOST_PORT=${SMTP_WEB_PORT:-5001}
 SMTP_USERNAME=
 SMTP_PASSWORD=
 SMTP_USE_SSL=false
-EMAIL_FROM_NAME=Intranet Dev
+EMAIL_FROM_NAME=${DISPLAY_NAME:-Intranet} Dev
 EMAIL_FROM_ADDRESS=noreply@localhost.com
 
 # Frontend Configuration (Development)
@@ -637,17 +661,18 @@ create_backend_env_file() {
     # Get the admin email and allowed domain from overrides or defaults
     local admin_email="${ADMIN_EMAIL_OVERRIDE:-admin@localhost.com}"
     local allowed_domain="${ALLOWED_DOMAIN_OVERRIDE:-localhost.com}"
+    local db_name="${SOLUTION_NAME:-intranet_starter}_dev"
     
     cat > backend/Api/.env <<EOF
 # Database Configuration
 DB_HOST=localhost
-DB_PORT=5433
-DB_NAME=intranet_starter_dev
+DB_PORT=${POSTGRES_PORT:-5433}
+DB_NAME=$db_name
 DB_USER=postgres
 DB_PASSWORD=postgres
 
 # Connection String (alternative to individual DB settings)
-ConnectionStrings__DefaultConnection=Host=localhost;Port=5433;Database=intranet_starter_dev;Username=postgres;Password=postgres
+ConnectionStrings__DefaultConnection=Host=localhost;Port=${POSTGRES_PORT:-5433};Database=$db_name;Username=postgres;Password=postgres
 
 # Authentication & Authorization
 ALLOWED_DOMAIN=$allowed_domain
@@ -655,16 +680,16 @@ ADMIN_EMAIL=$admin_email
 
 # JWT Configuration
 JWT_AUTHORITY=http://localhost:5000
-JWT_AUDIENCE=intranet-api
+JWT_AUDIENCE=${SOLUTION_NAME:-intranet}-api
 JWT_REQUIRE_HTTPS=false
 
 # Email Configuration (Development - smtp4dev)
 SMTP_HOST=localhost
-SMTP_PORT=25
+SMTP_PORT=${SMTP_PORT:-25}
 SMTP_USERNAME=
 SMTP_PASSWORD=
 SMTP_USE_SSL=false
-EMAIL_FROM_NAME=Intranet Dev
+EMAIL_FROM_NAME=${DISPLAY_NAME:-Intranet} Dev
 EMAIL_FROM_ADDRESS=noreply@localhost.com
 
 # File Storage
@@ -673,7 +698,7 @@ FileStorage__LocalPath=./uploads
 
 # Redis
 REDIS_HOST=localhost
-REDIS_PORT=6380
+REDIS_PORT=${REDIS_PORT:-6380}
 
 # CORS
 CORS_ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000,http://localhost:5000
@@ -698,15 +723,17 @@ EOF
 
 # Create appsettings.Development.json
 create_appsettings_development() {
-    cat > backend/Api/appsettings.Development.json <<'EOF'
+    local db_name="${SOLUTION_NAME:-intranet_starter}_dev"
+    
+    cat > backend/Api/appsettings.Development.json <<EOF
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Port=5433;Database=intranet_starter_dev;Username=postgres;Password=postgres",
-    "Redis": "localhost:6380"
+    "DefaultConnection": "Host=localhost;Port=${POSTGRES_PORT:-5433};Database=$db_name;Username=postgres;Password=postgres",
+    "Redis": "localhost:${REDIS_PORT:-6380}"
   },
   "Jwt": {
     "Authority": "http://localhost:5000",
-    "Audience": "intranet-api",
+    "Audience": "${SOLUTION_NAME:-intranet}-api",
     "RequireHttpsMetadata": false
   },
   "CorsSettings": {
@@ -745,7 +772,7 @@ create_appsettings_development() {
     "SmtpHost": "localhost",
     "SmtpPort": 25,
     "UseSsl": false,
-    "FromName": "Intranet Dev",
+    "FromName": "${DISPLAY_NAME:-Intranet} Dev",
     "FromAddress": "noreply@localhost.com"
   },
   "FileStorage": {
@@ -767,7 +794,7 @@ create_frontend_env_file() {
 
 VITE_API_URL=http://localhost:5000
 VITE_SIGNALR_URL=http://localhost:5000
-VITE_APP_NAME=Intranet Starter
+VITE_APP_NAME=${DISPLAY_NAME:-Intranet Starter}
 VITE_APP_VERSION=1.0.0
 VITE_ENVIRONMENT=development
 EOF
@@ -1070,7 +1097,8 @@ comprehensive_health_checks() {
     
     # Database migration status
     echo -e "${BLUE}  Checking database schema...${NC}"
-    if docker compose exec -T postgres psql -U postgres -d intranet_starter_dev -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public';" | grep -q "[1-9]"; then
+    local db_name="${SOLUTION_NAME:-intranet_starter}_dev"
+    if docker compose exec -T postgres psql -U postgres -d "$db_name" -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public';" | grep -q "[1-9]"; then
         echo -e "${GREEN}  ✅ Database schema is populated${NC}"
     else
         echo -e "${YELLOW}  ⚠️  Database schema may not be fully migrated${NC}"
@@ -1138,7 +1166,7 @@ show_status_dashboard() {
     echo -e "  ${CYAN}Restart service:${NC}     docker compose restart [service-name]"
     echo -e "  ${CYAN}Stop all:${NC}            docker compose down"
     echo -e "  ${CYAN}View status:${NC}         docker compose ps"
-    echo -e "  ${CYAN}Database shell:${NC}      docker compose exec postgres psql -U postgres intranet_starter_dev"
+    echo -e "  ${CYAN}Database shell:${NC}      docker compose exec postgres psql -U postgres ${SOLUTION_NAME:-intranet_starter}_dev"
     echo -e "  ${CYAN}Redis CLI:${NC}           docker compose exec redis redis-cli"
     
     # Development workflow section

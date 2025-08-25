@@ -9,6 +9,19 @@ BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
+# Get the script directory and load project configuration
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+cd "$PROJECT_ROOT"
+
+# Load project configuration system
+source "$SCRIPT_DIR/project-config.sh"
+
+# Try to load project configuration, detect if not available
+if ! load_project_config; then
+    detect_project_config
+fi
+
 # Show banner
 show_banner() {
     echo -e "${CYAN}"
@@ -71,7 +84,7 @@ check_services() {
 db_shell() {
     check_services
     echo -e "${BLUE}🐘 Opening PostgreSQL shell...${NC}"
-    docker compose exec postgres psql -U postgres -d intranet_starter_dev
+    docker compose exec postgres psql -U postgres -d ${SOLUTION_NAME:-intranet_starter}_dev
 }
 
 # Database reset
@@ -81,8 +94,8 @@ db_reset() {
     if [[ $REPLY == "yes" ]]; then
         echo -e "${BLUE}🗑️  Resetting database...${NC}"
         docker compose stop api hangfire
-        docker compose exec postgres psql -U postgres -c "DROP DATABASE IF EXISTS intranet_starter_dev;"
-        docker compose exec postgres psql -U postgres -c "CREATE DATABASE intranet_starter_dev;"
+        docker compose exec postgres psql -U postgres -c "DROP DATABASE IF EXISTS ${SOLUTION_NAME:-intranet_starter}_dev;"
+        docker compose exec postgres psql -U postgres -c "CREATE DATABASE ${SOLUTION_NAME:-intranet_starter}_dev;"
         docker compose start api hangfire
         echo -e "${GREEN}✅ Database reset complete${NC}"
     else
@@ -112,7 +125,7 @@ db_backup() {
     local backup_file=${1:-"backup_$(date +%Y%m%d_%H%M%S).sql"}
     check_services
     echo -e "${BLUE}💾 Creating database backup: $backup_file${NC}"
-    docker compose exec -T postgres pg_dump -U postgres -d intranet_starter_dev > "$backup_file"
+    docker compose exec -T postgres pg_dump -U postgres -d ${SOLUTION_NAME:-intranet_starter}_dev > "$backup_file"
     echo -e "${GREEN}✅ Backup saved: $backup_file${NC}"
 }
 
@@ -126,7 +139,7 @@ db_restore() {
     
     check_services
     echo -e "${BLUE}📥 Restoring database from: $backup_file${NC}"
-    docker compose exec -T postgres psql -U postgres -d intranet_starter_dev < "$backup_file"
+    docker compose exec -T postgres psql -U postgres -d ${SOLUTION_NAME:-intranet_starter}_dev < "$backup_file"
     echo -e "${GREEN}✅ Database restored${NC}"
 }
 

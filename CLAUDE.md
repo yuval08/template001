@@ -12,13 +12,42 @@ This file provides guidance to developers when working with this repository. Our
 
 ### One-Command Setup
 ```bash
-# Start everything - local dev environment in minutes!
+# Complete project setup - initialization + development environment
+./scripts/setup.sh
+
+# Or for existing initialized projects
 ./scripts/dev-setup.sh
 ```
 
 ## Development Workflow
 
 ### 🔧 Development Scripts Overview
+
+#### `./scripts/setup.sh` (NEW - Master Setup)
+Complete project setup orchestration:
+```bash
+# Full setup (recommended for new projects)
+./scripts/setup.sh
+
+# Initialize project only (rename from template)
+./scripts/setup.sh --init-only
+
+# Setup development environment only
+./scripts/setup.sh --dev-setup-only
+
+# Force re-initialization 
+./scripts/setup.sh --force-init
+```
+
+#### `./scripts/init.sh`
+Project initialization script that transforms the template:
+```bash
+# Initialize project (rename solution, update namespaces, randomize ports)
+./scripts/init.sh
+
+# Creates .project-config file with project settings
+# Handles re-initialization with port regeneration
+```
 
 #### `./scripts/dev-setup.sh`
 Comprehensive project initialization script with multiple modes:
