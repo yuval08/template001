@@ -6,7 +6,8 @@
       "Bash(dotnet clean:*)",
       "Bash(npm run dev:*)",
       "Bash(git log:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Read(//mnt/c/source/clients/lavazza/**)"
     ],
     "deny": []
   }

@@ -1,334 +1,179 @@
-# CLAUDE.md
+# CLAUDE.md - Development Guide
 
-This file provides guidance to developers when working with this repository. Our goal is to provide a streamlined, efficient development experience.
+This guide helps developers work effectively with this intranet template. Follow these workflows for optimal development experience.
 
-## 🚀 Quick Start Guide
+## 🚀 Template Setup (First Time)
 
-### Prerequisites
-- Docker
-- Docker Compose
-- Git
-- (Optional) VS Code or JetBrains Rider
-
-### One-Command Setup
+### Initial Setup
 ```bash
-# Complete project setup - initialization + development environment
+# 1. Get the template and initialize your project
 ./scripts/setup.sh
-
-# Or for existing initialized projects
-./scripts/dev-setup.sh
+# This will:
+# - Ask for your project name
+# - Rename all files and namespaces  
+# - Generate unique ports
+# - Setup development environment
 ```
 
-## Development Workflow
-
-### 🔧 Development Scripts Overview
-
-#### `./scripts/setup.sh` (NEW - Master Setup)
-Complete project setup orchestration:
+### Alternative Setup Methods
 ```bash
-# Full setup (recommended for new projects)
-./scripts/setup.sh
-
 # Initialize project only (rename from template)
 ./scripts/setup.sh --init-only
 
-# Setup development environment only
+# Setup development only (if already initialized)
 ./scripts/setup.sh --dev-setup-only
 
-# Force re-initialization 
+# Force re-initialization with new ports
 ./scripts/setup.sh --force-init
 ```
 
-#### `./scripts/init.sh`
-Project initialization script that transforms the template:
+## Daily Development Workflow
+
+### Essential Commands
 ```bash
-# Initialize project (rename solution, update namespaces, randomize ports)
-./scripts/init.sh
-
-# Creates .project-config file with project settings
-# Handles re-initialization with port regeneration
-```
-
-#### `./scripts/dev-setup.sh`
-Comprehensive project initialization script with multiple modes:
-```bash
-# Standard setup (recommended)
-./scripts/dev-setup.sh
-
-# Interactive mode with custom configuration
-./scripts/dev-setup.sh --interactive
-
-# Quick, minimal output setup
-./scripts/dev-setup.sh --quick
-
-# Complete reset (warning: destroys all local data)
-./scripts/dev-setup.sh --reset
-```
-
-#### `./scripts/dev-status.sh`
-Real-time project status and monitoring:
-```bash
-# Show comprehensive development dashboard
+# Check project status
 ./scripts/dev-status.sh
 
-# Real-time service monitoring
-./scripts/dev-status.sh --watch
+# View service logs  
+./scripts/dev-tools.sh logs <service-name>
 
-# Quick system health check
-./scripts/dev-status.sh --health
+# Database operations
+./scripts/dev-tools.sh db-shell    # Database access
+./scripts/dev-tools.sh db-reset    # Reset database (warning: destroys data)
+./scripts/dev-tools.sh db-migrate  # Run migrations
 
-# Display service URLs
-./scripts/dev-status.sh --urls
+# Service management
+./scripts/dev-tools.sh restart <service>
+./scripts/dev-tools.sh rebuild     # Rebuild all containers
 ```
 
-#### `./scripts/dev-tools.sh`
-Powerful development utility with multiple commands:
-```bash
-# Database Management
-./scripts/dev-tools.sh db-shell     # PostgreSQL interactive shell
-./scripts/dev-tools.sh db-reset     # Reset entire database
-./scripts/dev-tools.sh db-migrate   # Run pending migrations
+### Development Scripts Reference
 
-# Service Management
-./scripts/dev-tools.sh restart api  # Restart specific service
-./scripts/dev-tools.sh logs frontend # View service logs
-./scripts/dev-tools.sh rebuild      # Rebuild all services
+#### `./scripts/setup.sh` - Master Setup Script
+Complete project initialization and setup:
+- `--init-only`: Only rename template files
+- `--dev-setup-only`: Only setup development environment  
+- `--force-init`: Force re-initialization with new settings
 
-# Development Utilities
-./scripts/dev-tools.sh test Unit    # Run unit tests
-./scripts/dev-tools.sh fresh        # Complete environment refresh
-./scripts/dev-tools.sh open         # Open all development URLs
-```
+#### `./scripts/dev-status.sh` - Project Status Monitor
+View project health and information:
+- `--health`: Quick health check
+- `--urls`: Display all service URLs
+- `--watch`: Real-time monitoring
+
+#### `./scripts/dev-tools.sh` - Development Utilities
+Comprehensive development toolkit:
+- `db-shell`, `db-reset`, `db-migrate`: Database operations
+- `restart <service>`, `logs <service>`: Service management
+- `test <TestType>`: Run specific tests
+- `fresh`: Complete environment refresh
+- `open`: Open all development URLs in browser
 
 ## Troubleshooting
 
-### Common Issues & Solutions
+### Quick Fixes
+1. **Script won't run**: `chmod +x scripts/*.sh`
+2. **Port conflicts**: `./scripts/setup.sh --force-init`
+3. **Database issues**: `./scripts/dev-tools.sh db-reset` (destroys data)
+4. **Docker problems**: `docker system prune -f && ./scripts/dev-tools.sh rebuild`
 
-1. **Port Conflicts**
-   - Our scripts automatically detect and resolve port conflicts
-   - If a port is in use, the system will:
-     * Attempt to use an alternative port
-     * Provide clear error messages
-     * Suggest manual resolution steps
+### Detailed Help
+For comprehensive troubleshooting, see: **[docs/setup/troubleshooting.md](docs/setup/troubleshooting.md)**
 
-2. **Database Migration Problems**
-   - `./scripts/dev-tools.sh db-migrate` handles most migration scenarios
-   - Automatic rollback on failed migrations
-   - Detailed error logging for debugging
+## Architecture & Development
 
-3. **Docker-Related Challenges**
-   - Ensure Docker daemon is running
-   - Check Docker version compatibility (minimum Docker Compose v2)
-   - Verify sufficient system resources
+### Key Documentation
+- **[Architecture Overview](docs/development/architecture.md)** - System design and patterns
+- **[Adding New Features](docs/development/new-features.md)** - Complete guide for extending the template
+- **[Authentication Guide](docs/development/authentication.md)** - OAuth2 setup and user management
+- **[Deployment Guide](docs/development/deployment.md)** - Production deployment options
+- **[API Documentation](docs/api/endpoints.md)** - Complete API reference
 
-### Debugging Tips
-- Always start with `./scripts/dev-status.sh --health`
-- Use `./scripts/dev-tools.sh logs [service]` for detailed logs
-- Run `./scripts/dev-setup.sh --interactive` for guided troubleshooting
-
-## Manual Commands (Advanced Users)
-
-### Backend (.NET)
-```bash
-# Build backend
-dotnet build backend/
-
-# Run tests
-dotnet test backend/Tests.Unit
-dotnet test backend/Tests.Integration
-
-# Create migration
-dotnet ef migrations add <MigrationName> \
-  -p backend/Infrastructure \
-  -c ApplicationDbContext \
-  -s backend/Api
-```
-
-### Frontend (React)
-```bash
-# Install dependencies
-npm install --prefix frontend
-
-# Development server
-npm run dev --prefix frontend
-
-# Build for production
-npm run build --prefix frontend
-```
-
-📌 Pro Tip: Prefer our scripts (`dev-setup.sh`, `dev-tools.sh`) over manual commands when possible!
-
-## Feature Development
-
-### Adding New Entities
-
-When implementing new business entities (Customer, Order, Product, etc.), follow the comprehensive guide:
-
-**📋 [NEW FEATURE REQUIREMENTS](./docs/NEW_FEATURE_REQUIREMENTS.md)** - Complete step-by-step checklist for adding entities to the full-stack system
-
-This guide covers:
-- Backend implementation (Domain → Application → Infrastructure → API layers)
-- Frontend implementation (Entity architecture → UI components → Pages → Forms)
-- Integration with global loading states, SignalR, authentication, and testing
-- Deployment checklist and best practices
-
-## Architecture Overview
+### Technology Stack
+- **Backend**: .NET 9, ASP.NET Core, PostgreSQL, Entity Framework
+- **Frontend**: React 18, TypeScript, Tailwind CSS, Shadcn/ui
+- **Authentication**: OAuth2/OIDC (Azure AD, Google)
+- **Real-time**: SignalR for notifications
+- **Infrastructure**: Docker, Docker Compose
 
 ### Clean Architecture Layers
+1. **Domain** - Business entities and rules
+2. **Application** - CQRS commands/queries with MediatR
+3. **Infrastructure** - Database, external services
+4. **API** - REST endpoints, authentication
+5. **Frontend** - React components, state management
 
-The application follows Clean Architecture with clear separation of concerns:
+## Service URLs (Development)
+- **Frontend**: http://localhost:5173
+- **API**: http://localhost:5000  
+- **Swagger**: http://localhost:5000/swagger
+- **Database Admin**: http://localhost:5001 (SMTP4Dev)
 
-1. **Domain Layer** (`backend/Domain/`)
-   - Core business entities and value objects
-   - Domain events and business rules
-   - No external dependencies
+*Note: Ports are automatically assigned during setup to avoid conflicts*
 
-2. **Application Layer** (`backend/Application/`)
-   - CQRS pattern implementation using MediatR
-   - Commands: CreateProjectCommand, UpdateProjectCommand, CreateUserCommand, UpdateUserRoleCommand, UpdateUserProfileCommand, etc.
-   - Queries: GetProjectsQuery, GetUsersQuery, GetUserByIdQuery, GetPendingInvitationsQuery, etc.
-   - Service interfaces and DTOs
-   - Business logic orchestration
+## Configuration
 
-3. **Infrastructure Layer** (`backend/Infrastructure/`)
-   - Entity Framework Core with PostgreSQL
-   - External service integrations (Email, Storage)
-   - Background jobs with Hangfire
-   - SignalR hub implementations
-   - Repository implementations
+### Environment Setup
+The setup script creates `.env.development` with:
+- Database connection settings
+- OAuth provider configuration
+- CORS and security settings
+- Admin user email
 
-4. **API Layer** (`backend/Api/`)
-   - ASP.NET Core Web API
-   - Controllers: AuthController, ProjectsController, ReportsController, FilesController, UsersController
-   - Simplified cookie-based OAuth authentication
-   - Role-based authorization (Admin, Manager, Employee)
-   - SignalR hubs for real-time notifications
-   - Program.cs contains service configuration and startup
-
-### Frontend Architecture
-
-- **Pages** (`frontend/src/pages/`): Dashboard, Login, Reports, Users, Tables, Forms
-- **Components** (`frontend/src/components/`): Reusable UI components using Shadcn/ui
-- **State Management**: Zustand stores in `frontend/src/stores/`
-- **API Integration**: React Query with hooks in `frontend/src/hooks/`
-- **Routing**: React Router configured in `frontend/src/router.tsx`
-- **Real-time**: SignalR client in `frontend/src/hooks/useSignalR.ts`
-
-## Key Technologies & Patterns
-
-### Backend
-- **.NET 9** with C# nullable reference types enabled
-- **Authentication**: Simplified cookie-based OAuth2/OIDC (Azure AD, Google)
-- **User Management**: Pre-provisioning, role assignment, invitation system
-- **Database**: PostgreSQL with Entity Framework Core
-- **Caching**: Redis
-- **Background Jobs**: Hangfire for scheduled tasks
-- **Real-time**: SignalR for WebSocket communications
-- **Logging**: Serilog with file and console sinks
-- **Testing**: xUnit with separate Unit and Integration test projects
-
-### Frontend
-- **React 19** with TypeScript
-- **Build Tool**: Vite
-- **UI Framework**: Tailwind CSS with Shadcn/ui components
-- **Forms**: React Hook Form with Zod validation
-- **Data Fetching**: TanStack Query (React Query)
-- **State Management**: Zustand
-- **Tables**: TanStack Table
-- **Charts**: Recharts
-- **Internationalization**: i18next with React integration
-
-## Service URLs
-
-### Development
-- Frontend: http://localhost:5173
-- API: http://localhost:5000
-- Swagger: http://localhost:5000/swagger
-- Hangfire: http://localhost:5002/hangfire
-- SMTP4Dev (email testing): http://localhost:5001
-- PostgreSQL: localhost:5433
-- Redis: localhost:6379
-
-### Production (Docker)
-- Frontend: http://localhost:3000
-- API: http://localhost:8080
-- Hangfire: http://localhost:8081/hangfire
-- PostgreSQL: localhost:5432
-
-## Environment Configuration
-
-Key environment variables are defined in:
-- `.env.development` - Development environment template
-- `.env.example` - Production environment template
-- `docker-compose.override.yml` - Development overrides
-
-Required configuration:
-- `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD` - Database connection
-- `JWT_AUTHORITY`, `JWT_AUDIENCE` - Authentication settings
-- `CORS_ALLOWED_ORIGINS` - CORS configuration
-- `ADMIN_EMAIL`, `ALLOWED_DOMAIN` - Admin and domain restrictions
-- `SMTP_*` - Email service configuration
-- `VITE_DEFAULT_LANGUAGE`, `VITE_MULTI_LANGUAGE_ENABLED` - i18n configuration
-
-## Internationalization (i18n)
-
-The application includes full internationalization support with the following features:
-
-### Supported Languages
-- **English** (en) - Complete translation coverage
-- **Spanish** (es) - Complete translation coverage
-- Additional languages can be easily added
-
-### Configuration
+### Authentication Providers
+**Azure AD** (recommended for enterprise):
 ```env
-# Set default language (en or es)
-VITE_DEFAULT_LANGUAGE=es
-
-# Enable/disable language switcher
-VITE_MULTI_LANGUAGE_ENABLED=true
+JWT_AUTHORITY=https://login.microsoftonline.com/your-tenant/v2.0
+JWT_AUDIENCE=your-client-id
 ```
 
-### Key Features
-- **UI Translations**: All interface text is translatable
-- **Date/Number Formatting**: Respects user's system locale
-- **Email Localization**: Backend sends emails in user's preferred language
-- **Cookie Persistence**: Language preference saved across sessions
-- **Type-Safe**: Full TypeScript support for translation keys
-- **Performance Optimized**: Only ~61KB gzipped overhead
+**Google OAuth**:
+```env
+GOOGLE_CLIENT_ID=your-client-id
+GOOGLE_CLIENT_SECRET=your-secret
+```
 
-### Documentation
-- **[Frontend i18n Guide](./frontend/docs/internationalization.md)** - Complete implementation guide
-- **[Customer Configuration](./docs/language-configuration-guide.md)** - Setup instructions for deployments
-- **[Performance Analysis](./docs/i18n-performance-report.md)** - Bundle size and performance metrics
+## Development Best Practices
 
-## Database Management
+### Adding New Features
+1. **Plan**: Define entity, relationships, permissions
+2. **Backend**: Domain → Application → Infrastructure → API
+3. **Frontend**: Types → Services → Hooks → Components
+4. **Test**: Unit tests, integration tests, E2E
+5. **Deploy**: Update documentation, test deployment
 
-The application uses Code-First migrations with Entity Framework Core:
-- Migrations are in `backend/Infrastructure/Migrations/`
-- ApplicationDbContext is the main database context
-- Automatic migration on startup in development
-- Seed data includes admin user if ADMIN_EMAIL is configured
+### Code Organization
+- Follow existing patterns and naming conventions
+- Use existing components (DataTable, forms, etc.)
+- Implement proper error handling and loading states
+- Write tests for critical functionality
 
-## Authentication & Authorization
+### Database Changes
+```bash
+# Create migration
+dotnet ef migrations add YourMigrationName -p backend/Infrastructure -s backend/Api
 
-- Simplified cookie-based OAuth2/OIDC integration with Azure AD and Google
-- Session-based authentication with HTTP-only secure cookies
-- Role-based authorization policies: AdminOnly, ManagerOrAdmin, AllUsers
-- Domain restriction support via ALLOWED_DOMAIN environment variable
-- User pre-provisioning with role assignment
-- Automatic admin creation based on ADMIN_EMAIL environment variable
-- Custom claims added during token validation
+# Apply migration
+./scripts/dev-tools.sh db-migrate
+```
 
-## Real-time Features
+## Advanced Features
 
-SignalR is used for real-time notifications:
-- Hub endpoint: `/hubs/notifications`
-- Client implementation in `frontend/src/hooks/useSignalR.ts`
-- Automatic reconnection handling
+### Internationalization (i18n)
+Supports English and Spanish with:
+- UI translations
+- Email localization  
+- Date/number formatting
+- Language switcher (configurable)
 
-## Background Jobs
+### Real-time Features
+SignalR integration for:
+- Live notifications
+- Project updates
+- User status
 
-Hangfire manages background tasks:
-- Dashboard available at `/hangfire` (admin-only in production)
-- Recurring jobs scheduled in Program.cs
-- Project report generation scheduled job
+### Background Jobs
+Hangfire for:
+- Report generation
+- Email sending
+- Scheduled tasks
